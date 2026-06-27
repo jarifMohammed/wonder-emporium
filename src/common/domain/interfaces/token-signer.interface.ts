@@ -20,7 +20,11 @@ export enum TokenVerificationFailureReason {
 
 export class TokenVerificationException extends Error {
   constructor(public readonly reason: TokenVerificationFailureReason) {
-    super(reason === TokenVerificationFailureReason.EXPIRED ? 'Token expired' : 'Token invalid');
+    super(
+      reason === TokenVerificationFailureReason.EXPIRED
+        ? 'Token expired'
+        : 'Token invalid',
+    );
     this.name = 'TokenVerificationException';
   }
 }

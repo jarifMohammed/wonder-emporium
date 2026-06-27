@@ -1,0 +1,46 @@
+// ================================
+// Book & BookFile Models
+// ================================
+
+model Book {
+  id                 String     @id @default(uuid()) @db.Uuid
+  authorId           String     @db.Uuid
+  title              String
+  description        String?
+  bookCover          String?
+  isbn               String?
+  category           String?
+  tags               String[]
+  pageCount          Int?
+  trimSize           String?
+  language           String?
+  ageGroup           String?
+  listPrice          Float?
+  authorEarnings     Float?
+  publicationDetails String?
+  status             BookStatus @default(DRAFT)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  author AuthUser  @relation(fields: [authorId], references: [id])
+  files  BookFile[]
+
+  @@index([authorId])
+  @@index([status])
+  @@index([title])
+}
+
+model BookFile {
+  id        String       @id @default(uuid()) @db.Uuid
+  bookId    String       @db.Uuid
+  type      BookFileType
+  url       String?
+  fileKey   String?
+  mimeType  String?
+  size      Int?
+  createdAt DateTime     @default(now())
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@index([bookId])
+}

@@ -39,9 +39,7 @@ const forbiddenCorePatterns = [
 
 describe('architecture boundaries', () => {
   it('keeps auth/job domain and application layers framework agnostic', () => {
-    const files = [
-      ...listTypeScriptFiles(join(root, 'common/domain')),
-    ];
+    const files = [...listTypeScriptFiles(join(root, 'common/domain'))];
 
     const violations = files.flatMap((file) => {
       const source = readFileSync(file, 'utf8');

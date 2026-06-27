@@ -11,6 +11,8 @@ import { MetricsModule } from './metrics/metrics.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './common/config/winston.config';
 import { LoggerModule } from './common/modules/logger.module';
+import { AuthModule } from './auth/auth.module';
+import { BooksModule } from './books/books.module';
 
 import { MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { RequestIdMiddleware } from './common/middlewares/request-id.middleware';
@@ -38,6 +40,9 @@ import { RequestIdMiddleware } from './common/middlewares/request-id.middleware'
     RateLimitModule,
     // Metrics module (global - Prometheus metrics)
     MetricsModule,
+    // Auth module (authentication & authorization)
+    AuthModule,
+    BooksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -16,6 +16,11 @@ interface AppConfig {
   google_client_secret: string;
   google_redirect_uri: string;
   cors_origins: string[];
+  // AWS S3
+  aws_region: string;
+  aws_access_key_id: string;
+  aws_secret_access_key: string;
+  aws_s3_bucket: string;
 }
 
 const parseCsv = (value?: string): string[] =>
@@ -44,6 +49,11 @@ const config: AppConfig = {
   google_client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
   google_redirect_uri: process.env.GOOGLE_REDIRECT_URI || '',
   cors_origins: parseCsv(process.env.CORS_ORIGINS),
+  // AWS S3
+  aws_region: process.env.AWS_REGION || 'us-east-1',
+  aws_access_key_id: process.env.AWS_ACCESS_KEY_ID || '',
+  aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY || '',
+  aws_s3_bucket: process.env.AWS_S3_BUCKET || 'wonder-emporium-books',
 };
 
 export default config;

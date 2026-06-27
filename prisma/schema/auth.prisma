@@ -25,6 +25,7 @@ model AuthUser {
   activityLogEvents ActivityLogEvent[]
   subscriptions     Subscription[]
   jobs              Job[]
+  books             Book[]
 
   // MongoDB: @unique already creates an index, so don't duplicate with @@index
   // Compound index for lookups by email+id+providerId

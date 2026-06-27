@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
+import {
+  INestApplication,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { PrismaService } from '../src/common/services/prisma.service';
@@ -18,15 +22,19 @@ describe('Auth & Job Workflow (e2e)', () => {
       type: VersioningType.URI,
       defaultVersion: '1',
     });
-    app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-    
+    app.useGlobalPipes(
+      new ValidationPipe({ transform: true, whitelist: true }),
+    );
+
     await app.init();
     prisma = app.get<PrismaService>(PrismaService);
   });
 
   afterAll(async () => {
     // Clean up test data
-    await prisma.authUser.deleteMany({ where: { email: 'e2e-test@example.com' } });
+    await prisma.authUser.deleteMany({
+      where: { email: 'e2e-test@example.com' },
+    });
     await app.close();
   });
 

@@ -13,7 +13,8 @@
  * Edge Case: UUIDs from PostgreSQL are exactly 36 characters with hyphens.
  */
 export class EntityId {
-  private static readonly UUID_REGEX = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
+  private static readonly UUID_REGEX =
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
 
   private constructor(private readonly _value: string) {}
 
