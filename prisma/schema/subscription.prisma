@@ -1,0 +1,86 @@
+// ================================
+// Subscription Models
+// ================================
+
+model Subscription {
+  id                 String             @id @default(uuid()) @db.Uuid
+  authId             String             @db.Uuid
+  planId             String             @db.Uuid
+  status             SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean            @default(false)
+  canceledAt         DateTime?
+  trialStart         DateTime?
+  trialEnd           DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  // Relations
+  authUser AuthUser         @relation(fields: [authId], references: [id], onDelete: Cascade)
+  plan     SubscriptionPlan @relation(fields: [planId], references: [id])
+  payments Payment[]
+  invoices Invoice[]
+
+  @@index([authId])
+  @@index([status])
+}
+
+model SubscriptionPlan {
+  id              String          @id @default(uuid()) @db.Uuid
+  name            String          @unique
+  description     String?
+  price           Float // Changed from Decimal — MongoDB doesn't support @db.Decimal
+  currency        String          @default("USD")
+  interval        BillingInterval
+  intervalCount   Int             @default(1)
+  trialPeriodDays Int?
+  features        Json?
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  subscriptions Subscription[]
+
+  @@index([isActive])
+}
+
+model Payment {
+  id                String        @id @default(uuid()) @db.Uuid
+  subscriptionId    String        @db.Uuid
+  amount            Float // Changed from Decimal — MongoDB doesn't support @db.Decimal
+  currency          String        @default("USD")
+  status            PaymentStatus
+  provider          String // stripe, paypal, etc
+  providerPaymentId String?
+  metadata          Json?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Relations
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([status])
+}
+
+model Invoice {
+  id             String        @id @default(uuid()) @db.Uuid
+  subscriptionId String        @db.Uuid
+  invoiceNumber  String        @unique
+  amount         Float // Changed from Decimal — MongoDB doesn't support @db.Decimal
+  currency       String        @default("USD")
+  status         InvoiceStatus
+  dueDate        DateTime
+  paidAt         DateTime?
+  invoiceUrl     String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Relations
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([status])
+}

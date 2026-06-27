@@ -1,0 +1,41 @@
+// ================================
+// Activity Event Model
+// ================================
+
+model ActivityLogEvent {
+  id         String     @id @default(uuid()) @db.Uuid
+  tableName  String
+  recordId   String
+  action     ActionType
+  actionedBy String?    @db.Uuid // user id who did the action
+  ipAddress  String?
+  userAgent  String?
+  device     String?
+  requestId  String?
+  createdAt  DateTime   @default(now())
+  eventType  EventType?
+
+  // Relations
+  details  ActivityLogEventDetail[]
+  authUser AuthUser?                @relation(fields: [actionedBy], references: [id], onDelete: SetNull)
+
+  @@index([tableName, recordId, createdAt]) // fetch history for a record
+  @@index([actionedBy, createdAt]) // fetch actions by user
+}
+
+// ================================
+// Activity Event Detail Model
+// ================================
+
+model ActivityLogEventDetail {
+  id        String  @id @default(uuid()) @db.Uuid
+  eventId   String  @db.Uuid
+  fieldName String
+  oldValue  String?
+  newValue  String?
+
+  // Relations
+  event ActivityLogEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}

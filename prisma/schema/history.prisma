@@ -1,0 +1,54 @@
+// ================================
+// Login History Model
+// ================================
+
+model LoginHistory {
+  id            String      @id @default(uuid()) @db.Uuid
+  authId        String      @db.Uuid
+  ipAddress     String
+  userAgent     String
+  device_id     String?
+  geo_country   String?
+  geo_city      String?
+  action        LoginAction
+  success       Boolean
+  failureReason String?
+  attemptNumber Int         @default(1)
+  isSuspicious  Boolean     @default(false)
+  requestId     String?
+  createdAt     DateTime    @default(now())
+
+  // Relations
+  authUser AuthUser @relation(fields: [authId], references: [id], onDelete: Cascade)
+
+  @@index([authId, createdAt])
+}
+
+// ================================
+// Email History Model
+// ================================
+
+model EmailHistory {
+  id            String         @id @default(uuid()) @db.Uuid
+  authId        String         @db.Uuid
+  emailTo       String
+  emailType     EmailType
+  subject       String
+  emailProvider EmailProvider?
+  messageId     String
+  emailStatus   EmailStatus
+  retry_count   Int            @default(0)
+  ipAddress     String?
+  userAgent     String?
+  sentAt        DateTime       @default(now())
+  errorMessage  String?
+  createdAt     DateTime       @default(now())
+
+  // Relations
+  authUser AuthUser @relation(fields: [authId], references: [id], onDelete: Cascade)
+
+  @@index([authId])
+  @@index([emailTo])
+  @@index([sentAt])
+  @@index([messageId])
+}

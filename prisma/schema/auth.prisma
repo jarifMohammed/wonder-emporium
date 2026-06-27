@@ -1,0 +1,55 @@
+// ================================
+// Auth User Model
+// ================================
+
+model AuthUser {
+  id           String     @id @default(uuid()) @db.Uuid
+  email        String     @unique
+  password     String
+  username     String     @unique
+  role         UserRole   @default(USER)
+  verified     Boolean    @default(false)
+  status       UserStatus @default(ACTIVE)
+  tokenVersion Int        @default(1) // For immediate JWT revocation on security events
+  deletedAt    DateTime?
+  provider     String     @default("local")
+  providerId   String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relations
+  userProfile       UserProfile?
+  authSecurity      AuthSecurity?
+  loginHistory      LoginHistory[]
+  emailHistory      EmailHistory[]
+  activityLogEvents ActivityLogEvent[]
+  subscriptions     Subscription[]
+  jobs              Job[]
+
+  // MongoDB: @unique already creates an index, so don't duplicate with @@index
+  // Compound index for lookups by email+id+providerId
+  @@index([email, providerId])
+}
+
+// ================================
+// Auth Security Model
+// ================================
+
+model AuthSecurity {
+  id                 String     @id @default(uuid()) @db.Uuid
+  authId             String     @unique @db.Uuid
+  failedAttempts     Int        @default(0)
+  lastFailedAt       DateTime?
+  lockExpiresAt      DateTime?
+  mfaEnabled         Boolean    @default(false)
+  mfaMethod          MfaMethod?
+  mfaSecret          String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  lastPasswordChange DateTime?
+
+  // Relations
+  authUser AuthUser @relation(fields: [authId], references: [id], onDelete: Cascade)
+
+  // @unique on authId already creates an index — no @@index needed
+}
