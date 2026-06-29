@@ -13,11 +13,17 @@ export interface BookOutput {
   isbn: string | null;
   category: string | null;
   tags: string[];
-  pageCount: number | null;
-  trimSize: string | null;
   language: string | null;
   ageGroup: string | null;
-  listPrice: number | null;
+  formats: {
+    formatType: string;
+    listPrice: number;
+    sku: string | null;
+    pageCount: number | null;
+    trimSize: string | null;
+    coverUrl: string | null;
+    interiorUrl: string | null;
+  }[];
   authorEarnings: number | null;
   publicationDetails: string | null;
   status: BookStatus;
@@ -42,11 +48,17 @@ export interface CreateBookInput {
   isbn?: string;
   category?: string;
   tags?: string[];
-  pageCount?: number;
-  trimSize?: string;
   language?: string;
   ageGroup?: string;
-  listPrice?: number;
+  formats?: {
+    formatType: string;
+    listPrice: number;
+    sku?: string;
+    pageCount?: number;
+    trimSize?: string;
+    coverUrl?: string;
+    interiorUrl?: string;
+  }[];
   authorEarnings?: number;
   publicationDetails?: string;
   status?: BookStatus;
@@ -66,11 +78,17 @@ export interface UpdateBookInput {
   isbn?: string;
   category?: string;
   tags?: string[];
-  pageCount?: number;
-  trimSize?: string;
   language?: string;
   ageGroup?: string;
-  listPrice?: number;
+  formats?: {
+    formatType: string;
+    listPrice: number;
+    sku?: string;
+    pageCount?: number;
+    trimSize?: string;
+    coverUrl?: string;
+    interiorUrl?: string;
+  }[];
   authorEarnings?: number;
   publicationDetails?: string;
   files?: {

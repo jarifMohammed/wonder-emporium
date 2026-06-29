@@ -33,6 +33,18 @@ export class EmailProcessor extends WorkerHost {
         case 'welcome':
           await this.handleWelcomeEmail(job);
           break;
+        case 'order-receipt':
+          await this.handleOrderReceiptEmail(job);
+          break;
+        case 'author-sale':
+          await this.handleAuthorSaleEmail(job);
+          break;
+        case 'author-onboarding-approved':
+          await this.handleAuthorOnboardingApprovedEmail(job);
+          break;
+        case 'contact-us':
+          await this.handleContactUsEmail(job);
+          break;
         default:
           this.logger.warn(
             `Unknown email job type: ${String((job.data as { type?: string }).type || 'undefined')}`,
@@ -125,4 +137,103 @@ export class EmailProcessor extends WorkerHost {
       // Just log the error and mark job as complete
     }
   }
+
+  private async handleOrderReceiptEmail(job: Job<EmailJob>): Promise<void> {
+    const jobData = job.data as Extract<EmailJob, { type: 'order-receipt' }>;
+    const { email, data } = jobData;
+
+    try {
+      await this.emailService.sendOrderReceiptEmail(email, data);
+      this.logger.info(`Order receipt email sent successfully to ${email}`, {
+        context: 'EmailProcessor',
+        jobId: job.id,
+        email,
+        orderId: data.orderId,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send order receipt email to ${email}`, {
+        context: 'EmailProcessor',
+        email,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error; // Re-throw to trigger retry — receipts are important
+    }
+  }
+
+  private async handleAuthorSaleEmail(job: Job<EmailJob>): Promise<void> {
+    const jobData = job.data as Extract<EmailJob, { type: 'author-sale' }>;
+    const { email, data } = jobData;
+
+    try {
+      await this.emailService.sendAuthorSaleNotificationEmail(email, data);
+      this.logger.info(`Author sale notification email sent to ${email}`, {
+        context: 'EmailProcessor',
+        jobId: job.id,
+        email,
+        orderId: data.orderId,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send author sale email to ${email}`, {
+        context: 'EmailProcessor',
+        email,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      // Author sale notifications are non-critical — balance is already recorded
+      // Don't throw, just log
+    }
+  }
+
+  private async handleAuthorOnboardingApprovedEmail(
+    job: Job<EmailJob>,
+  ): Promise<void> {
+    const jobData = job.data as Extract<
+      EmailJob,
+      { type: 'author-onboarding-approved' }
+    >;
+    const { email, username } = jobData;
+
+    try {
+      await this.emailService.sendAuthorOnboardingApprovedEmail(
+        email,
+        username,
+      );
+      this.logger.info(`Author onboarding approved email sent to ${email}`, {
+        context: 'EmailProcessor',
+        jobId: job.id,
+        email,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to send author onboarding approved email to ${email}`,
+        {
+          context: 'EmailProcessor',
+          email,
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
+      // Non-critical — the account is already approved
+    }
+  }
+
+  private async handleContactUsEmail(job: Job<EmailJob>): Promise<void> {
+    const jobData = job.data as Extract<EmailJob, { type: 'contact-us' }>;
+    const { name, email, subject, message } = jobData;
+
+    try {
+      await this.emailService.sendContactUsEmail(name, email, subject, message);
+      this.logger.info(`Contact us email sent from ${email}`, {
+        context: 'EmailProcessor',
+        jobId: job.id,
+        email,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send contact us email from ${email}`, {
+        context: 'EmailProcessor',
+        email,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error; // Re-throw to trigger retry
+    }
+  }
 }
+

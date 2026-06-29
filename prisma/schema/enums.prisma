@@ -252,3 +252,28 @@ enum BookFileType {
   HARDCOVER
   PAPERBACK
 }
+
+// ================================
+// Commerce Related Enums
+// ================================
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum OutboxStatus {
+  PENDING
+  PROCESSED
+  FAILED
+}
+
+enum PayoutStatus {
+  PENDING_REQUEST
+  REQUESTED
+  APPROVED
+  PAID
+  REJECTED
+}

@@ -149,4 +149,112 @@ export class EmailService {
       html,
     });
   }
+
+  /**
+   * Send order receipt email to buyer
+   */
+  async sendOrderReceiptEmail(
+    email: string,
+    data: {
+      orderId: string;
+      totalAmount: number;
+      taxAmount: number;
+      currency: string;
+      items: Array<{ name: string; quantity: number; unitPrice: number }>;
+    },
+  ): Promise<void> {
+    const itemsHtml = data.items
+      .map(
+        (item) =>
+          `<tr><td>${item.name}</td><td style="text-align:center;">${item.quantity}</td><td style="text-align:right;">${data.currency.toUpperCase()} ${item.unitPrice.toFixed(2)}</td></tr>`,
+      )
+      .join('');
+
+    const tableHtml = `<table style="width:100%;border-collapse:collapse;"><tr><th style="text-align:left;padding:8px 4px;border-bottom:1px solid #eee;color:#666;font-size:12px;text-transform:uppercase;">Item</th><th style="text-align:center;padding:8px 4px;border-bottom:1px solid #eee;color:#666;font-size:12px;text-transform:uppercase;">Qty</th><th style="text-align:right;padding:8px 4px;border-bottom:1px solid #eee;color:#666;font-size:12px;text-transform:uppercase;">Price</th></tr>${itemsHtml}</table>`;
+
+    const html = this.getEmailTemplate('order-receipt.html', {
+      orderId: data.orderId,
+      totalAmount: data.totalAmount.toFixed(2),
+      taxAmount: data.taxAmount.toFixed(2),
+      currency: data.currency.toUpperCase(),
+      itemsHtml: tableHtml,
+      year: new Date().getFullYear().toString(),
+    });
+
+    await this.sendEmail({
+      to: email,
+      subject: `Order Confirmed — ${data.orderId}`,
+      html,
+    });
+  }
+
+  /**
+   * Send sale notification email to author
+   */
+  async sendAuthorSaleNotificationEmail(
+    email: string,
+    data: {
+      orderId: string;
+      earningsAmount: number;
+      platformFee: number;
+      currency: string;
+    },
+  ): Promise<void> {
+    const html = this.getEmailTemplate('author-sale-notification.html', {
+      orderId: data.orderId,
+      earningsAmount: data.earningsAmount.toFixed(2),
+      platformFee: data.platformFee.toFixed(2),
+      currency: data.currency.toUpperCase(),
+      year: new Date().getFullYear().toString(),
+    });
+
+    await this.sendEmail({
+      to: email,
+      subject: 'You made a sale! 💰',
+      html,
+    });
+  }
+
+  /**
+   * Send onboarding approved email to author
+   */
+  async sendAuthorOnboardingApprovedEmail(
+    email: string,
+    username: string,
+  ): Promise<void> {
+    const html = this.getEmailTemplate('author-onboarding-approved.html', {
+      username,
+      year: new Date().getFullYear().toString(),
+    });
+
+    await this.sendEmail({
+      to: email,
+      subject: 'Your author account is approved! 🚀',
+      html,
+    });
+  }
+
+  /**
+   * Send contact us email to admin
+   */
+  async sendContactUsEmail(
+    name: string,
+    email: string,
+    subject: string,
+    message: string,
+  ): Promise<void> {
+    const html = this.getEmailTemplate('contact-us.html', {
+      name,
+      email,
+      message,
+    });
+
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@wonderemporium.com';
+
+    await this.sendEmail({
+      to: adminEmail,
+      subject: `Contact Us: ${subject}`,
+      html,
+    });
+  }
 }

@@ -23,6 +23,7 @@ interface PrismaAuthUser {
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  isFoundingAuthor: boolean;
 }
 
 @Injectable()
@@ -37,6 +38,10 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
   async findByEmail(email: string): Promise<AuthUser | null> {
     const user = await this.prisma.authUser.findUnique({ where: { email } });
     return user ? this.toDomain(user as PrismaAuthUser) : null;
+  }
+
+  async countByRole(role: userRole): Promise<number> {
+    return this.prisma.authUser.count({ where: { role: role as $Enums.UserRole } });
   }
 
   async findByProvider(
@@ -58,6 +63,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
         role: data.role as $Enums.UserRole,
         provider: data.provider ?? 'local',
         providerId: data.providerId,
+        isFoundingAuthor: data.isFoundingAuthor ?? false,
       },
     });
     return this.toDomain(user as PrismaAuthUser);
@@ -185,6 +191,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
       user.createdAt,
       user.updatedAt,
       user.deletedAt,
+      user.isFoundingAuthor,
     );
   }
 }

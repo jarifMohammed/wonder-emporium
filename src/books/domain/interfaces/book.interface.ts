@@ -24,6 +24,20 @@ export interface BookFileData {
   createdAt: Date;
 }
 
+export interface BookFormatData {
+  id: string;
+  bookId: string;
+  formatType: string;
+  listPrice: number;
+  sku: string | null;
+  pageCount: number | null;
+  trimSize: string | null;
+  coverUrl: string | null;
+  interiorUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface BookFilters {
   status?: BookStatus;
   authorId?: string;

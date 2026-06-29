@@ -11,19 +11,18 @@ model Book {
   isbn               String?
   category           String?
   tags               String[]
-  pageCount          Int?
-  trimSize           String?
   language           String?
   ageGroup           String?
-  listPrice          Float?
   authorEarnings     Float?
   publicationDetails String?
   status             BookStatus @default(DRAFT)
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
 
-  author AuthUser  @relation(fields: [authorId], references: [id])
-  files  BookFile[]
+  author     AuthUser            @relation(fields: [authorId], references: [id])
+  files      BookFile[]
+  formats    BookFormatPricing[]
+  orderItems OrderItem[]
 
   @@index([authorId])
   @@index([status])
@@ -41,6 +40,25 @@ model BookFile {
   createdAt DateTime     @default(now())
 
   book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@index([bookId])
+}
+
+model BookFormatPricing {
+  id          String   @id @default(uuid()) @db.Uuid
+  bookId      String   @db.Uuid
+  book        Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  formatType  String
+  listPrice   Float
+  sku         String?
+  pageCount   Int?
+  trimSize    String?
+  coverUrl    String?
+  interiorUrl String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems OrderItem[]
 
   @@index([bookId])
 }

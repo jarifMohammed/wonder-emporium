@@ -2,6 +2,7 @@ import {
   BookStatus,
   BookFileType,
   BookFileData,
+  BookFormatData,
   BookFilters,
 } from './book.interface';
 import { Book } from '../entities/book.entity';
@@ -14,11 +15,17 @@ export interface CreateBookData {
   isbn?: string;
   category?: string;
   tags?: string[];
-  pageCount?: number;
-  trimSize?: string;
   language?: string;
   ageGroup?: string;
-  listPrice?: number;
+  formats?: {
+    formatType: string;
+    listPrice: number;
+    sku?: string;
+    pageCount?: number;
+    trimSize?: string;
+    coverUrl?: string;
+    interiorUrl?: string;
+  }[];
   authorEarnings?: number;
   publicationDetails?: string;
   status?: BookStatus;
@@ -31,11 +38,17 @@ export interface UpdateBookData {
   isbn?: string;
   category?: string;
   tags?: string[];
-  pageCount?: number;
-  trimSize?: string;
   language?: string;
   ageGroup?: string;
-  listPrice?: number;
+  formats?: {
+    formatType: string;
+    listPrice: number;
+    sku?: string;
+    pageCount?: number;
+    trimSize?: string;
+    coverUrl?: string;
+    interiorUrl?: string;
+  }[];
   authorEarnings?: number;
   publicationDetails?: string;
 }
@@ -49,13 +62,14 @@ export interface CreateFileData {
   size?: number;
 }
 
-export interface BookWithFiles {
+export interface BookWithFilesAndFormats {
   book: Book;
   files: BookFileData[];
+  formats: BookFormatData[];
 }
 
 export interface PaginatedBooks {
-  books: BookWithFiles[];
+  books: BookWithFilesAndFormats[];
   total: number;
   page: number;
   limit: number;
@@ -63,14 +77,14 @@ export interface PaginatedBooks {
 }
 
 export interface IBookRepository {
-  create(data: CreateBookData): Promise<BookWithFiles>;
-  findById(id: string): Promise<BookWithFiles | null>;
+  create(data: CreateBookData): Promise<BookWithFilesAndFormats>;
+  findById(id: string): Promise<BookWithFilesAndFormats | null>;
   findAll(filters: BookFilters): Promise<PaginatedBooks>;
   findByAuthorId(
     authorId: string,
     filters: BookFilters,
   ): Promise<PaginatedBooks>;
-  update(id: string, data: UpdateBookData): Promise<BookWithFiles>;
+  update(id: string, data: UpdateBookData): Promise<BookWithFilesAndFormats>;
   updateStatus(id: string, status: BookStatus): Promise<void>;
   delete(id: string): Promise<void>;
   addFile(data: CreateFileData): Promise<BookFileData>;

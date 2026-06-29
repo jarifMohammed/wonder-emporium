@@ -13,6 +13,9 @@ import { winstonConfig } from './common/config/winston.config';
 import { LoggerModule } from './common/modules/logger.module';
 import { AuthModule } from './auth/auth.module';
 import { BooksModule } from './books/books.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { QueueModule } from './common/modules/queue.module';
+import { CommerceModule } from './commerce/commerce.module';
 
 import { MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { RequestIdMiddleware } from './common/middlewares/request-id.middleware';
@@ -43,6 +46,10 @@ import { RequestIdMiddleware } from './common/middlewares/request-id.middleware'
     // Auth module (authentication & authorization)
     AuthModule,
     BooksModule,
+    CommerceModule,
+    QueueModule,
+    // Event Emitter module
+    EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

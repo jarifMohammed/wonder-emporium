@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Approved</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 30px;
+            border: 1px solid #ddd;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status-box {
+            background-color: #e8f5e9;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #c8e6c9;
+        }
+        .status-icon {
+            font-size: 48px;
+        }
+        .status-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-top: 10px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>You're All Set! 🚀</h1>
+        </div>
+        <p>Hi {{username}},</p>
+
+        <div class="status-box">
+            <div class="status-icon">✅</div>
+            <div class="status-text">Your Author Account is Approved</div>
+        </div>
+
+        <p>Your Stripe Connect account has been fully verified and activated. You can now:</p>
+        <ul>
+            <li>Receive payments from book sales</li>
+            <li>Track your earnings in your author dashboard</li>
+            <li>Request payouts to your bank account</li>
+        </ul>
+
+        <p>Start publishing and earning today!</p>
+
+        <p>Best regards,<br>Your Team</p>
+
+        <div class="footer">
+            <p>&copy; {{year}} Your Company. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

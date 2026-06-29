@@ -6,7 +6,7 @@ import {
   CreateBookData,
   UpdateBookData,
   CreateFileData,
-  BookWithFiles,
+  BookWithFilesAndFormats,
   PaginatedBooks,
 } from '../../domain/interfaces/book.repository.interface';
 import {
@@ -26,11 +26,8 @@ interface PrismaBook {
   isbn: string | null;
   category: string | null;
   tags: string[];
-  pageCount: number | null;
-  trimSize: string | null;
   language: string | null;
   ageGroup: string | null;
-  listPrice: number | null;
   authorEarnings: number | null;
   publicationDetails: string | null;
   status: string;
@@ -49,11 +46,25 @@ interface PrismaBookFile {
   createdAt: Date;
 }
 
+interface PrismaBookFormatPricing {
+  id: string;
+  bookId: string;
+  formatType: string;
+  listPrice: number;
+  sku: string | null;
+  pageCount: number | null;
+  trimSize: string | null;
+  coverUrl: string | null;
+  interiorUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 @Injectable()
 export class PrismaBookRepository implements IBookRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateBookData): Promise<BookWithFiles> {
+  async create(data: CreateBookData): Promise<BookWithFilesAndFormats> {
     const book = await this.prisma.book.create({
       data: {
         authorId: data.authorId,
@@ -63,29 +74,45 @@ export class PrismaBookRepository implements IBookRepository {
         isbn: data.isbn,
         category: data.category,
         tags: data.tags ?? [],
-        pageCount: data.pageCount,
-        trimSize: data.trimSize,
         language: data.language,
         ageGroup: data.ageGroup,
-        listPrice: data.listPrice,
         authorEarnings: data.authorEarnings,
         publicationDetails: data.publicationDetails,
         status: (data.status ?? BookStatus.DRAFT) as $Enums.BookStatus,
+        formats: data.formats
+          ? {
+              create: data.formats.map((f) => ({
+                formatType: f.formatType,
+                listPrice: f.listPrice,
+                sku: f.sku,
+                pageCount: f.pageCount,
+                trimSize: f.trimSize,
+                coverUrl: f.coverUrl,
+                interiorUrl: f.interiorUrl,
+              })),
+            }
+          : undefined,
       },
+      include: { files: true, formats: true },
     });
 
-    return this.toBookWithFiles(book as PrismaBook, []);
+    return this.toBookWithFilesAndFormats(
+      book as unknown as PrismaBook,
+      (book as any).files as PrismaBookFile[],
+      (book as any).formats as PrismaBookFormatPricing[],
+    );
   }
 
-  async findById(id: string): Promise<BookWithFiles | null> {
+  async findById(id: string): Promise<BookWithFilesAndFormats | null> {
     const book = await this.prisma.book.findUnique({
       where: { id },
-      include: { files: true },
+      include: { files: true, formats: true },
     });
     if (!book) return null;
-    return this.toBookWithFiles(
-      book as PrismaBook,
+    return this.toBookWithFilesAndFormats(
+      book as unknown as PrismaBook,
       book.files as PrismaBookFile[],
+      (book as any).formats as PrismaBookFormatPricing[],
     );
   }
 
@@ -117,16 +144,17 @@ export class PrismaBookRepository implements IBookRepository {
         orderBy,
         skip,
         take: limit,
-        include: { files: true },
+        include: { files: true, formats: true },
       }),
       this.prisma.book.count({ where }),
     ]);
 
     return {
       books: books.map((b) =>
-        this.toBookWithFiles(
-          b as PrismaBook,
+        this.toBookWithFilesAndFormats(
+          b as unknown as PrismaBook,
           (b as any).files as PrismaBookFile[],
+          (b as any).formats as PrismaBookFormatPricing[],
         ),
       ),
       total,
@@ -143,7 +171,10 @@ export class PrismaBookRepository implements IBookRepository {
     return this.findAll({ ...filters, authorId });
   }
 
-  async update(id: string, data: UpdateBookData): Promise<BookWithFiles> {
+  async update(
+    id: string,
+    data: UpdateBookData,
+  ): Promise<BookWithFilesAndFormats> {
     const updateData: Record<string, unknown> = {};
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined)
@@ -152,25 +183,38 @@ export class PrismaBookRepository implements IBookRepository {
     if (data.isbn !== undefined) updateData.isbn = data.isbn;
     if (data.category !== undefined) updateData.category = data.category;
     if (data.tags !== undefined) updateData.tags = data.tags;
-    if (data.pageCount !== undefined) updateData.pageCount = data.pageCount;
-    if (data.trimSize !== undefined) updateData.trimSize = data.trimSize;
     if (data.language !== undefined) updateData.language = data.language;
     if (data.ageGroup !== undefined) updateData.ageGroup = data.ageGroup;
-    if (data.listPrice !== undefined) updateData.listPrice = data.listPrice;
     if (data.authorEarnings !== undefined)
       updateData.authorEarnings = data.authorEarnings;
     if (data.publicationDetails !== undefined)
       updateData.publicationDetails = data.publicationDetails;
 
+    if (data.formats !== undefined) {
+      updateData.formats = {
+        deleteMany: {},
+        create: data.formats.map((f) => ({
+          formatType: f.formatType,
+          listPrice: f.listPrice,
+          sku: f.sku,
+          pageCount: f.pageCount,
+          trimSize: f.trimSize,
+          coverUrl: f.coverUrl,
+          interiorUrl: f.interiorUrl,
+        })),
+      };
+    }
+
     const book = await this.prisma.book.update({
       where: { id },
       data: updateData,
-      include: { files: true },
+      include: { files: true, formats: true },
     });
 
-    return this.toBookWithFiles(
-      book as PrismaBook,
+    return this.toBookWithFilesAndFormats(
+      book as unknown as PrismaBook,
       book.files as PrismaBookFile[],
+      (book as any).formats as PrismaBookFormatPricing[],
     );
   }
 
@@ -214,11 +258,8 @@ export class PrismaBookRepository implements IBookRepository {
       book.isbn,
       book.category,
       book.tags,
-      book.pageCount,
-      book.trimSize,
       book.language,
       book.ageGroup,
-      book.listPrice,
       book.authorEarnings,
       book.publicationDetails,
       book.status as BookStatus,
@@ -240,13 +281,27 @@ export class PrismaBookRepository implements IBookRepository {
     };
   }
 
-  private toBookWithFiles(
+  private toBookWithFilesAndFormats(
     book: PrismaBook,
     files: PrismaBookFile[],
-  ): BookWithFiles {
+    formats: PrismaBookFormatPricing[] = [],
+  ): BookWithFilesAndFormats {
     return {
       book: this.toDomain(book),
       files: files.map((f) => this.toFileData(f)),
+      formats: formats.map((f) => ({
+        id: f.id,
+        bookId: f.bookId,
+        formatType: f.formatType,
+        listPrice: f.listPrice,
+        sku: f.sku,
+        pageCount: f.pageCount,
+        trimSize: f.trimSize,
+        coverUrl: f.coverUrl,
+        interiorUrl: f.interiorUrl,
+        createdAt: f.createdAt,
+        updatedAt: f.updatedAt,
+      })),
     };
   }
 }

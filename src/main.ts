@@ -18,6 +18,7 @@ import { VersioningType } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
+    rawBody: true, // Required for Stripe webhook signature verification
   });
 
   // Enable API Versioning

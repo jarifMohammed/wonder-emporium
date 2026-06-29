@@ -52,11 +52,20 @@ export class CreateAccountUseCase {
     const hashedPassword = await this.passwordHasher.hash(input.password);
     const username = this.generateUsername(input.email);
 
+    let isFoundingAuthor = false;
+    if (input.role === userRole.AUTHOR) {
+      const authorCount = await this.userRepository.countByRole(userRole.AUTHOR);
+      if (authorCount < 100) {
+        isFoundingAuthor = true;
+      }
+    }
+
     const authUser = await this.userRepository.create({
       email: input.email,
       password: hashedPassword,
       username,
       role: input.role,
+      isFoundingAuthor,
     });
 
     await this.userRepository.createProfile(
@@ -72,6 +81,12 @@ export class CreateAccountUseCase {
       authUser.role,
       authUser.tokenVersion,
     );
+
+    if (isFoundingAuthor) {
+      // TODO: Send greetings email to the founding author
+      // This could be dispatched via an event emitter or a mail service
+      console.log(`[Email Mock] Sending Greetings to Founding Author: ${authUser.email}`);
+    }
 
     return {
       tokens,

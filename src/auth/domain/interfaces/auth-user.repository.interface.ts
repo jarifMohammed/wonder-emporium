@@ -8,11 +8,13 @@ export interface CreateAuthUserData {
   role: userRole;
   provider?: string;
   providerId?: string;
+  isFoundingAuthor?: boolean;
 }
 
 export interface IAuthUserRepository {
   findById(id: string): Promise<AuthUser | null>;
   findByEmail(email: string): Promise<AuthUser | null>;
+  countByRole(role: userRole): Promise<number>;
   findByProvider(
     provider: string,
     providerId: string,

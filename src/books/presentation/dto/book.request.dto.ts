@@ -10,9 +10,50 @@ import {
   Max,
   Min,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { BookStatus } from '../../domain/interfaces/book.interface';
+
+export class BookFormatDto {
+  @ApiProperty({ example: 'EBOOK' })
+  @IsString()
+  @IsNotEmpty()
+  formatType: string;
+
+  @ApiProperty({ example: 9.99 })
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  listPrice: number;
+
+  @ApiPropertyOptional({ example: 'SKU-123' })
+  @IsString()
+  @IsOptional()
+  sku?: string;
+
+  @ApiPropertyOptional({ example: 320 })
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  @Type(() => Number)
+  pageCount?: number;
+
+  @ApiPropertyOptional({ example: '6x9' })
+  @IsString()
+  @IsOptional()
+  trimSize?: string;
+
+  @ApiPropertyOptional({ example: 'https://...' })
+  @IsString()
+  @IsOptional()
+  coverUrl?: string;
+
+  @ApiPropertyOptional({ example: 'https://...' })
+  @IsString()
+  @IsOptional()
+  interiorUrl?: string;
+}
 
 export class CreateBookRequest {
   @ApiProperty({ example: 'The Great Adventure' })
@@ -52,18 +93,6 @@ export class CreateBookRequest {
   })
   tags?: string[];
 
-  @ApiPropertyOptional({ example: 320 })
-  @IsInt()
-  @Min(1)
-  @IsOptional()
-  @Type(() => Number)
-  pageCount?: number;
-
-  @ApiPropertyOptional({ example: '6x9' })
-  @IsString()
-  @IsOptional()
-  trimSize?: string;
-
   @ApiPropertyOptional({ example: 'English' })
   @IsString()
   @IsOptional()
@@ -74,12 +103,12 @@ export class CreateBookRequest {
   @IsOptional()
   ageGroup?: string;
 
-  @ApiPropertyOptional({ example: 9.99 })
-  @IsNumber()
-  @Min(0)
+  @ApiPropertyOptional({ type: [BookFormatDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => BookFormatDto)
   @IsOptional()
-  @Type(() => Number)
-  listPrice?: number;
+  formats?: BookFormatDto[];
 
   @ApiPropertyOptional({ example: 7.0 })
   @IsNumber()
@@ -132,18 +161,6 @@ export class UpdateBookRequest {
   })
   tags?: string[];
 
-  @ApiPropertyOptional({ example: 320 })
-  @IsInt()
-  @Min(1)
-  @IsOptional()
-  @Type(() => Number)
-  pageCount?: number;
-
-  @ApiPropertyOptional({ example: '6x9' })
-  @IsString()
-  @IsOptional()
-  trimSize?: string;
-
   @ApiPropertyOptional({ example: 'English' })
   @IsString()
   @IsOptional()
@@ -154,12 +171,12 @@ export class UpdateBookRequest {
   @IsOptional()
   ageGroup?: string;
 
-  @ApiPropertyOptional({ example: 9.99 })
-  @IsNumber()
-  @Min(0)
+  @ApiPropertyOptional({ type: [BookFormatDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => BookFormatDto)
   @IsOptional()
-  @Type(() => Number)
-  listPrice?: number;
+  formats?: BookFormatDto[];
 
   @ApiPropertyOptional({ example: 7.0 })
   @IsNumber()
