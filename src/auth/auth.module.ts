@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { AuthController } from './presentation/controllers/auth.controller';
+import { AdminUsersController } from './presentation/controllers/admin-users.controller';
 
 import { AccessTokenAuthenticator } from './application/services/access-token-authenticator.service';
 import { CreateAccountUseCase } from './application/services/create-account.use-case';
@@ -11,6 +12,7 @@ import { ChangePasswordUseCase } from './application/services/change-password.us
 import { RefreshTokenUseCase } from './application/services/refresh-token.use-case';
 import { VerifyEmailUseCase } from './application/services/verify-email.use-case';
 import { GoogleOAuthUseCase } from './application/services/google-oauth.use-case';
+import { UpdateUserStatusUseCase } from './application/services/update-user-status.use-case';
 
 import { PrismaAuthUserRepository } from './infrastructure/persistence/prisma-auth-user.repository';
 import { PrismaOtpStore } from './infrastructure/persistence/prisma-otp.store';
@@ -30,7 +32,7 @@ import { AppConfigService } from '../common/config/app-config.service';
 
 @Module({
   imports: [],
-  controllers: [AuthController],
+  controllers: [AuthController, AdminUsersController],
   providers: [
     // Domain interfaces → Infrastructure implementations
     {
@@ -64,6 +66,7 @@ import { AppConfigService } from '../common/config/app-config.service';
     RefreshTokenUseCase,
     VerifyEmailUseCase,
     GoogleOAuthUseCase,
+    UpdateUserStatusUseCase,
 
     // Infrastructure
     PrismaAuthUserRepository,
@@ -72,6 +75,6 @@ import { AppConfigService } from '../common/config/app-config.service';
     OtpGenerator,
     EmailService,
   ],
-  exports: [AccessTokenAuthenticator],
+  exports: [AccessTokenAuthenticator, AUTH_USER_REPOSITORY_TOKEN],
 })
 export class AuthModule {}

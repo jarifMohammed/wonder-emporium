@@ -1,0 +1,1091 @@
+---
+  openapi: "3.0.0"
+  paths: 
+    /: 
+      get: 
+        operationId: "AppController_getHello"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Health check endpoint"
+        tags: 
+          - "App"
+    /health: 
+      get: 
+        operationId: "AppController_health"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Liveness probe"
+        tags: 
+          - "App"
+    /ready: 
+      get: 
+        operationId: "AppController_ready"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Readiness probe"
+        tags: 
+          - "App"
+    /contact: 
+      post: 
+        operationId: "AppController_contactUs"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/ContactDto"
+        responses: 
+          201: 
+            description: ""
+        summary: "Contact Us endpoint (User/Author to Admin)"
+        tags: 
+          - "App"
+    /metrics/json: 
+      get: 
+        operationId: "MetricsController_getMetricsJSON"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Get metrics in JSON format"
+        tags: 
+          - "metrics"
+    /auth/register: 
+      post: 
+        operationId: "AuthController_register"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/RegisterRequest"
+        responses: 
+          201: 
+            description: "Account created successfully"
+          409: 
+            description: "Email already registered"
+        summary: "Create a new account"
+        tags: 
+          - "Authentication"
+    /auth/login: 
+      post: 
+        operationId: "AuthController_login"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/LoginRequest"
+        responses: 
+          200: 
+            description: "Login successful"
+        summary: "Login with email and password"
+        tags: 
+          - "Authentication"
+    /auth/forgot-password: 
+      post: 
+        operationId: "AuthController_forgotPassword"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/ForgotPasswordRequest"
+        responses: 
+          200: 
+            description: "OTP sent if email exists"
+        summary: "Request password reset OTP"
+        tags: 
+          - "Authentication"
+    /auth/reset-password: 
+      post: 
+        operationId: "AuthController_resetPassword"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/ResetPasswordRequest"
+        responses: 
+          200: 
+            description: "Password reset successfully"
+        summary: "Reset password with OTP"
+        tags: 
+          - "Authentication"
+    /auth/change-password: 
+      post: 
+        operationId: "AuthController_changePassword"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/ChangePasswordRequest"
+        responses: 
+          200: 
+            description: "Password changed successfully"
+        summary: "Change password (authenticated)"
+        tags: 
+          - "Authentication"
+    /auth/refresh: 
+      post: 
+        operationId: "AuthController_refresh"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/RefreshTokenRequest"
+        responses: 
+          200: 
+            description: "Tokens refreshed successfully"
+        summary: "Refresh access token"
+        tags: 
+          - "Authentication"
+    /auth/verify-email: 
+      post: 
+        operationId: "AuthController_verifyEmail"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/VerifyEmailRequest"
+        responses: 
+          200: 
+            description: "Email verified successfully"
+        summary: "Verify email with code"
+        tags: 
+          - "Authentication"
+    /auth/google: 
+      post: 
+        operationId: "AuthController_googleLogin"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/GoogleTokenRequest"
+        responses: 
+          200: 
+            description: "Google authentication successful"
+        summary: "Login or register with Google ID token"
+        tags: 
+          - "Authentication"
+      get: 
+        operationId: "AuthController_googleRedirect"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Redirect to Google OAuth consent screen"
+        tags: 
+          - "Authentication"
+    /auth/google/callback: 
+      get: 
+        operationId: "AuthController_googleCallback"
+        parameters: 
+          - 
+            name: "code"
+            required: true
+            in: "query"
+            schema: 
+              type: "string"
+        responses: 
+          200: 
+            description: "Google authentication successful"
+        summary: "Google OAuth callback"
+        tags: 
+          - "Authentication"
+    /auth/logout: 
+      post: 
+        operationId: "AuthController_logout"
+        parameters: []
+        responses: 
+          200: 
+            description: "Logged out successfully"
+        summary: "Logout (invalidate tokens)"
+        tags: 
+          - "Authentication"
+    /auth/me: 
+      get: 
+        operationId: "AuthController_me"
+        parameters: []
+        responses: 
+          200: 
+            description: "Current user profile"
+        summary: "Get current user profile"
+        tags: 
+          - "Authentication"
+    /books: 
+      post: 
+        operationId: "BooksController_createBook"
+        parameters: []
+        requestBody: 
+          required: true
+          description: "Book details and optional file uploads (bookCover, audiobook, ebook, hardcover, paperback)"
+          content: 
+            multipart/form-data: 
+              schema: 
+                $ref: "#/components/schemas/CreateBookRequest"
+        responses: 
+          201: 
+            description: "Book created successfully"
+        summary: "Create a new book (draft or submit for review)"
+        tags: 
+          - "Books"
+      get: 
+        operationId: "BooksController_getAllBooks"
+        parameters: 
+          - 
+            name: "status"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+              enum: 
+                - "DRAFT"
+                - "SUBMITTED"
+                - "APPROVED"
+                - "REJECTED"
+          - 
+            name: "search"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "category"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "language"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "page"
+            required: false
+            in: "query"
+            schema: 
+              default: 1
+              type: "number"
+          - 
+            name: "limit"
+            required: false
+            in: "query"
+            schema: 
+              default: 20
+              type: "number"
+          - 
+            name: "sortBy"
+            required: false
+            in: "query"
+            schema: 
+              default: "createdAt"
+              type: "string"
+          - 
+            name: "sortOrder"
+            required: false
+            in: "query"
+            schema: 
+              default: "desc"
+              type: "string"
+              enum: 
+                - "asc"
+                - "desc"
+          - 
+            name: "ageGroup"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "maxPrice"
+            required: false
+            in: "query"
+            schema: 
+              type: "number"
+          - 
+            name: "minPrice"
+            required: false
+            in: "query"
+            schema: 
+              type: "number"
+          - 
+            name: "tag"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+        responses: 
+          200: 
+            description: "List of books"
+        summary: "Get all books with filtering, search, and pagination"
+        tags: 
+          - "Books"
+    /books/approved: 
+      get: 
+        operationId: "BooksController_getApprovedBooks"
+        parameters: 
+          - 
+            name: "status"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+              enum: 
+                - "DRAFT"
+                - "SUBMITTED"
+                - "APPROVED"
+                - "REJECTED"
+          - 
+            name: "search"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "category"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "language"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "page"
+            required: false
+            in: "query"
+            schema: 
+              default: 1
+              type: "number"
+          - 
+            name: "limit"
+            required: false
+            in: "query"
+            schema: 
+              default: 20
+              type: "number"
+          - 
+            name: "sortBy"
+            required: false
+            in: "query"
+            schema: 
+              default: "createdAt"
+              type: "string"
+          - 
+            name: "sortOrder"
+            required: false
+            in: "query"
+            schema: 
+              default: "desc"
+              type: "string"
+              enum: 
+                - "asc"
+                - "desc"
+        responses: 
+          200: 
+            description: "List of approved books"
+        summary: "Get all approved/published books"
+        tags: 
+          - "Books"
+    /books/pending: 
+      get: 
+        operationId: "BooksController_getPendingBooks"
+        parameters: 
+          - 
+            name: "status"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+              enum: 
+                - "DRAFT"
+                - "SUBMITTED"
+                - "APPROVED"
+                - "REJECTED"
+          - 
+            name: "search"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "category"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "language"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "page"
+            required: false
+            in: "query"
+            schema: 
+              default: 1
+              type: "number"
+          - 
+            name: "limit"
+            required: false
+            in: "query"
+            schema: 
+              default: 20
+              type: "number"
+          - 
+            name: "sortBy"
+            required: false
+            in: "query"
+            schema: 
+              default: "createdAt"
+              type: "string"
+          - 
+            name: "sortOrder"
+            required: false
+            in: "query"
+            schema: 
+              default: "desc"
+              type: "string"
+              enum: 
+                - "asc"
+                - "desc"
+        responses: 
+          200: 
+            description: "List of pending books"
+        summary: "Get all pending (submitted) books for review"
+        tags: 
+          - "Books"
+    /books/author/{authorId}: 
+      get: 
+        operationId: "BooksController_getBooksByAuthor"
+        parameters: 
+          - 
+            name: "authorId"
+            required: true
+            in: "path"
+            schema: 
+              type: "string"
+          - 
+            name: "status"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+              enum: 
+                - "DRAFT"
+                - "SUBMITTED"
+                - "APPROVED"
+                - "REJECTED"
+          - 
+            name: "search"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "category"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "language"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "page"
+            required: false
+            in: "query"
+            schema: 
+              default: 1
+              type: "number"
+          - 
+            name: "limit"
+            required: false
+            in: "query"
+            schema: 
+              default: 20
+              type: "number"
+          - 
+            name: "sortBy"
+            required: false
+            in: "query"
+            schema: 
+              default: "createdAt"
+              type: "string"
+          - 
+            name: "sortOrder"
+            required: false
+            in: "query"
+            schema: 
+              default: "desc"
+              type: "string"
+              enum: 
+                - "asc"
+                - "desc"
+        responses: 
+          200: 
+            description: "List of books by author"
+        summary: "Get books by author ID"
+        tags: 
+          - "Books"
+    /books/{id}: 
+      get: 
+        operationId: "BooksController_getBook"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "string"
+        responses: 
+          200: 
+            description: "Book details"
+          404: 
+            description: "Book not found"
+        summary: "Get a single book by ID"
+        tags: 
+          - "Books"
+      put: 
+        operationId: "BooksController_updateBook"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "string"
+        requestBody: 
+          required: true
+          description: "Book fields to update and optional new file uploads (bookCover, audiobook, ebook, hardcover, paperback)"
+          content: 
+            multipart/form-data: 
+              schema: 
+                $ref: "#/components/schemas/UpdateBookRequest"
+        responses: 
+          200: 
+            description: "Book updated successfully"
+        summary: "Update a book (only draft status)"
+        tags: 
+          - "Books"
+      delete: 
+        operationId: "BooksController_deleteBook"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "string"
+        responses: 
+          200: 
+            description: "Book deleted successfully"
+        summary: "Delete a book"
+        tags: 
+          - "Books"
+    /books/{id}/submit: 
+      patch: 
+        operationId: "BooksController_submitForReview"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "string"
+        responses: 
+          200: 
+            description: "Book submitted for review"
+        summary: "Submit a draft book for review"
+        tags: 
+          - "Books"
+    /books/{id}/approve: 
+      patch: 
+        operationId: "BooksController_approveBook"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "string"
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/ApproveBookRequest"
+        responses: 
+          200: 
+            description: "Book status updated"
+        summary: "Approve or reject a submitted book"
+        tags: 
+          - "Books"
+    /commerce/author/onboard: 
+      post: 
+        operationId: "CommerceController_onboardAuthor"
+        parameters: []
+        responses: 
+          200: 
+            description: "Returns an onboarding URL"
+        summary: "Create Stripe Connect onboarding link for authors"
+        tags: 
+          - "Commerce"
+    /commerce/author/status: 
+      get: 
+        operationId: "CommerceController_checkAccountStatus"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Check Stripe Connect account status"
+        tags: 
+          - "Commerce"
+    /commerce/author/express-dashboard: 
+      get: 
+        operationId: "CommerceController_getExpressDashboardLink"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Get Stripe Express Dashboard login link"
+        tags: 
+          - "Commerce"
+    /webhooks/stripe: 
+      post: 
+        operationId: "StripeWebhookController_handleCheckoutWebhook"
+        parameters: []
+        responses: 
+          201: 
+            description: ""
+        summary: "Stripe standard checkout webhook"
+        tags: 
+          - "Webhooks"
+    /webhooks/stripe/connect: 
+      post: 
+        operationId: "StripeWebhookController_handleConnectWebhook"
+        parameters: []
+        responses: 
+          201: 
+            description: ""
+        summary: "Stripe Connect account webhook"
+        tags: 
+          - "Webhooks"
+    /orders/history: 
+      get: 
+        operationId: "OrdersController_getOrderHistory"
+        parameters: 
+          - 
+            name: "status"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "startDate"
+            required: false
+            in: "query"
+            description: "YYYY-MM-DD"
+            schema: 
+              type: "string"
+          - 
+            name: "endDate"
+            required: false
+            in: "query"
+            description: "YYYY-MM-DD"
+            schema: 
+              type: "string"
+        responses: 
+          200: 
+            description: ""
+        summary: "Get order history for logged-in user"
+        tags: 
+          - "Orders"
+    /orders/checkout: 
+      post: 
+        operationId: "OrdersController_createCheckout"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/CreateCheckoutDto"
+        responses: 
+          200: 
+            description: "Returns a checkout URL"
+        summary: "Create Stripe Checkout Session for cart items"
+        tags: 
+          - "Orders"
+    /payouts/author: 
+      get: 
+        operationId: "PayoutsController_getAuthorPayouts"
+        parameters: 
+          - 
+            name: "status"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+        responses: 
+          200: 
+            description: ""
+        summary: "Get all payouts (orders) for the logged-in author"
+        tags: 
+          - "Payouts"
+    /payouts/author/{id}/request: 
+      post: 
+        operationId: "PayoutsController_requestPayout"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "string"
+        responses: 
+          201: 
+            description: ""
+        summary: "Request a payout for a specific order"
+        tags: 
+          - "Payouts"
+    /payouts/admin: 
+      get: 
+        operationId: "PayoutsController_getAdminPayouts"
+        parameters: 
+          - 
+            name: "status"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+        responses: 
+          200: 
+            description: ""
+        summary: "Get all platform payouts"
+        tags: 
+          - "Payouts"
+    /payouts/admin/{id}/approve: 
+      post: 
+        operationId: "PayoutsController_approvePayout"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "string"
+        responses: 
+          201: 
+            description: ""
+        summary: "Approve a requested payout and trigger Stripe Transfer"
+        tags: 
+          - "Payouts"
+    /statistics/admin: 
+      get: 
+        operationId: "StatisticsController_getAdminStatistics"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Get platform-wide statistics for admins"
+        tags: 
+          - "Statistics"
+    /statistics/author: 
+      get: 
+        operationId: "StatisticsController_getAuthorStatistics"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+        summary: "Get statistics for the logged-in author"
+        tags: 
+          - "Statistics"
+  info: 
+    title: "NestJS API"
+    description: "Production-ready NestJS API with Prisma, PostgreSQL, Authentication, Logging, Monitoring, and more."
+    version: "1.0.0"
+    contact: {}
+  tags: 
+    - 
+      name: "auth"
+      description: "Authentication and authorization endpoints"
+    - 
+      name: "health"
+      description: "Health check endpoints"
+    - 
+      name: "metrics"
+      description: "Metrics and monitoring endpoints"
+  servers: []
+  components: 
+    securitySchemes: 
+      JWT-auth: 
+        scheme: "bearer"
+        bearerFormat: "JWT"
+        type: "http"
+        name: "JWT"
+        description: "Enter JWT access token"
+        in: "header"
+    schemas: 
+      ContactDto: 
+        type: "object"
+        properties: {}
+      RegisterRequest: 
+        type: "object"
+        properties: 
+          firstName: 
+            type: "string"
+            example: "John"
+          lastName: 
+            type: "string"
+            example: "Doe"
+          email: 
+            type: "string"
+            example: "john@example.com"
+          password: 
+            type: "string"
+            example: "StrongPass123!"
+          role: 
+            type: "string"
+            enum: 
+              - "USER"
+              - "ADMIN"
+              - "MODERATOR"
+              - "SUPERADMIN"
+              - "READER"
+              - "AUTHOR"
+            example: "READER"
+        required: 
+          - "firstName"
+          - "lastName"
+          - "email"
+          - "password"
+          - "role"
+      LoginRequest: 
+        type: "object"
+        properties: 
+          email: 
+            type: "string"
+            example: "john@example.com"
+          password: 
+            type: "string"
+            example: "StrongPass123!"
+        required: 
+          - "email"
+          - "password"
+      ForgotPasswordRequest: 
+        type: "object"
+        properties: 
+          email: 
+            type: "string"
+            example: "john@example.com"
+        required: 
+          - "email"
+      ResetPasswordRequest: 
+        type: "object"
+        properties: 
+          email: 
+            type: "string"
+            example: "john@example.com"
+          otp: 
+            type: "string"
+            example: "123456"
+          password: 
+            type: "string"
+            example: "NewStrongPass123!"
+        required: 
+          - "email"
+          - "otp"
+          - "password"
+      ChangePasswordRequest: 
+        type: "object"
+        properties: 
+          oldPassword: 
+            type: "string"
+            example: "OldPass123!"
+          newPassword: 
+            type: "string"
+            example: "NewPass123!"
+        required: 
+          - "oldPassword"
+          - "newPassword"
+      RefreshTokenRequest: 
+        type: "object"
+        properties: 
+          refreshToken: 
+            type: "string"
+        required: 
+          - "refreshToken"
+      VerifyEmailRequest: 
+        type: "object"
+        properties: 
+          email: 
+            type: "string"
+            example: "john@example.com"
+          code: 
+            type: "string"
+            example: "123456"
+        required: 
+          - "email"
+          - "code"
+      GoogleTokenRequest: 
+        type: "object"
+        properties: 
+          idToken: 
+            type: "string"
+            description: "Google ID token from Google Sign-In"
+        required: 
+          - "idToken"
+      BookFormatDto: 
+        type: "object"
+        properties: 
+          formatType: 
+            type: "string"
+            example: "EBOOK"
+          listPrice: 
+            type: "number"
+            example: 9.99
+          sku: 
+            type: "string"
+            example: "SKU-123"
+          pageCount: 
+            type: "number"
+            example: 320
+          trimSize: 
+            type: "string"
+            example: "6x9"
+          coverUrl: 
+            type: "string"
+            example: "https://..."
+          interiorUrl: 
+            type: "string"
+            example: "https://..."
+        required: 
+          - "formatType"
+          - "listPrice"
+      CreateBookRequest: 
+        type: "object"
+        properties: 
+          title: 
+            type: "string"
+            example: "The Great Adventure"
+          description: 
+            type: "string"
+            example: "A thrilling adventure story..."
+          isbn: 
+            type: "string"
+            example: "978-3-16-148410-0"
+          category: 
+            type: "string"
+            example: "Fiction"
+          tags: 
+            example: 
+              - "adventure"
+              - "fiction"
+              - "thriller"
+            type: "array"
+            items: 
+              type: "string"
+          language: 
+            type: "string"
+            example: "English"
+          ageGroup: 
+            type: "string"
+            example: "Adult"
+          formats: 
+            type: "array"
+            items: 
+              $ref: "#/components/schemas/BookFormatDto"
+          authorEarnings: 
+            type: "number"
+            example: 7
+          publicationDetails: 
+            type: "string"
+            example: "Published by Wonder Press, 2024"
+        required: 
+          - "title"
+      UpdateBookRequest: 
+        type: "object"
+        properties: 
+          title: 
+            type: "string"
+            example: "The Great Adventure"
+          description: 
+            type: "string"
+            example: "A thrilling adventure story..."
+          isbn: 
+            type: "string"
+            example: "978-3-16-148410-0"
+          category: 
+            type: "string"
+            example: "Fiction"
+          tags: 
+            example: 
+              - "adventure"
+              - "fiction"
+            type: "array"
+            items: 
+              type: "string"
+          language: 
+            type: "string"
+            example: "English"
+          ageGroup: 
+            type: "string"
+            example: "Adult"
+          formats: 
+            type: "array"
+            items: 
+              $ref: "#/components/schemas/BookFormatDto"
+          authorEarnings: 
+            type: "number"
+            example: 7
+          publicationDetails: 
+            type: "string"
+            example: "Published by Wonder Press, 2024"
+      ApproveBookRequest: 
+        type: "object"
+        properties: 
+          status: 
+            type: "string"
+            enum: 
+              - "DRAFT"
+              - "SUBMITTED"
+              - "APPROVED"
+              - "REJECTED"
+            example: "APPROVED"
+        required: 
+          - "status"
+      CreateCheckoutDto: 
+        type: "object"
+        properties: {}
+

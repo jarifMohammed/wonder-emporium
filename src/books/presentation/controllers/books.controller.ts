@@ -159,7 +159,8 @@ export class BooksController {
   @ApiQuery({ name: 'sortOrder', required: false, type: String })
   @ApiResponse({ status: 200, description: 'List of books' })
   async getAllBooks(@Query() query: BookQueryParams) {
-    return this.getBooksUseCase.execute(query);
+    // Only return approved books for the public main website listing
+    return this.getBooksUseCase.getApproved(query);
   }
 
   @Get('approved')

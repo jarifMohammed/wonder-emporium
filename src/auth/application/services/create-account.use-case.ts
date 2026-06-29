@@ -65,6 +65,7 @@ export class CreateAccountUseCase {
       password: hashedPassword,
       username,
       role: input.role,
+      status: input.role === userRole.AUTHOR ? 'INACTIVE' : 'ACTIVE',
       isFoundingAuthor,
     });
 

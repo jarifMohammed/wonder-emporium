@@ -61,6 +61,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
         password: data.password,
         username: data.username,
         role: data.role as $Enums.UserRole,
+        status: (data.status as $Enums.UserStatus) ?? $Enums.UserStatus.ACTIVE,
         provider: data.provider ?? 'local',
         providerId: data.providerId,
         isFoundingAuthor: data.isFoundingAuthor ?? false,
@@ -75,6 +76,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
     if (data.password !== undefined) updateData.password = data.password;
     if (data.role !== undefined) updateData.role = data.role as string;
     if (data.verified !== undefined) updateData.verified = data.verified;
+    if (data.status !== undefined) updateData.status = data.status as string;
 
     const user = await this.prisma.authUser.update({
       where: { id },

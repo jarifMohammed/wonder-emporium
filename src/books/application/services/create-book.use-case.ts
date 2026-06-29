@@ -2,16 +2,28 @@ import { Inject, Injectable } from '@nestjs/common';
 import { BOOK_REPOSITORY_TOKEN } from '../../domain/interfaces/book.repository.interface';
 import type { IBookRepository } from '../../domain/interfaces/book.repository.interface';
 import { BookStatus } from '../../domain/interfaces/book.interface';
+import { AUTH_USER_REPOSITORY_TOKEN } from '../../../auth/domain/interfaces/auth-user.repository.interface';
+import type { IAuthUserRepository } from '../../../auth/domain/interfaces/auth-user.repository.interface';
 import { CreateBookInput, BookOutput } from '../dto/book.dto';
+import { AppError } from '../../../common/errors/app.error';
 
 @Injectable()
 export class CreateBookUseCase {
   constructor(
     @Inject(BOOK_REPOSITORY_TOKEN)
     private readonly bookRepository: IBookRepository,
+    @Inject(AUTH_USER_REPOSITORY_TOKEN)
+    private readonly userRepository: IAuthUserRepository,
   ) {}
 
   async execute(input: CreateBookInput): Promise<BookOutput> {
+    const user = await this.userRepository.findById(input.authorId);
+    if (!user) {
+      throw AppError.notFound('Author not found');
+    }
+    if (user.status !== 'ACTIVE') {
+      throw AppError.forbidden('Your account must be approved before listing books.');
+    }
     const result = await this.bookRepository.create({
       authorId: input.authorId,
       title: input.title,

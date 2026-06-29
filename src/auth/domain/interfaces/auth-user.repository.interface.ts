@@ -8,6 +8,7 @@ export interface CreateAuthUserData {
   role: userRole;
   provider?: string;
   providerId?: string;
+  status?: string;
   isFoundingAuthor?: boolean;
 }
 
