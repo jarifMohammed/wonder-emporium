@@ -356,6 +356,64 @@
         ]
       }
     },
+    "/admin/users/{id}/approve": {
+      "patch": {
+        "operationId": "AdminUsersController_approveUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User approved successfully"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Approve a user (set status to ACTIVE)",
+        "tags": [
+          "Admin Users"
+        ]
+      }
+    },
+    "/admin/users/{id}/suspend": {
+      "patch": {
+        "operationId": "AdminUsersController_suspendUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User suspended successfully"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Suspend a user (set status to SUSPENDED)",
+        "tags": [
+          "Admin Users"
+        ]
+      }
+    },
     "/books": {
       "post": {
         "operationId": "BooksController_createBook",
