@@ -66,6 +66,8 @@ export class S3FileStorageService {
     ebook?: UploadedFile;
     hardcover?: UploadedFile;
     paperback?: UploadedFile;
+    interiorPdf?: UploadedFile;
+    coverPdf?: UploadedFile;
   }> {
     const folder = `books/${userId}`;
     const result: {
@@ -74,6 +76,8 @@ export class S3FileStorageService {
       ebook?: UploadedFile;
       hardcover?: UploadedFile;
       paperback?: UploadedFile;
+      interiorPdf?: UploadedFile;
+      coverPdf?: UploadedFile;
     } = {};
 
     for (const [fieldname, fileArray] of Object.entries(files)) {

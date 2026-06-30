@@ -1,5 +1,19 @@
-import { Controller, Post, Body, Req, UseGuards, Get, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  Get,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../../../common/guards/auth.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../../auth/interfaces/auth.interface';
@@ -31,8 +45,18 @@ export class OrdersController {
   @Roles(userRole.USER, userRole.READER, userRole.AUTHOR, userRole.ADMIN)
   @ApiOperation({ summary: 'Get order history for logged-in user' })
   @ApiQuery({ name: 'status', required: false, type: String })
-  @ApiQuery({ name: 'startDate', required: false, type: String, description: 'YYYY-MM-DD' })
-  @ApiQuery({ name: 'endDate', required: false, type: String, description: 'YYYY-MM-DD' })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: String,
+    description: 'YYYY-MM-DD',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: String,
+    description: 'YYYY-MM-DD',
+  })
   async getOrderHistory(
     @Req() req: Request,
     @Query('status') status?: string,

@@ -24,10 +24,15 @@ export class SyncConnectAccountUseCase {
     chargesEnabled: boolean,
     payoutsEnabled: boolean,
   ): Promise<void> {
-    this.logger.log(`Syncing capabilities for account ${stripeAccountId} (Charges: ${chargesEnabled}, Payouts: ${payoutsEnabled})`);
+    this.logger.log(
+      `Syncing capabilities for account ${stripeAccountId} (Charges: ${chargesEnabled}, Payouts: ${payoutsEnabled})`,
+    );
 
     // Fetch current state to detect first-time activation
-    const before = await this.commerceRepository.getConnectedAccountByStripeId(stripeAccountId);
+    const before =
+      await this.commerceRepository.getConnectedAccountByStripeId(
+        stripeAccountId,
+      );
 
     await this.commerceRepository.updateConnectedAccountStatus(
       stripeAccountId,
@@ -48,11 +53,15 @@ export class SyncConnectAccountUseCase {
             author.email,
             author.username,
           );
-          this.logger.log(`Author onboarding-approved email queued for ${author.email}`);
+          this.logger.log(
+            `Author onboarding-approved email queued for ${author.email}`,
+          );
         }
       } catch (emailError) {
         // Non-critical — the account is already approved
-        this.logger.warn(`Failed to queue onboarding-approved email for account ${stripeAccountId}: ${(emailError as Error).message}`);
+        this.logger.warn(
+          `Failed to queue onboarding-approved email for account ${stripeAccountId}: ${(emailError as Error).message}`,
+        );
       }
     }
   }

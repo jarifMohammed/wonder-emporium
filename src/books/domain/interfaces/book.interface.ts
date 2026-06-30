@@ -11,6 +11,8 @@ export enum BookFileType {
   EBOOK = 'EBOOK',
   HARDCOVER = 'HARDCOVER',
   PAPERBACK = 'PAPERBACK',
+  INTERIOR_PDF = 'INTERIOR_PDF',
+  COVER_PDF = 'COVER_PDF',
 }
 
 export interface BookFileData {

@@ -15,11 +15,11 @@ export class AdminGetPayoutsUseCase {
       where,
       include: {
         author: {
-          select: { email: true, username: true }
+          select: { email: true, username: true },
         },
         order: {
-          select: { id: true, createdAt: true, status: true }
-        }
+          select: { id: true, createdAt: true, status: true },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });

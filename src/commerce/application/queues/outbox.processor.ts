@@ -18,18 +18,24 @@ export class OutboxProcessor extends WorkerHost {
   }
 
   async process(job: Job<{ eventId: string }>): Promise<void> {
-    this.logger.log(`Processing outbox event job ${job.id} for event ${job.data.eventId}`);
+    this.logger.log(
+      `Processing outbox event job ${job.id} for event ${job.data.eventId}`,
+    );
 
     // Retrieve the full event from the database
     const event = await this.outboxRepository.getEventById(job.data.eventId);
-    
+
     if (!event) {
-      this.logger.error(`OutboxEvent ${job.data.eventId} not found in database`);
+      this.logger.error(
+        `OutboxEvent ${job.data.eventId} not found in database`,
+      );
       return;
     }
 
     if (event.status !== 'PENDING') {
-      this.logger.log(`OutboxEvent ${job.data.eventId} is already processed or failed. Status: ${event.status}`);
+      this.logger.log(
+        `OutboxEvent ${job.data.eventId} is already processed or failed. Status: ${event.status}`,
+      );
       return;
     }
 

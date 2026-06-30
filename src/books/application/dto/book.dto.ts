@@ -30,6 +30,11 @@ export interface BookOutput {
   files: BookFileData[];
   createdAt: Date;
   updatedAt: Date;
+  printEdition?: any;
+  sellingPrice?: number;
+  printAvailable?: boolean;
+  ebookAvailable?: boolean;
+  audiobookAvailable?: boolean;
 }
 
 export interface PaginatedBooksOutput {
@@ -69,6 +74,21 @@ export interface CreateBookInput {
     mimeType: string;
     size: number;
   }[];
+  printEdition?: {
+    enabled: boolean;
+    interiorPdfUrl?: string;
+    coverPdfUrl?: string;
+    pageCount?: number;
+    trimSize: string;
+    bindingType: string;
+    interiorColor: string;
+    paperType: string;
+    coverFinish: string;
+    bookType: string;
+    printQuality?: string;
+    authorProfit?: number;
+    sellingPrice?: number;
+  };
 }
 
 export interface UpdateBookInput {
@@ -98,6 +118,21 @@ export interface UpdateBookInput {
     mimeType: string;
     size: number;
   }[];
+  printEdition?: {
+    enabled: boolean;
+    interiorPdfUrl?: string;
+    coverPdfUrl?: string;
+    pageCount?: number;
+    trimSize: string;
+    bindingType: string;
+    interiorColor: string;
+    paperType: string;
+    coverFinish: string;
+    bookType: string;
+    printQuality?: string;
+    authorProfit?: number;
+    sellingPrice?: number;
+  };
 }
 
 export interface BookFiltersInput {

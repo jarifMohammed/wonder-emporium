@@ -32,9 +32,14 @@ export class PayoutsController {
   @Get('author')
   @UseGuards(AuthGuard)
   @Roles(userRole.AUTHOR)
-  @ApiOperation({ summary: 'Get all payouts (orders) for the logged-in author' })
+  @ApiOperation({
+    summary: 'Get all payouts (orders) for the logged-in author',
+  })
   @ApiQuery({ name: 'status', required: false, type: String })
-  async getAuthorPayouts(@Req() req: Request, @Query('status') status?: string) {
+  async getAuthorPayouts(
+    @Req() req: Request,
+    @Query('status') status?: string,
+  ) {
     const user = (req as unknown as { user: { id: string } }).user;
     return this.authorGetPayoutsUseCase.execute(user.id, status);
   }
@@ -62,7 +67,9 @@ export class PayoutsController {
   @Post('admin/:id/approve')
   @UseGuards(AuthGuard)
   @Roles(userRole.ADMIN, userRole.SUPERADMIN)
-  @ApiOperation({ summary: 'Approve a requested payout and trigger Stripe Transfer' })
+  @ApiOperation({
+    summary: 'Approve a requested payout and trigger Stripe Transfer',
+  })
   async approvePayout(@Param('id') id: string) {
     return this.adminApprovePayoutUseCase.execute(id);
   }

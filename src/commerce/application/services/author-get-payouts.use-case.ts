@@ -21,8 +21,8 @@ export class AuthorGetPayoutsUseCase {
             status: true,
             createdAt: true,
             totalAmount: true,
-          }
-        }
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });

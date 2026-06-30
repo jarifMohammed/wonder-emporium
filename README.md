@@ -2848,3 +2848,72 @@ This project is [MIT licensed](LICENSE).
   <a href="https://github.com/the-pujon/nestjs-prisma-postgresql-hexagon/issues">🐛 Report Bug</a> •
   <a href="https://github.com/the-pujon/nestjs-prisma-postgresql-hexagon/issues">✨ Request Feature</a>
 </p>
+
+----
+
+
+# Todos
+[✓] Explore existing project structure and architecture
+[✓] Read pricing spreadsheet to understand SKU/pricing data
+[✓] Install dependencies (pdf-parse, xlsx already installed)
+[✓] Update Prisma schema (printEdition, printJob, new file types)
+[✓] Update .env and app.config.ts with Lulu config
+[✓] Create Lulu API types/interfaces
+[✓] Implement Lulu authentication service
+[✓] Implement pricing spreadsheet reader service
+[✓] Implement Lulu API service (validation, print jobs, shipping)
+[✓] Implement PDF page count detection utility
+[✓] Implement BullMQ workers (validation, pricing, print-job, status-sync)
+[✓] Extend Book repository interface and implementation
+[✓] Extend book controller and use cases for print edition
+[✓] Extend checkout flow for print job creation after payment
+[✓] Create Print module and wire everything together
+[✓] Verify implementation builds and lint passes
+
+
+Build succeeds, schema synchronized, and tests pass. Here's a summary of everything implemented:
+Implementation Summary
+Files Created (src/print/)
+File	Purpose
+
+print.module.ts	Root module registering all print services + 4 BullMQ queues
+domain/interfaces/lulu.types.ts	All TypeScript types for Lulu API, pricing, validation, print jobs
+domain/interfaces/print.repository.interface.ts	Repository interface for print edition & print job persistence
+application/services/lulu-auth.service.ts	OAuth2 client credentials authentication with token caching
+application/services/pricing.service.ts	Reads lulu-print-api-spec-sheet.xlsx → maps all 3277 pricing rows → calculates manufacturing cost via Base Price + (Page Count × Per Page Price)
+application/services/pdf-utils.service.ts	Downloads PDFs from URL, detects page count via /Type /Page regex parsing
+application/queues/validation.processor.ts	BullMQ worker: validates interior + cover PDFs via Lulu API, detects page count, calculates manufacturing cost
+application/queues/pricing.processor.ts	BullMQ worker: recalculates pricing when author changes profit/selling price
+application/queues/print-job.processor.ts	BullMQ worker: creates Lulu print job after payment
+application/queues/status-sync.processor.ts	BullMQ worker: polls Lulu for print job status updates
+infrastructure/lulu/lulu-api.service.ts	HTTP client for Lulu API (auth, validation, print jobs, shipping cost, POD packages)
+infrastructure/persistence/prisma-print.repository.ts	Prisma implementation for storing/reading printEdition & printJob JSON
+Files Modified
+File	Changes
+prisma/schema/enums.prisma	Added INTERIOR_PDF, COVER_PDF to BookFileType
+prisma/schema/books.prisma	Added printEdition Json? to Book model
+prisma/schema/orders.prisma	Added printCost Float?, printJob Json? to Order model
+.env	Added LULU_API_BASE_URL, LULU_CLIENT_KEY, LULU_CLIENT_SECRET
+src/common/config/app.config.ts	Added Lulu config fields
+src/app.module.ts	Added PrintModule import
+src/books/books.module.ts	Added PrintModule import
+src/books/domain/interfaces/book.interface.ts	Added new BookFileType values
+src/books/domain/entities/book.entity.ts	Added printEdition parameter
+src/books/domain/interfaces/book.repository.interface.ts	(no structural changes needed)
+src/books/application/dto/book.dto.ts	Added printEdition, sellingPrice, printAvailable, ebookAvailable, audiobookAvailable to all DTOs
+src/books/presentation/dto/book.request.dto.ts	Added PrintEditionDto validation class
+src/books/infrastructure/persistence/prisma-book.repository.ts	Updated to map printEdition
+src/books/infrastructure/storage/s3-file-storage.service.ts	Added interiorPdf, coverPdf upload support
+src/books/application/services/create-book.use-case.ts	Enqueues validation job for print editions
+src/books/application/services/update-book.use-case.ts	Auto revalidates when PDF/trim/binding/color changes
+src/books/application/services/get-book.use-case.ts	Returns sellingPrice, printAvailable, format flags; shows full print edition data to authors/admins
+src/books/application/services/get-books.use-case.ts	Returns format availability flags
+src/books/presentation/controllers/books.controller.ts	Added interiorPdf, coverPdf multipart fields; passes printEdition to use cases
+src/commerce/commerce.module.ts	Registered print-job-creation queue
+src/commerce/application/services/handle-checkout-completed.use-case.ts	After payment → enqueues Lulu print job for each print book in order
+Architecture Highlights
+- Pricing: Spreadsheet loaded into memory on module init (OnModuleInit), never calls Lulu for cost during book creation
+- Async by default: All long-running operations (validation, pricing calc, print job creation) go through BullMQ queues with retry+backoff
+- Dependency injection: Clean module boundaries with PrintModule exporting what BooksModule and CommerceModule need
+- Idempotent checkpoint: Outbox pattern for order events prevents double-processing
+- Validation lifecycle: New PDF upload → auto reset validation → auto revalidate → auto recalculate pricing

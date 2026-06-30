@@ -33,6 +33,7 @@ interface PrismaBook {
   status: string;
   createdAt: Date;
   updatedAt: Date;
+  printEdition: any;
 }
 
 interface PrismaBookFile {
@@ -265,6 +266,7 @@ export class PrismaBookRepository implements IBookRepository {
       book.status as BookStatus,
       book.createdAt,
       book.updatedAt,
+      book.printEdition,
     );
   }
 

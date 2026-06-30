@@ -13,6 +13,7 @@ import { winstonConfig } from './common/config/winston.config';
 import { LoggerModule } from './common/modules/logger.module';
 import { AuthModule } from './auth/auth.module';
 import { BooksModule } from './books/books.module';
+import { PrintModule } from './print/print.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { QueueModule } from './common/modules/queue.module';
 import { CommerceModule } from './commerce/commerce.module';
@@ -46,6 +47,7 @@ import { RequestIdMiddleware } from './common/middlewares/request-id.middleware'
     // Auth module (authentication & authorization)
     AuthModule,
     BooksModule,
+    PrintModule,
     CommerceModule,
     QueueModule,
     // Event Emitter module

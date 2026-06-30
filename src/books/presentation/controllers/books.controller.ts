@@ -70,6 +70,8 @@ export class BooksController {
       { name: 'ebook', maxCount: 1 },
       { name: 'hardcover', maxCount: 1 },
       { name: 'paperback', maxCount: 1 },
+      { name: 'interiorPdf', maxCount: 1 },
+      { name: 'coverPdf', maxCount: 1 },
     ]),
   )
   @HttpCode(HttpStatus.CREATED)
@@ -77,7 +79,7 @@ export class BooksController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description:
-      'Book details and optional file uploads (bookCover, audiobook, ebook, hardcover, paperback)',
+      'Book details and optional file uploads (bookCover, audiobook, ebook, hardcover, paperback, interiorPdf, coverPdf)',
     type: CreateBookRequest,
   })
   @ApiResponse({ status: 201, description: 'Book created successfully' })
@@ -124,6 +126,18 @@ export class BooksController {
         ...uploadedFiles.paperback,
       });
     }
+    if (uploadedFiles.interiorPdf) {
+      inputFiles.push({
+        type: BookFileType.INTERIOR_PDF,
+        ...uploadedFiles.interiorPdf,
+      });
+    }
+    if (uploadedFiles.coverPdf) {
+      inputFiles.push({
+        type: BookFileType.COVER_PDF,
+        ...uploadedFiles.coverPdf,
+      });
+    }
 
     return this.createBookUseCase.execute({
       authorId: user.id,
@@ -139,6 +153,7 @@ export class BooksController {
       authorEarnings: body.authorEarnings,
       publicationDetails: body.publicationDetails,
       files: inputFiles,
+      printEdition: body.printEdition,
     });
   }
 
@@ -159,7 +174,6 @@ export class BooksController {
   @ApiQuery({ name: 'sortOrder', required: false, type: String })
   @ApiResponse({ status: 200, description: 'List of books' })
   async getAllBooks(@Query() query: BookQueryParams) {
-    // Only return approved books for the public main website listing
     return this.getBooksUseCase.getApproved(query);
   }
 
@@ -193,8 +207,9 @@ export class BooksController {
   @ApiOperation({ summary: 'Get a single book by ID' })
   @ApiResponse({ status: 200, description: 'Book details' })
   @ApiResponse({ status: 404, description: 'Book not found' })
-  async getBook(@Param('id') id: string) {
-    return this.getBookUseCase.execute(id);
+  async getBook(@Param('id') id: string, @Req() req: Request) {
+    const user = (req as unknown as { user?: { id: string } })?.user;
+    return this.getBookUseCase.execute(id, user?.id);
   }
 
   @Put(':id')
@@ -207,13 +222,15 @@ export class BooksController {
       { name: 'ebook', maxCount: 1 },
       { name: 'hardcover', maxCount: 1 },
       { name: 'paperback', maxCount: 1 },
+      { name: 'interiorPdf', maxCount: 1 },
+      { name: 'coverPdf', maxCount: 1 },
     ]),
   )
   @ApiOperation({ summary: 'Update a book (only draft status)' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description:
-      'Book fields to update and optional new file uploads (bookCover, audiobook, ebook, hardcover, paperback)',
+      'Book fields to update and optional new file uploads (bookCover, audiobook, ebook, hardcover, paperback, interiorPdf, coverPdf)',
     type: UpdateBookRequest,
   })
   @ApiResponse({ status: 200, description: 'Book updated successfully' })
@@ -261,6 +278,18 @@ export class BooksController {
         ...uploadedFiles.paperback,
       });
     }
+    if (uploadedFiles.interiorPdf) {
+      inputFiles.push({
+        type: BookFileType.INTERIOR_PDF,
+        ...uploadedFiles.interiorPdf,
+      });
+    }
+    if (uploadedFiles.coverPdf) {
+      inputFiles.push({
+        type: BookFileType.COVER_PDF,
+        ...uploadedFiles.coverPdf,
+      });
+    }
 
     return this.updateBookUseCase.execute(id, user.id, {
       title: body.title,
@@ -275,6 +304,7 @@ export class BooksController {
       authorEarnings: body.authorEarnings,
       publicationDetails: body.publicationDetails,
       files: inputFiles,
+      printEdition: body.printEdition,
     });
   }
 

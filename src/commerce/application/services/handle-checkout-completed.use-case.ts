@@ -1,12 +1,13 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { ORDER_REPOSITORY_TOKEN } from '../../domain/interfaces/order.repository.interface';
 import type { IOrderRepository } from '../../domain/interfaces/order.repository.interface';
 import { OUTBOX_REPOSITORY_TOKEN } from '../../domain/interfaces/outbox.repository.interface';
 import type { IOutboxRepository } from '../../domain/interfaces/outbox.repository.interface';
 import { PrismaService } from '../../../common/services/prisma.service';
 import Stripe from 'stripe';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
+import { PrintEditionData } from '../../../print/domain/interfaces/lulu.types';
 
 @Injectable()
 export class HandleCheckoutCompletedUseCase {
@@ -20,6 +21,8 @@ export class HandleCheckoutCompletedUseCase {
     private readonly prisma: PrismaService,
     @InjectQueue('commerce-outbox')
     private readonly outboxQueue: Queue,
+    @InjectQueue('print-job-creation')
+    private readonly printJobQueue: Queue,
   ) {}
 
   async execute(session: Stripe.Checkout.Session): Promise<void> {
@@ -29,7 +32,6 @@ export class HandleCheckoutCompletedUseCase {
       return;
     }
 
-    // Check if event already processed (Idempotency)
     const isProcessed = await this.outboxRepository.hasEventProcessed(
       orderId,
       'ORDER_COMPLETED',
@@ -46,7 +48,7 @@ export class HandleCheckoutCompletedUseCase {
     }
 
     if (order.status === 'COMPLETED') {
-      return; // Already completed
+      return;
     }
 
     const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
@@ -55,7 +57,6 @@ export class HandleCheckoutCompletedUseCase {
       : 0;
     const taxAmount = totalAmount - subtotal;
 
-    // Use transaction for updating order and inserting outbox event
     const outboxEvent = await this.prisma.$transaction(async (tx) => {
       await tx.order.update({
         where: { id: order.id },
@@ -68,7 +69,6 @@ export class HandleCheckoutCompletedUseCase {
         },
       });
 
-      // Insert outbox event for async processing (email and payouts)
       return await this.outboxRepository.createEventWithTx(
         {
           aggregateId: order.id,
@@ -91,7 +91,74 @@ export class HandleCheckoutCompletedUseCase {
       `Order ${order.id} marked as COMPLETED and OutboxEvent created.`,
     );
 
-    // Instantly trigger outbox processing via BullMQ
     await this.outboxQueue.add('process-event', { eventId: outboxEvent.id });
+
+    await this.createPrintJobsIfNeeded(order, session);
+  }
+
+  private async createPrintJobsIfNeeded(
+    order: any,
+    session: Stripe.Checkout.Session,
+  ): Promise<void> {
+    for (const item of order.items || []) {
+      try {
+        const book = await this.prisma.book.findUnique({
+          where: { id: item.bookId },
+        });
+
+        if (!book) continue;
+
+        const printEdition = (book as any)
+          .printEdition as PrintEditionData | null;
+        if (!printEdition?.enabled) continue;
+
+        const podPackageId = parseInt(printEdition.podPackageId, 10);
+        if (isNaN(podPackageId) || podPackageId <= 0) {
+          this.logger.warn(
+            `Invalid POD package ID for book ${item.bookId}: ${printEdition.podPackageId}`,
+          );
+          continue;
+        }
+
+        const sess = session as any;
+        const shipDetail = sess.shipping_details;
+        const shipAddr = shipDetail?.address || {};
+
+        const shippingAddress = {
+          name: shipDetail?.name || 'Customer',
+          street1: shipAddr?.line1 || '',
+          street2: shipAddr?.line2,
+          city: shipAddr?.city || '',
+          state_code: shipAddr?.state || '',
+          country_code: shipAddr?.country || 'US',
+          postcode: shipAddr?.postal_code || '',
+          phone: shipDetail?.phone,
+        };
+
+        await this.printJobQueue.add(
+          'create-print-job',
+          {
+            orderId: order.id,
+            podPackageId,
+            quantity: item.quantity,
+            shippingLevel: 'MAIL',
+            shippingAddress,
+            manufacturingCost: printEdition.pricing?.manufacturingCost || 0,
+          },
+          {
+            attempts: 3,
+            backoff: { type: 'exponential', delay: 2000 },
+          },
+        );
+
+        this.logger.log(
+          `Print job enqueued for order ${order.id}, book ${item.bookId}`,
+        );
+      } catch (error: any) {
+        this.logger.error(
+          `Failed to enqueue print job for order ${order.id}, item ${item.bookId}: ${error.message}`,
+        );
+      }
+    }
   }
 }

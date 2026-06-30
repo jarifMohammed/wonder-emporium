@@ -24,7 +24,9 @@ export class OutboxProcessorService {
   ) {}
 
   async processEvent(event: any) {
-    this.logger.log(`Processing outbox event ${event.id} of type ${event.type}`);
+    this.logger.log(
+      `Processing outbox event ${event.id} of type ${event.type}`,
+    );
 
     try {
       if (event.type === 'ORDER_COMPLETED') {
@@ -37,13 +39,23 @@ export class OutboxProcessorService {
       this.logger.log(`Outbox event ${event.id} processed successfully.`);
     } catch (error: unknown) {
       const err = error as Error;
-      this.logger.error(`Failed to process outbox event ${event.id}: ${err.message}`);
+      this.logger.error(
+        `Failed to process outbox event ${event.id}: ${err.message}`,
+      );
       await this.outboxRepository.markAsFailed(event.id, err.message);
     }
   }
 
   private async processOrderCompleted(payload: any) {
-    const { orderId, totalAmount, subtotal, taxAmount, currency, customerEmail, items } = payload;
+    const {
+      orderId,
+      totalAmount,
+      subtotal,
+      taxAmount,
+      currency,
+      customerEmail,
+      items,
+    } = payload;
 
     // 1. Send receipt email to buyer via BullMQ
     if (customerEmail) {
@@ -62,7 +74,9 @@ export class OutboxProcessorService {
       });
       this.logger.log(`Order receipt email queued for ${customerEmail}`);
     } else {
-      this.logger.warn(`No customer email for order ${orderId} — skipping receipt email`);
+      this.logger.warn(
+        `No customer email for order ${orderId} — skipping receipt email`,
+      );
     }
 
     // 2. Accumulate pending balances for Authors + send sale notification emails
@@ -71,14 +85,17 @@ export class OutboxProcessorService {
       if (!authorTotals[item.authorId]) {
         authorTotals[item.authorId] = 0;
       }
-      authorTotals[item.authorId] += (item.totalPrice * 100); // converting to cents
+      authorTotals[item.authorId] += item.totalPrice * 100; // converting to cents
     }
 
     for (const [authorId, amountInCents] of Object.entries(authorTotals)) {
-      const connectedAccount = await this.commerceRepository.getConnectedAccountByAuthId(authorId);
-      
+      const connectedAccount =
+        await this.commerceRepository.getConnectedAccountByAuthId(authorId);
+
       if (!connectedAccount) {
-        this.logger.error(`Author ${authorId} does not have a connected Stripe account. Balance cannot be recorded.`);
+        this.logger.error(
+          `Author ${authorId} does not have a connected Stripe account. Balance cannot be recorded.`,
+        );
         continue;
       }
 
@@ -97,9 +114,14 @@ export class OutboxProcessorService {
       const platformFee = Math.round(amountInCents * platformFeePercentage);
       const authorPayout = amountInCents - platformFee;
 
-      this.logger.log(`Adding ${authorPayout} cents to author ${authorId}'s pending balance (Platform Fee kept: ${platformFee} cents, isFoundingAuthor: ${authorUser.isFoundingAuthor}) for order ${orderId}`);
-      
-      await this.commerceRepository.incrementPendingBalance(authorId, authorPayout / 100);
+      this.logger.log(
+        `Adding ${authorPayout} cents to author ${authorId}'s pending balance (Platform Fee kept: ${platformFee} cents, isFoundingAuthor: ${authorUser.isFoundingAuthor}) for order ${orderId}`,
+      );
+
+      await this.commerceRepository.incrementPendingBalance(
+        authorId,
+        authorPayout / 100,
+      );
 
       // Create AuthorOrderPayout record
       await this.prisma.authorOrderPayout.create({
@@ -109,25 +131,31 @@ export class OutboxProcessorService {
           amount: authorPayout / 100,
           platformFee: platformFee / 100,
           status: 'PENDING_REQUEST',
-        }
+        },
       });
 
       // Send sale notification email to author
       try {
         if (authorUser.email) {
-          await this.emailSender.sendAuthorSaleNotificationEmail(authorUser.email, {
-            orderId,
-            earningsAmount: authorPayout / 100,
-            platformFee: platformFee / 100,
-            currency: currency || 'usd',
-          });
-          this.logger.log(`Author sale notification email queued for ${authorUser.email}`);
+          await this.emailSender.sendAuthorSaleNotificationEmail(
+            authorUser.email,
+            {
+              orderId,
+              earningsAmount: authorPayout / 100,
+              platformFee: platformFee / 100,
+              currency: currency || 'usd',
+            },
+          );
+          this.logger.log(
+            `Author sale notification email queued for ${authorUser.email}`,
+          );
         }
       } catch (emailError) {
         // Non-critical — balance is already recorded, just log
-        this.logger.warn(`Failed to queue author sale email for author ${authorId}: ${(emailError as Error).message}`);
+        this.logger.warn(
+          `Failed to queue author sale email for author ${authorId}: ${(emailError as Error).message}`,
+        );
       }
     }
   }
 }
-

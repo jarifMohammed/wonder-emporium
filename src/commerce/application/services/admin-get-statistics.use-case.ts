@@ -35,12 +35,14 @@ export class AdminGetStatisticsUseCase {
     const totalGrossRevenue = grossRevenueAggregation._sum.totalAmount || 0;
 
     // 5. Net Platform Revenue
-    const platformRevenueAggregation = await this.prisma.authorOrderPayout.aggregate({
-      _sum: {
-        platformFee: true,
-      },
-    });
-    const totalPlatformRevenue = platformRevenueAggregation._sum.platformFee || 0;
+    const platformRevenueAggregation =
+      await this.prisma.authorOrderPayout.aggregate({
+        _sum: {
+          platformFee: true,
+        },
+      });
+    const totalPlatformRevenue =
+      platformRevenueAggregation._sum.platformFee || 0;
 
     // 6. Platform Revenue by Day (last 30 days)
     const revenueByDayRaw = await this.prisma.$queryRaw<

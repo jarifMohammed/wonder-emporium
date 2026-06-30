@@ -20,7 +20,9 @@ export class AuthorRequestPayoutUseCase {
     }
 
     if (payout.status !== 'PENDING_REQUEST') {
-      throw AppError.badRequest(`Payout cannot be requested in status: ${payout.status}`);
+      throw AppError.badRequest(
+        `Payout cannot be requested in status: ${payout.status}`,
+      );
     }
 
     const updatedPayout = await this.prisma.authorOrderPayout.update({

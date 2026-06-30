@@ -6,7 +6,12 @@ import {
   Patch,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../../../common/guards/auth.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
@@ -19,7 +24,9 @@ import { UpdateUserStatusUseCase } from '../../application/services/update-user-
 @Roles(userRole.ADMIN, userRole.SUPERADMIN)
 @ApiBearerAuth('JWT-auth')
 export class AdminUsersController {
-  constructor(private readonly updateUserStatusUseCase: UpdateUserStatusUseCase) {}
+  constructor(
+    private readonly updateUserStatusUseCase: UpdateUserStatusUseCase,
+  ) {}
 
   @Patch(':id/approve')
   @HttpCode(HttpStatus.OK)

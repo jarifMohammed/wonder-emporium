@@ -21,6 +21,11 @@ interface AppConfig {
   aws_access_key_id: string;
   aws_secret_access_key: string;
   aws_s3_bucket: string;
+  // Lulu Print API
+  lulu_api_base_url: string;
+  lulu_client_key: string;
+  lulu_client_secret: string;
+  lulu_shipping_origin_country: string;
 }
 
 const parseCsv = (value?: string): string[] =>
@@ -54,6 +59,12 @@ const config: AppConfig = {
   aws_access_key_id: process.env.AWS_ACCESS_KEY_ID || '',
   aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY || '',
   aws_s3_bucket: process.env.AWS_S3_BUCKET || 'wonder-emporium-books',
+  // Lulu Print API
+  lulu_api_base_url: process.env.LULU_API_BASE_URL || 'https://api.lulu.com',
+  lulu_client_key: process.env.LULU_CLIENT_KEY || '',
+  lulu_client_secret: process.env.LULU_CLIENT_SECRET || '',
+  lulu_shipping_origin_country:
+    process.env.LULU_SHIPPING_ORIGIN_COUNTRY || 'US',
 };
 
 export default config;

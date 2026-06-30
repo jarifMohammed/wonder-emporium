@@ -54,7 +54,9 @@ export class CreateAccountUseCase {
 
     let isFoundingAuthor = false;
     if (input.role === userRole.AUTHOR) {
-      const authorCount = await this.userRepository.countByRole(userRole.AUTHOR);
+      const authorCount = await this.userRepository.countByRole(
+        userRole.AUTHOR,
+      );
       if (authorCount < 100) {
         isFoundingAuthor = true;
       }
@@ -86,7 +88,9 @@ export class CreateAccountUseCase {
     if (isFoundingAuthor) {
       // TODO: Send greetings email to the founding author
       // This could be dispatched via an event emitter or a mail service
-      console.log(`[Email Mock] Sending Greetings to Founding Author: ${authUser.email}`);
+      console.log(
+        `[Email Mock] Sending Greetings to Founding Author: ${authUser.email}`,
+      );
     }
 
     return {

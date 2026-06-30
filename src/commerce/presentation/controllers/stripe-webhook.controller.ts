@@ -36,8 +36,12 @@ export class StripeWebhookController {
   ): Stripe.Event | null {
     const webhookSecret = this.configService.get<string>(secretEnvKey);
     if (!webhookSecret) {
-      this.logger.error(`Stripe webhook secret "${secretEnvKey}" is not configured`);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Webhook Secret missing');
+      this.logger.error(
+        `Stripe webhook secret "${secretEnvKey}" is not configured`,
+      );
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send('Webhook Secret missing');
       return null;
     }
 
@@ -45,11 +49,19 @@ export class StripeWebhookController {
     try {
       // Use req.rawBody if available (requires rawBody: true in main.ts)
       const payload = (req as any).rawBody || req.body;
-      return this.stripeService.constructEvent(payload, signature, webhookSecret);
+      return this.stripeService.constructEvent(
+        payload,
+        signature,
+        webhookSecret,
+      );
     } catch (err: unknown) {
       const error = err as Error;
-      this.logger.error(`Webhook signature verification failed: ${error.message}`);
-      res.status(HttpStatus.BAD_REQUEST).send(`Webhook Error: ${error.message}`);
+      this.logger.error(
+        `Webhook signature verification failed: ${error.message}`,
+      );
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .send(`Webhook Error: ${error.message}`);
       return null;
     }
   }
@@ -63,34 +75,39 @@ export class StripeWebhookController {
 
   @Post()
   @ApiOperation({ summary: 'Stripe standard checkout webhook' })
-  async handleCheckoutWebhook(
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
+  async handleCheckoutWebhook(@Req() req: Request, @Res() res: Response) {
     const event = this.constructEvent(req, res, 'STRIPE_WEBHOOK_SECRET');
     if (!event) return;
 
     try {
       switch (event.type) {
         case 'checkout.session.completed': {
-          const session = event.data.object as Stripe.Checkout.Session;
+          const session = event.data.object;
           await this.handleCheckoutCompletedUseCase.execute(session);
           break;
         }
         case 'payment_intent.payment_failed': {
-          const intent = event.data.object as Stripe.PaymentIntent;
-          const order = await this.handleCheckoutCompletedUseCase['orderRepository'].getOrderByPaymentIntentId(intent.id);
+          const intent = event.data.object;
+          const order = await this.handleCheckoutCompletedUseCase[
+            'orderRepository'
+          ].getOrderByPaymentIntentId(intent.id);
           if (order && order.status === 'PENDING') {
-            await this.handleCheckoutCompletedUseCase['orderRepository'].updateOrderStatus(order.id, 'FAILED');
+            await this.handleCheckoutCompletedUseCase[
+              'orderRepository'
+            ].updateOrderStatus(order.id, 'FAILED');
             this.logger.warn(`Payment failed for order ${order.id}`);
           }
           break;
         }
         case 'checkout.session.expired': {
-          const session = event.data.object as Stripe.Checkout.Session;
-          const order = await this.handleCheckoutCompletedUseCase['orderRepository'].getOrderBySessionId(session.id);
+          const session = event.data.object;
+          const order = await this.handleCheckoutCompletedUseCase[
+            'orderRepository'
+          ].getOrderBySessionId(session.id);
           if (order && order.status === 'PENDING') {
-            await this.handleCheckoutCompletedUseCase['orderRepository'].updateOrderStatus(order.id, 'FAILED');
+            await this.handleCheckoutCompletedUseCase[
+              'orderRepository'
+            ].updateOrderStatus(order.id, 'FAILED');
             this.logger.warn(`Checkout session expired for order ${order.id}`);
           }
           break;
@@ -102,7 +119,9 @@ export class StripeWebhookController {
     } catch (err: unknown) {
       const error = err as Error;
       this.logger.error(`Error processing checkout webhook: ${error.message}`);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(`Error: ${error.message}`);
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send(`Error: ${error.message}`);
     }
   }
 
@@ -116,17 +135,18 @@ export class StripeWebhookController {
 
   @Post('connect')
   @ApiOperation({ summary: 'Stripe Connect account webhook' })
-  async handleConnectWebhook(
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
-    const event = this.constructEvent(req, res, 'STRIPE_CONNECT_WEBHOOK_SECRET');
+  async handleConnectWebhook(@Req() req: Request, @Res() res: Response) {
+    const event = this.constructEvent(
+      req,
+      res,
+      'STRIPE_CONNECT_WEBHOOK_SECRET',
+    );
     if (!event) return;
 
     try {
       switch (event.type) {
         case 'account.updated': {
-          const account = event.data.object as Stripe.Account;
+          const account = event.data.object;
           this.logger.log(`Connect: account.updated for ${account.id}`);
           await this.syncConnectAccountUseCase.execute(
             account.id,
@@ -136,13 +156,15 @@ export class StripeWebhookController {
           break;
         }
         case 'capability.updated': {
-          const capability = event.data.object as Stripe.Capability;
+          const capability = event.data.object;
           this.logger.log(`Capability updated: ${capability.id}`);
-          const account = await this.stripeService.retrieveAccount(capability.account as string);
+          const account = await this.stripeService.retrieveAccount(
+            capability.account as string,
+          );
           await this.syncConnectAccountUseCase.execute(
             account.id,
             account.charges_enabled,
-            account.payouts_enabled
+            account.payouts_enabled,
           );
           break;
         }
@@ -152,7 +174,11 @@ export class StripeWebhookController {
           const accountId = event.account;
           if (accountId) {
             this.logger.log(`Account deauthorized: ${accountId}`);
-            await this.syncConnectAccountUseCase.execute(accountId, false, false);
+            await this.syncConnectAccountUseCase.execute(
+              accountId,
+              false,
+              false,
+            );
           }
           break;
         }

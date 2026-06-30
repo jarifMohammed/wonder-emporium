@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
+  IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -53,6 +54,61 @@ export class BookFormatDto {
   @IsString()
   @IsOptional()
   interiorUrl?: string;
+}
+
+export class PrintEditionDto {
+  @ApiProperty({ example: true })
+  @IsBoolean()
+  enabled: boolean;
+
+  @ApiProperty({ example: '6x9' })
+  @IsString()
+  @IsNotEmpty()
+  trimSize: string;
+
+  @ApiProperty({ example: 'Perfect' })
+  @IsString()
+  @IsNotEmpty()
+  bindingType: string;
+
+  @ApiProperty({ example: 'Black & White' })
+  @IsString()
+  @IsNotEmpty()
+  interiorColor: string;
+
+  @ApiProperty({ example: '60# Uncoated White' })
+  @IsString()
+  @IsNotEmpty()
+  paperType: string;
+
+  @ApiProperty({ example: 'Pocketbook' })
+  @IsString()
+  @IsNotEmpty()
+  bookType: string;
+
+  @ApiProperty({ example: 'Standard' })
+  @IsString()
+  @IsOptional()
+  printQuality?: string;
+
+  @ApiProperty({ example: 'Gloss' })
+  @IsString()
+  @IsNotEmpty()
+  coverFinish: string;
+
+  @ApiPropertyOptional({ example: 4.0 })
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  @Type(() => Number)
+  authorProfit?: number;
+
+  @ApiPropertyOptional({ example: 9.99 })
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  @Type(() => Number)
+  sellingPrice?: number;
 }
 
 export class CreateBookRequest {
@@ -121,6 +177,12 @@ export class CreateBookRequest {
   @IsString()
   @IsOptional()
   publicationDetails?: string;
+
+  @ApiPropertyOptional({ type: PrintEditionDto })
+  @ValidateNested()
+  @Type(() => PrintEditionDto)
+  @IsOptional()
+  printEdition?: PrintEditionDto;
 }
 
 export class UpdateBookRequest {
@@ -189,6 +251,12 @@ export class UpdateBookRequest {
   @IsString()
   @IsOptional()
   publicationDetails?: string;
+
+  @ApiPropertyOptional({ type: PrintEditionDto })
+  @ValidateNested()
+  @Type(() => PrintEditionDto)
+  @IsOptional()
+  printEdition?: PrintEditionDto;
 }
 
 export class BookQueryParams {

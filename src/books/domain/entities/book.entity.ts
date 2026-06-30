@@ -17,6 +17,7 @@ export class Book {
     public readonly status: BookStatus,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
+    public readonly printEdition?: any,
   ) {}
 
   isDraft(): boolean {

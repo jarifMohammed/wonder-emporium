@@ -41,11 +41,18 @@ import { QueueModule } from '../common/modules/queue.module';
     ConfigModule,
     AuthModule,
     QueueModule,
-    BullModule.registerQueue({
-      name: 'commerce-outbox',
-    }),
+    BullModule.registerQueue(
+      { name: 'commerce-outbox' },
+      { name: 'print-job-creation' },
+    ),
   ],
-  controllers: [CommerceController, StripeWebhookController, OrdersController, PayoutsController, StatisticsController],
+  controllers: [
+    CommerceController,
+    StripeWebhookController,
+    OrdersController,
+    PayoutsController,
+    StatisticsController,
+  ],
   providers: [
     {
       provide: COMMERCE_REPOSITORY_TOKEN,
@@ -75,8 +82,6 @@ import { QueueModule } from '../common/modules/queue.module';
     AdminGetStatisticsUseCase,
     AuthorGetStatisticsUseCase,
   ],
-  exports: [
-    CreateCheckoutSessionUseCase,
-  ],
+  exports: [CreateCheckoutSessionUseCase],
 })
 export class CommerceModule {}

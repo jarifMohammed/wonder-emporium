@@ -81,13 +81,16 @@ export class CommerceController {
   @ApiOperation({ summary: 'Get Stripe Express Dashboard login link' })
   async getExpressDashboardLink(@Req() req: Request) {
     const user = (req as unknown as { user: { id: string } }).user;
-    const accountData = await this.commerceRepository.getConnectedAccountByAuthId(user.id);
+    const accountData =
+      await this.commerceRepository.getConnectedAccountByAuthId(user.id);
 
     if (!accountData || !accountData.stripeAccountId) {
       return { url: null, message: 'Stripe Connect account not found.' };
     }
 
-    const loginLink = await this.stripeService.createLoginLink(accountData.stripeAccountId);
+    const loginLink = await this.stripeService.createLoginLink(
+      accountData.stripeAccountId,
+    );
     return { url: loginLink.url };
   }
 }

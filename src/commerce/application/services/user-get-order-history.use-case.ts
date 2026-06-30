@@ -5,13 +5,16 @@ import { PrismaService } from '../../../common/services/prisma.service';
 export class UserGetOrderHistoryUseCase {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(buyerId: string, filters?: { status?: string; startDate?: string; endDate?: string }) {
+  async execute(
+    buyerId: string,
+    filters?: { status?: string; startDate?: string; endDate?: string },
+  ) {
     const where: any = { buyerId };
-    
+
     if (filters?.status) {
       where.status = filters.status;
     }
-    
+
     if (filters?.startDate || filters?.endDate) {
       where.createdAt = {};
       if (filters.startDate) {
@@ -32,9 +35,9 @@ export class UserGetOrderHistoryUseCase {
             },
             format: {
               select: { formatType: true },
-            }
-          }
-        }
+            },
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });

@@ -251,6 +251,8 @@ enum BookFileType {
   EBOOK
   HARDCOVER
   PAPERBACK
+  INTERIOR_PDF
+  COVER_PDF
 }
 
 // ================================

@@ -41,7 +41,9 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
   }
 
   async countByRole(role: userRole): Promise<number> {
-    return this.prisma.authUser.count({ where: { role: role as $Enums.UserRole } });
+    return this.prisma.authUser.count({
+      where: { role: role as $Enums.UserRole },
+    });
   }
 
   async findByProvider(
@@ -76,7 +78,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
     if (data.password !== undefined) updateData.password = data.password;
     if (data.role !== undefined) updateData.role = data.role as string;
     if (data.verified !== undefined) updateData.verified = data.verified;
-    if (data.status !== undefined) updateData.status = data.status as string;
+    if (data.status !== undefined) updateData.status = data.status;
 
     const user = await this.prisma.authUser.update({
       where: { id },
