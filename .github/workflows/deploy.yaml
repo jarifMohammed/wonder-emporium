@@ -1,9 +1,12 @@
-name: CI/CD Deploy to EC2
+name: CI/CD Deploy to VPS
 
 on:
   push:
     branches:
       - deploy
+
+env:
+  DOCKER_IMAGE: thepujon/simple_blog_backend
 
 jobs:
   build-and-deploy:
@@ -12,11 +15,11 @@ jobs:
     steps:
       # checkout code
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # log in to docker
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -24,22 +27,22 @@ jobs:
       # build docker image
       - name: Build Docker Image
         run: |
-          docker build -t thepujon/simple_blog_backend:latest .
+          docker build -t ${{ env.DOCKER_IMAGE }}:latest .
 
       # push docker image
       - name: Push Docker Image
         run: |
-          docker push thepujon/simple_blog_backend:latest
+          docker push ${{ env.DOCKER_IMAGE }}:latest
 
-        # deploy to EC2
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.6
+      # deploy to VPS
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script: |
-            cd /home/ec2-user/my-app
-            docker-compose -f docker-compose.yaml -f docker-compose.prod.yaml pull
-            docker-compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
+            cd /opt/wonder-emporium
+            docker compose -f docker-compose.yaml -f docker-compose.prod.yaml pull
+            docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d --remove-orphans
