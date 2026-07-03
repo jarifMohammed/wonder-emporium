@@ -6,7 +6,7 @@ on:
       - deploy
 
 env:
-  DOCKER_IMAGE: thepujon/simple_blog_backend
+  DOCKER_IMAGE: zihadulislam2/simple_blog_backend
 
 jobs:
   build-and-deploy:
