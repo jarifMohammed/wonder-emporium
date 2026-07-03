@@ -32,7 +32,6 @@ services:
     container_name: redis_cache
     ports:
       - "6379:6379"
-      - "8001:8001" # RedisInsight UI
     volumes:
       - redis-stack:/var/lib/redis-stack
     environment:
