@@ -34,6 +34,24 @@ jobs:
         run: |
           docker push ${{ env.DOCKER_IMAGE }}:latest
 
+      # copy config files to VPS
+      - name: Copy configs to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          source: |
+            docker-compose.yaml
+            docker-compose.prod.yaml
+            monitoring/prometheus/prometheus.yml
+            monitoring/loki/loki-config.yml
+            monitoring/grafana/provisioning/
+            monitoring/grafana/nestjs-complete-dashboard.json
+          target: /opt/wonder-emporium
+          strip_components: 0
+
       # deploy to VPS
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.2.0
