@@ -76,6 +76,9 @@ export class StripeService {
         enabled: true,
       },
       billing_address_collection: 'required',
+      shipping_address_collection: {
+        allowed_countries: ['US', 'CA', 'GB', 'AU', 'NZ', 'IE'], // Add supported shipping countries
+      },
       success_url: successUrl,
       cancel_url: cancelUrl,
       metadata,

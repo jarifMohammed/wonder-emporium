@@ -118,21 +118,34 @@ export class OutboxProcessorService {
         `Adding ${authorPayout} cents to author ${authorId}'s pending balance (Platform Fee kept: ${platformFee} cents, isFoundingAuthor: ${authorUser.isFoundingAuthor}) for order ${orderId}`,
       );
 
-      await this.commerceRepository.incrementPendingBalance(
-        authorId,
-        authorPayout / 100,
-      );
+      try {
+        await this.prisma.$transaction(async (tx) => {
+          await tx.stripeConnectedAccount.update({
+            where: { authId: authorId },
+            data: {
+              pendingBalance: {
+                increment: authorPayout / 100,
+              },
+            },
+          });
 
-      // Create AuthorOrderPayout record
-      await this.prisma.authorOrderPayout.create({
-        data: {
-          orderId,
-          authorId,
-          amount: authorPayout / 100,
-          platformFee: platformFee / 100,
-          status: 'PENDING_REQUEST',
-        },
-      });
+          await tx.authorOrderPayout.create({
+            data: {
+              orderId,
+              authorId,
+              amount: authorPayout / 100,
+              platformFee: platformFee / 100,
+              status: 'PENDING_REQUEST',
+            },
+          });
+        });
+      } catch (txError: any) {
+        if (txError.code === 'P2002') {
+          this.logger.warn(`Payout for order ${orderId} and author ${authorId} already exists. Skipping duplicate.`);
+        } else {
+          throw txError;
+        }
+      }
 
       // Send sale notification email to author
       try {

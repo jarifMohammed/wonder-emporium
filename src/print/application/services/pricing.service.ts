@@ -88,11 +88,17 @@ export class PricingService implements OnModuleInit {
       )
         return false;
 
-      const colorMatch =
-        params.interiorColor.toLowerCase() === 'black & white' ||
-        params.interiorColor.toLowerCase() === 'mono'
-          ? row.interiorColor.toLowerCase() === 'black & white'
-          : row.interiorColor.toLowerCase() === 'full color';
+      let colorMatch = false;
+      const paramColor = params.interiorColor.toLowerCase();
+      const rowColor = row.interiorColor.toLowerCase();
+
+      if (paramColor === 'black & white' || paramColor === 'mono') {
+        colorMatch = rowColor === 'black & white';
+      } else if (paramColor === 'full color') {
+        colorMatch = rowColor === 'full color';
+      } else {
+        colorMatch = rowColor === paramColor || rowColor === 'full color';
+      }
 
       if (!colorMatch) return false;
       if (params.pageCount < row.minPage || params.pageCount > row.maxPage)
@@ -104,6 +110,13 @@ export class PricingService implements OnModuleInit {
     if (candidates.length === 0) {
       this.logger.warn(`No pricing row found for: ${JSON.stringify(params)}`);
       return null;
+    }
+
+    if (candidates.length > 1 && !params.printQuality) {
+      const standard = candidates.find(
+        (c) => c.printQuality.toLowerCase() === 'standard'
+      );
+      if (standard) return standard;
     }
 
     return candidates[0];

@@ -69,6 +69,17 @@ export class HandleCheckoutCompletedUseCase {
         },
       });
 
+      if (order.items && order.items.length > 0 && subtotal > 0 && taxAmount > 0) {
+        for (const item of order.items) {
+          const itemProportion = item.totalPrice / subtotal;
+          const itemTax = itemProportion * taxAmount;
+          await tx.orderItem.update({
+            where: { id: item.id },
+            data: { taxAmount: itemTax },
+          });
+        }
+      }
+
       return await this.outboxRepository.createEventWithTx(
         {
           aggregateId: order.id,
@@ -102,6 +113,19 @@ export class HandleCheckoutCompletedUseCase {
   ): Promise<void> {
     for (const item of order.items || []) {
       try {
+        const format = await this.prisma.bookFormatPricing.findUnique({
+          where: { id: item.formatId },
+        });
+
+        if (
+          !format ||
+          !['PAPERBACK', 'HARDCOVER'].includes(
+            format.formatType.toUpperCase(),
+          )
+        ) {
+          continue;
+        }
+
         const book = await this.prisma.book.findUnique({
           where: { id: item.bookId },
         });
