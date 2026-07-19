@@ -20,6 +20,8 @@
 
 ## 📋 Table of Contents
 
+> Frontend team: use the [API documentation folder](docs/api/README.md) for implementation order, OpenAPI contracts, Postman collection, examples, and complete user flows.
+
 - [Why This Starter?](#-why-this-starter)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
@@ -92,7 +94,7 @@ npm run start:dev
 
 **Verify installation:**
 - API Health: http://localhost:5000
-- API Docs: Import `postman-collection.json` into Postman
+- API Docs: Import `docs/api/postman-collection.json` into Postman
 - Mongo Express: http://localhost:8081
 - RedisInsight: http://localhost:8001
 - Grafana: http://localhost:3000 (admin / admin)
@@ -698,7 +700,7 @@ nestjs-prisma-postgresql-hexagon/
 ├── docker-compose.override.yaml    # Development overrides
 ├── Dockerfile                      # Multi-stage build
 ├── .env.example                    # Environment template
-└── postman-collection.json         # API collection
+└── docs/api/                       # Frontend guide, OpenAPI and Postman files
 ```
 
 ---
@@ -807,7 +809,7 @@ Once the application is running, access the interactive API documentation at:
 - ✅ **Try it out** - Test endpoints directly from the browser
 - ✅ **Pagination support** - Standard pagination patterns included
 
-For detailed information, see [docs/SWAGGER.md](docs/SWAGGER.md)
+For detailed information, see the [API documentation](docs/api/README.md).
 
 ---
 
@@ -1271,7 +1273,7 @@ GET /metrics
 
 ### Postman Collection
 
-Import `postman-collection.json` into Postman for a complete API testing environment with examples.
+Import `docs/api/postman-collection.json` into Postman for a complete API testing environment with examples.
 
 ### Example Requests
 

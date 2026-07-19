@@ -7,6 +7,7 @@ import { StripeWebhookController } from './presentation/controllers/stripe-webho
 import { OrdersController } from './presentation/controllers/orders.controller';
 import { PayoutsController } from './presentation/controllers/payouts.controller';
 import { StatisticsController } from './presentation/controllers/statistics.controller';
+import { LibraryController } from './presentation/controllers/library.controller';
 
 import { CreateCheckoutSessionUseCase } from './application/services/create-checkout-session.use-case';
 import { HandleCheckoutCompletedUseCase } from './application/services/handle-checkout-completed.use-case';
@@ -20,6 +21,8 @@ import { AdminGetPayoutsUseCase } from './application/services/admin-get-payouts
 import { AdminApprovePayoutUseCase } from './application/services/admin-approve-payout.use-case';
 import { AdminGetStatisticsUseCase } from './application/services/admin-get-statistics.use-case';
 import { AuthorGetStatisticsUseCase } from './application/services/author-get-statistics.use-case';
+import { GetUserLibraryUseCase } from './application/services/get-user-library.use-case';
+import { GetLibraryAccessUseCase } from './application/services/get-library-access.use-case';
 
 import { StripeService } from './infrastructure/stripe/stripe.service';
 import { PrismaCommerceRepository } from './infrastructure/persistence/prisma-commerce.repository';
@@ -35,12 +38,14 @@ import { ProcessOutboxEventsCron } from './application/cron/process-outbox.cron'
 
 import { AuthModule } from '../auth/auth.module';
 import { QueueModule } from '../common/modules/queue.module';
+import { BooksModule } from '../books/books.module';
 
 @Module({
   imports: [
     ConfigModule,
     AuthModule,
     QueueModule,
+    BooksModule,
     BullModule.registerQueue(
       { name: 'commerce-outbox' },
       { name: 'print-job-creation' },
@@ -52,6 +57,7 @@ import { QueueModule } from '../common/modules/queue.module';
     OrdersController,
     PayoutsController,
     StatisticsController,
+    LibraryController,
   ],
   providers: [
     {
@@ -81,6 +87,8 @@ import { QueueModule } from '../common/modules/queue.module';
     AdminApprovePayoutUseCase,
     AdminGetStatisticsUseCase,
     AuthorGetStatisticsUseCase,
+    GetUserLibraryUseCase,
+    GetLibraryAccessUseCase,
   ],
   exports: [CreateCheckoutSessionUseCase],
 })

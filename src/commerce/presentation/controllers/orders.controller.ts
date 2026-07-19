@@ -32,7 +32,7 @@ class CreateCheckoutDto {
   cancelUrl: string;
 }
 
-@ApiTags('Orders')
+@ApiTags('Orders', 'Users', 'Admin')
 @Controller('orders')
 export class OrdersController {
   constructor(
@@ -43,7 +43,11 @@ export class OrdersController {
   @Get('history')
   @UseGuards(AuthGuard)
   @Roles(userRole.USER, userRole.READER, userRole.AUTHOR, userRole.ADMIN)
-  @ApiOperation({ summary: 'Get order history for logged-in user' })
+  @ApiOperation({
+    summary: 'Get order history for logged-in user',
+    description:
+      'Fetches the order history (purchases) for the currently authenticated user. Supports filtering by status, startDate, and endDate.',
+  })
   @ApiQuery({ name: 'status', required: false, type: String })
   @ApiQuery({
     name: 'startDate',
@@ -74,7 +78,11 @@ export class OrdersController {
   @Post('checkout')
   @UseGuards(AuthGuard)
   @Roles(userRole.USER, userRole.READER, userRole.AUTHOR, userRole.ADMIN)
-  @ApiOperation({ summary: 'Create Stripe Checkout Session for cart items' })
+  @ApiOperation({
+    summary: 'Create Stripe Checkout Session for cart items',
+    description:
+      'Takes a list of book format IDs and quantities to generate a Stripe Checkout session URL for the user to complete their purchase.',
+  })
   @ApiBody({ type: CreateCheckoutDto })
   @ApiResponse({ status: 200, description: 'Returns a checkout URL' })
   async createCheckout(@Req() req: Request, @Body() body: CreateCheckoutDto) {

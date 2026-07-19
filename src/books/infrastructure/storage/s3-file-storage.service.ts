@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  DeleteObjectCommand,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuid } from 'uuid';
 import config from '../../../common/config/app.config';
 
@@ -99,6 +104,20 @@ export class S3FileStorageService {
         Bucket: this.bucket,
         Key: fileKey,
       }),
+    );
+  }
+
+  async createDownloadUrl(
+    fileKey: string,
+    expiresInSeconds = 300,
+  ): Promise<string> {
+    return getSignedUrl(
+      this.s3,
+      new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: fileKey,
+      }),
+      { expiresIn: expiresInSeconds },
     );
   }
 }

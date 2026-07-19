@@ -67,3 +67,9 @@ nestjs-explore-with-ec2-pujon2.pem
 *.crt
 
 docs
+!docs/
+!docs/api/
+!docs/api/README.md
+!docs/api/openapi.json
+!docs/api/openapi.yaml
+!docs/api/postman-collection.json

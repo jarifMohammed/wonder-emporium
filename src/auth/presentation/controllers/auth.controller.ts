@@ -42,7 +42,7 @@ import {
 import config from '../../../common/config/app.config';
 import { AuthPrincipal } from '../../interfaces/auth.interface';
 
-@ApiTags('Authentication')
+@ApiTags('Users')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -59,7 +59,11 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new account' })
+  @ApiOperation({
+    summary: 'Create a new account',
+    description:
+      'This route is used by users or authors to register a new account on the platform. It takes a first name, last name, email, password, and role. Upon success, it creates the user record.',
+  })
   @ApiResponse({ status: 201, description: 'Account created successfully' })
   @ApiResponse({ status: 409, description: 'Email already registered' })
   async register(@Body() body: RegisterRequest) {
@@ -75,7 +79,11 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Login with email and password' })
+  @ApiOperation({
+    summary: 'Login with email and password',
+    description:
+      'Authenticates a user using email and password. Returns an access token and refresh token upon success. Used for standard login flow.',
+  })
   @ApiResponse({ status: 200, description: 'Login successful' })
   async login(@Body() body: LoginRequest, @Req() req: Request) {
     return this.loginUseCase.execute({
@@ -193,7 +201,11 @@ export class AuthController {
   @Get('me')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(userRole.USER, userRole.READER, userRole.AUTHOR, userRole.ADMIN)
-  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiOperation({
+    summary: 'Get current user profile',
+    description:
+      'Fetches the profile details of the currently authenticated user. Validates the JWT token and returns user metadata.',
+  })
   @ApiResponse({ status: 200, description: 'Current user profile' })
   me(@Req() req: Request) {
     const user = (req as unknown as { user: AuthPrincipal }).user;

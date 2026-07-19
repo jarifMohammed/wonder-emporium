@@ -46,7 +46,7 @@ import {
 } from '../dto/book.request.dto';
 import { BookFileType } from '../../domain/interfaces/book.interface';
 
-@ApiTags('Books')
+@ApiTags('Books', 'Author', 'Admin')
 @Controller('books')
 export class BooksController {
   constructor(
@@ -75,7 +75,11 @@ export class BooksController {
     ]),
   )
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new book (draft or submit for review)' })
+  @ApiOperation({
+    summary: 'Create a new book (draft or submit for review)',
+    description:
+      'Used by Authors to create a new book. Books start in a draft state unless submitted for review. Supports multipart/form-data for uploading cover images, audiobooks, PDFs, etc.',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description:

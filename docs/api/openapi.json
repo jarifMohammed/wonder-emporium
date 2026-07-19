@@ -88,6 +88,7 @@
     },
     "/auth/register": {
       "post": {
+        "description": "This route is used by users or authors to register a new account on the platform. It takes a first name, last name, email, password, and role. Upon success, it creates the user record.",
         "operationId": "AuthController_register",
         "parameters": [],
         "requestBody": {
@@ -110,12 +111,13 @@
         },
         "summary": "Create a new account",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
     "/auth/login": {
       "post": {
+        "description": "Authenticates a user using email and password. Returns an access token and refresh token upon success. Used for standard login flow.",
         "operationId": "AuthController_login",
         "parameters": [],
         "requestBody": {
@@ -135,7 +137,7 @@
         },
         "summary": "Login with email and password",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -160,7 +162,7 @@
         },
         "summary": "Request password reset OTP",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -185,7 +187,7 @@
         },
         "summary": "Reset password with OTP",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -210,7 +212,7 @@
         },
         "summary": "Change password (authenticated)",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -235,7 +237,7 @@
         },
         "summary": "Refresh access token",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -260,7 +262,7 @@
         },
         "summary": "Verify email with code",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -285,7 +287,7 @@
         },
         "summary": "Login or register with Google ID token",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       },
       "get": {
@@ -298,7 +300,7 @@
         },
         "summary": "Redirect to Google OAuth consent screen",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -322,7 +324,7 @@
         },
         "summary": "Google OAuth callback",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -337,12 +339,13 @@
         },
         "summary": "Logout (invalidate tokens)",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
     "/auth/me": {
       "get": {
+        "description": "Fetches the profile details of the currently authenticated user. Validates the JWT token and returns user metadata.",
         "operationId": "AuthController_me",
         "parameters": [],
         "responses": {
@@ -352,7 +355,7 @@
         },
         "summary": "Get current user profile",
         "tags": [
-          "Authentication"
+          "Users"
         ]
       }
     },
@@ -416,11 +419,12 @@
     },
     "/books": {
       "post": {
+        "description": "Used by Authors to create a new book. Books start in a draft state unless submitted for review. Supports multipart/form-data for uploading cover images, audiobooks, PDFs, etc.",
         "operationId": "BooksController_createBook",
         "parameters": [],
         "requestBody": {
           "required": true,
-          "description": "Book details and optional file uploads (bookCover, audiobook, ebook, hardcover, paperback)",
+          "description": "Book details and optional file uploads (bookCover, audiobook, ebook, hardcover, paperback, interiorPdf, coverPdf)",
           "content": {
             "multipart/form-data": {
               "schema": {
@@ -436,7 +440,9 @@
         },
         "summary": "Create a new book (draft or submit for review)",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       },
       "get": {
@@ -560,7 +566,9 @@
         },
         "summary": "Get all books with filtering, search, and pagination",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -654,7 +662,9 @@
         },
         "summary": "Get all approved/published books",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -748,7 +758,9 @@
         },
         "summary": "Get all pending (submitted) books for review",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -850,7 +862,9 @@
         },
         "summary": "Get books by author ID",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -877,7 +891,9 @@
         },
         "summary": "Get a single book by ID",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       },
       "put": {
@@ -894,7 +910,7 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "Book fields to update and optional new file uploads (bookCover, audiobook, ebook, hardcover, paperback)",
+          "description": "Book fields to update and optional new file uploads (bookCover, audiobook, ebook, hardcover, paperback, interiorPdf, coverPdf)",
           "content": {
             "multipart/form-data": {
               "schema": {
@@ -910,7 +926,9 @@
         },
         "summary": "Update a book (only draft status)",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       },
       "delete": {
@@ -932,7 +950,9 @@
         },
         "summary": "Delete a book",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -956,7 +976,9 @@
         },
         "summary": "Submit a draft book for review",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -990,12 +1012,15 @@
         },
         "summary": "Approve or reject a submitted book",
         "tags": [
-          "Books"
+          "Books",
+          "Author",
+          "Admin"
         ]
       }
     },
     "/commerce/author/onboard": {
       "post": {
+        "description": "Used to onboard authors onto Stripe Connect so they can receive payouts. Returns an onboarding URL that the author needs to complete.",
         "operationId": "CommerceController_onboardAuthor",
         "parameters": [],
         "responses": {
@@ -1005,7 +1030,9 @@
         },
         "summary": "Create Stripe Connect onboarding link for authors",
         "tags": [
-          "Commerce"
+          "Commerce",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -1020,7 +1047,9 @@
         },
         "summary": "Check Stripe Connect account status",
         "tags": [
-          "Commerce"
+          "Commerce",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -1035,7 +1064,9 @@
         },
         "summary": "Get Stripe Express Dashboard login link",
         "tags": [
-          "Commerce"
+          "Commerce",
+          "Author",
+          "Admin"
         ]
       }
     },
@@ -1071,6 +1102,7 @@
     },
     "/orders/history": {
       "get": {
+        "description": "Fetches the order history (purchases) for the currently authenticated user. Supports filtering by status, startDate, and endDate.",
         "operationId": "OrdersController_getOrderHistory",
         "parameters": [
           {
@@ -1107,12 +1139,15 @@
         },
         "summary": "Get order history for logged-in user",
         "tags": [
-          "Orders"
+          "Orders",
+          "Users",
+          "Admin"
         ]
       }
     },
     "/orders/checkout": {
       "post": {
+        "description": "Takes a list of book format IDs and quantities to generate a Stripe Checkout session URL for the user to complete their purchase.",
         "operationId": "OrdersController_createCheckout",
         "parameters": [],
         "requestBody": {
@@ -1132,7 +1167,9 @@
         },
         "summary": "Create Stripe Checkout Session for cart items",
         "tags": [
-          "Orders"
+          "Orders",
+          "Users",
+          "Admin"
         ]
       }
     },
@@ -1485,6 +1522,61 @@
           "listPrice"
         ]
       },
+      "PrintEditionDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "trimSize": {
+            "type": "string",
+            "example": "6x9"
+          },
+          "bindingType": {
+            "type": "string",
+            "example": "Perfect"
+          },
+          "interiorColor": {
+            "type": "string",
+            "example": "Black & White"
+          },
+          "paperType": {
+            "type": "string",
+            "example": "60# Uncoated White"
+          },
+          "bookType": {
+            "type": "string",
+            "example": "Pocketbook"
+          },
+          "printQuality": {
+            "type": "string",
+            "example": "Standard"
+          },
+          "coverFinish": {
+            "type": "string",
+            "example": "Gloss"
+          },
+          "authorProfit": {
+            "type": "number",
+            "example": 4
+          },
+          "sellingPrice": {
+            "type": "number",
+            "example": 9.99
+          }
+        },
+        "required": [
+          "enabled",
+          "trimSize",
+          "bindingType",
+          "interiorColor",
+          "paperType",
+          "bookType",
+          "printQuality",
+          "coverFinish"
+        ]
+      },
       "CreateBookRequest": {
         "type": "object",
         "properties": {
@@ -1536,6 +1628,9 @@
           "publicationDetails": {
             "type": "string",
             "example": "Published by Wonder Press, 2024"
+          },
+          "printEdition": {
+            "$ref": "#/components/schemas/PrintEditionDto"
           }
         },
         "required": [
@@ -1592,6 +1687,9 @@
           "publicationDetails": {
             "type": "string",
             "example": "Published by Wonder Press, 2024"
+          },
+          "printEdition": {
+            "$ref": "#/components/schemas/PrintEditionDto"
           }
         }
       },

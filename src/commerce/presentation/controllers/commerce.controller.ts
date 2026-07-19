@@ -18,7 +18,7 @@ import { COMMERCE_REPOSITORY_TOKEN } from '../../domain/interfaces/commerce.repo
 import type { ICommerceRepository } from '../../domain/interfaces/commerce.repository.interface';
 import { Inject } from '@nestjs/common';
 
-@ApiTags('Commerce')
+@ApiTags('Commerce', 'Author', 'Admin')
 @Controller('commerce')
 export class CommerceController {
   constructor(
@@ -33,6 +33,8 @@ export class CommerceController {
   @Roles(userRole.AUTHOR, userRole.ADMIN)
   @ApiOperation({
     summary: 'Create Stripe Connect onboarding link for authors',
+    description:
+      'Used to onboard authors onto Stripe Connect so they can receive payouts. Returns an onboarding URL that the author needs to complete.',
   })
   @ApiResponse({ status: 200, description: 'Returns an onboarding URL' })
   async onboardAuthor(

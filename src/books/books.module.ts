@@ -52,5 +52,6 @@ import { BOOK_REPOSITORY_TOKEN } from './domain/interfaces/book.repository.inter
     ApproveBookUseCase,
     DeleteBookUseCase,
   ],
+  exports: [S3FileStorageService],
 })
 export class BooksModule {}
