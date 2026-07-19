@@ -20,6 +20,9 @@ import { CustomThrottlerGuard } from '../guards/custom-throttler.guard';
           password: configService.get<string>('REDIS_PASSWORD'),
           db: configService.get<number>('REDIS_DB', 0),
           keyPrefix: `${configService.get<string>('REDIS_CACHE_KEY_PREFIX', 'app')}:throttle:`,
+          ...(configService.get<string>('REDIS_TLS') === 'true' && {
+            tls: { rejectUnauthorized: true },
+          }),
         });
 
         return {
