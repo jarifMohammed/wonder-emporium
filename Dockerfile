@@ -103,4 +103,4 @@ COPY package*.json ./
 ENV NODE_ENV=production
 
 EXPOSE 5000
-CMD ["node", "dist/src/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main.js"]
