@@ -26,6 +26,9 @@ export class EmailService {
         user: String(config.email_user),
         pass: String(config.email_pass),
       },
+      connectionTimeout: 10_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 20_000,
     });
   }
 

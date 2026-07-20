@@ -92,26 +92,15 @@ export class CreateAccountUseCase {
       verificationCode,
       600,
     );
-    await this.emailService.sendVerificationEmail(
-      authUser.email,
-      authUser.username,
+    // Do not hold the registration response open while SMTP completes. The OTP
+    // is already persisted, so the user can continue to verification and use
+    // the resend endpoint if delivery fails.
+    void this.sendRegistrationEmails({
+      authUser,
       verificationCode,
-    );
-
-    if (input.role === userRole.AUTHOR) {
-      await Promise.all([
-        this.emailService.sendAuthorPendingApprovalEmail(
-          authUser.email,
-          authUser.username,
-        ),
-        this.emailService.sendNewAuthorAdminNotificationEmail({
-          authorId: authUser.id,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          email: authUser.email,
-        }),
-      ]);
-    }
+      firstName: input.firstName,
+      lastName: input.lastName,
+    });
 
     const tokens = this.generateTokens(
       authUser.id,
@@ -160,6 +149,51 @@ export class CreateAccountUseCase {
       { expiresIn: '7d' },
     );
     return { accessToken, refreshToken };
+  }
+
+  private async sendRegistrationEmails(input: {
+    authUser: {
+      id: string;
+      email: string;
+      username: string;
+      role: userRole;
+    };
+    verificationCode: string;
+    firstName: string;
+    lastName: string;
+  }): Promise<void> {
+    const emails: Promise<void>[] = [
+      this.emailService.sendVerificationEmail(
+        input.authUser.email,
+        input.authUser.username,
+        input.verificationCode,
+      ),
+    ];
+
+    if (input.authUser.role === userRole.AUTHOR) {
+      emails.push(
+        this.emailService.sendAuthorPendingApprovalEmail(
+          input.authUser.email,
+          input.authUser.username,
+        ),
+        this.emailService.sendNewAuthorAdminNotificationEmail({
+          authorId: input.authUser.id,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.authUser.email,
+        }),
+      );
+    }
+
+    const results = await Promise.allSettled(emails);
+    const failedCount = results.filter(
+      (result) => result.status === 'rejected',
+    ).length;
+    if (failedCount > 0) {
+      console.error(
+        `Failed to deliver ${failedCount} registration email(s) for ${input.authUser.email}`,
+      );
+    }
   }
 
   private generateUsername(email: string): string {
