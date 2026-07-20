@@ -10,13 +10,17 @@ export class DeleteBookUseCase {
     private readonly bookRepository: IBookRepository,
   ) {}
 
-  async execute(id: string, userId: string): Promise<{ message: string }> {
+  async execute(
+    id: string,
+    userId: string,
+    isAdmin = false,
+  ): Promise<{ message: string }> {
     const existing = await this.bookRepository.findById(id);
     if (!existing) {
       throw AppError.notFound('Book not found');
     }
 
-    if (existing.book.authorId !== userId) {
+    if (existing.book.authorId !== userId && !isAdmin) {
       throw AppError.forbidden('You can only delete your own books');
     }
 

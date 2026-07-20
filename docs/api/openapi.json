@@ -166,6 +166,56 @@
         ]
       }
     },
+    "/auth/resend-password-reset": {
+      "post": {
+        "operationId": "AuthController_resendPasswordReset",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP sent if email exists"
+          }
+        },
+        "summary": "Resend password reset OTP",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/auth/verify-password-reset-otp": {
+      "post": {
+        "operationId": "AuthController_verifyPasswordResetOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyPasswordResetOtpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP verified successfully"
+          }
+        },
+        "summary": "Verify a password reset OTP",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
     "/auth/reset-password": {
       "post": {
         "operationId": "AuthController_resetPassword",
@@ -266,6 +316,31 @@
         ]
       }
     },
+    "/auth/resend-verification": {
+      "post": {
+        "operationId": "AuthController_resendVerification",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendVerificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code sent if verification is required"
+          }
+        },
+        "summary": "Resend email verification code",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
     "/auth/google": {
       "post": {
         "operationId": "AuthController_googleLogin",
@@ -356,6 +431,98 @@
         "summary": "Get current user profile",
         "tags": [
           "Users"
+        ]
+      }
+    },
+    "/admin/users/authors": {
+      "get": {
+        "operationId": "AdminUsersController_getAuthors",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "INACTIVE",
+                "SUSPENDED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated author list"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get all authors with filtering and pagination",
+        "tags": [
+          "Admin Users"
+        ]
+      }
+    },
+    "/admin/users/authors/{id}": {
+      "get": {
+        "operationId": "AdminUsersController_getAuthor",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Author details"
+          },
+          "404": {
+            "description": "Author not found"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a single author",
+        "tags": [
+          "Admin Users"
         ]
       }
     },
@@ -764,6 +931,102 @@
         ]
       }
     },
+    "/books/mine": {
+      "get": {
+        "operationId": "BooksController_getMyBooks",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "SUBMITTED",
+                "APPROVED",
+                "REJECTED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated author book list"
+          }
+        },
+        "summary": "Get all books owned by the current author",
+        "tags": [
+          "Books",
+          "Author",
+          "Admin"
+        ]
+      }
+    },
     "/books/author/{authorId}": {
       "get": {
         "operationId": "BooksController_getBooksByAuthor",
@@ -924,7 +1187,7 @@
             "description": "Book updated successfully"
           }
         },
-        "summary": "Update a book (only draft status)",
+        "summary": "Update a draft or rejected book",
         "tags": [
           "Books",
           "Author",
@@ -1298,6 +1561,58 @@
           "Statistics"
         ]
       }
+    },
+    "/library": {
+      "get": {
+        "operationId": "LibraryController_getLibrary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Purchased ebooks and audiobooks"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get the logged-in user's purchased digital books",
+        "tags": [
+          "Library"
+        ]
+      }
+    },
+    "/library/{orderItemId}/access": {
+      "post": {
+        "operationId": "LibraryController_getAccess",
+        "parameters": [
+          {
+            "name": "orderItemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Five-minute signed access URL"
+          },
+          "404": {
+            "description": "Purchased item or file not found"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a short-lived URL for a purchased file",
+        "tags": [
+          "Library"
+        ]
+      }
     }
   },
   "info": {
@@ -1406,6 +1721,23 @@
           "email"
         ]
       },
+      "VerifyPasswordResetOtpRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "john@example.com"
+          },
+          "otp": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "required": [
+          "email",
+          "otp"
+        ]
+      },
       "ResetPasswordRequest": {
         "type": "object",
         "properties": {
@@ -1471,6 +1803,18 @@
         "required": [
           "email",
           "code"
+        ]
+      },
+      "ResendVerificationRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "john@example.com"
+          }
+        },
+        "required": [
+          "email"
         ]
       },
       "GoogleTokenRequest": {

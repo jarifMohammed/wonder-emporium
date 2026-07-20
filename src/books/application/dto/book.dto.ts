@@ -92,6 +92,7 @@ export interface CreateBookInput {
 }
 
 export interface UpdateBookInput {
+  isAdmin?: boolean;
   title?: string;
   description?: string;
   bookCover?: string;

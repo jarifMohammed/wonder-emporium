@@ -1,10 +1,12 @@
 import {
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
   Patch,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,6 +19,8 @@ import { RolesGuard } from '../../../common/guards/roles.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../interfaces/auth.interface';
 import { UpdateUserStatusUseCase } from '../../application/services/update-user-status.use-case';
+import { GetAdminAuthorsUseCase } from '../../application/services/get-admin-authors.use-case';
+import { AdminAuthorQuery } from '../dto/auth.request.dto';
 
 @ApiTags('Admin Users')
 @Controller('admin/users')
@@ -26,7 +30,23 @@ import { UpdateUserStatusUseCase } from '../../application/services/update-user-
 export class AdminUsersController {
   constructor(
     private readonly updateUserStatusUseCase: UpdateUserStatusUseCase,
+    private readonly getAdminAuthorsUseCase: GetAdminAuthorsUseCase,
   ) {}
+
+  @Get('authors')
+  @ApiOperation({ summary: 'Get all authors with filtering and pagination' })
+  @ApiResponse({ status: 200, description: 'Paginated author list' })
+  getAuthors(@Query() query: AdminAuthorQuery) {
+    return this.getAdminAuthorsUseCase.list(query);
+  }
+
+  @Get('authors/:id')
+  @ApiOperation({ summary: 'Get a single author' })
+  @ApiResponse({ status: 200, description: 'Author details' })
+  @ApiResponse({ status: 404, description: 'Author not found' })
+  getAuthor(@Param('id') id: string) {
+    return this.getAdminAuthorsUseCase.getById(id);
+  }
 
   @Patch(':id/approve')
   @HttpCode(HttpStatus.OK)

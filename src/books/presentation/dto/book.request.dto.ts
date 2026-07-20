@@ -164,6 +164,14 @@ export class CreateBookRequest {
   @ValidateNested({ each: true })
   @Type(() => BookFormatDto)
   @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (typeof value !== 'string') return value;
+    try {
+      return JSON.parse(value) as BookFormatDto[];
+    } catch {
+      return value;
+    }
+  })
   formats?: BookFormatDto[];
 
   @ApiPropertyOptional({ example: 7.0 })
@@ -182,6 +190,14 @@ export class CreateBookRequest {
   @ValidateNested()
   @Type(() => PrintEditionDto)
   @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (typeof value !== 'string') return value;
+    try {
+      return JSON.parse(value) as PrintEditionDto;
+    } catch {
+      return value;
+    }
+  })
   printEdition?: PrintEditionDto;
 }
 
@@ -238,6 +254,14 @@ export class UpdateBookRequest {
   @ValidateNested({ each: true })
   @Type(() => BookFormatDto)
   @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (typeof value !== 'string') return value;
+    try {
+      return JSON.parse(value) as BookFormatDto[];
+    } catch {
+      return value;
+    }
+  })
   formats?: BookFormatDto[];
 
   @ApiPropertyOptional({ example: 7.0 })
@@ -256,6 +280,14 @@ export class UpdateBookRequest {
   @ValidateNested()
   @Type(() => PrintEditionDto)
   @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (typeof value !== 'string') return value;
+    try {
+      return JSON.parse(value) as PrintEditionDto;
+    } catch {
+      return value;
+    }
+  })
   printEdition?: PrintEditionDto;
 }
 

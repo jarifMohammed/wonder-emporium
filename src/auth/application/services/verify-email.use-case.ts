@@ -16,7 +16,8 @@ export class VerifyEmailUseCase {
   ) {}
 
   async execute(email: string, code: string): Promise<{ message: string }> {
-    const valid = await this.otpStore.verify(email, code);
+    const otpKey = `verification:${email}`;
+    const valid = await this.otpStore.verify(otpKey, code);
     if (!valid) {
       throw AppError.badRequest('Invalid or expired verification code');
     }
@@ -33,7 +34,7 @@ export class VerifyEmailUseCase {
     await this.userRepository.update(user.id, {
       verified: true,
     } as Partial<AuthUser>);
-    await this.otpStore.delete(email);
+    await this.otpStore.delete(otpKey);
 
     return { message: 'Email verified successfully' };
   }

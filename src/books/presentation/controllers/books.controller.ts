@@ -26,6 +26,8 @@ import {
 } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { AuthGuard } from '../../../common/guards/auth.guard';
+import { RolesGuard } from '../../../common/guards/roles.guard';
+import { OptionalAuthGuard } from '../../../common/guards/optional-auth.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../../auth/interfaces/auth.interface';
 
@@ -44,7 +46,10 @@ import {
   BookQueryParams,
   ApproveBookRequest,
 } from '../dto/book.request.dto';
-import { BookFileType } from '../../domain/interfaces/book.interface';
+import {
+  BookFileType,
+  BookStatus,
+} from '../../domain/interfaces/book.interface';
 
 @ApiTags('Books', 'Author', 'Admin')
 @Controller('books')
@@ -61,8 +66,8 @@ export class BooksController {
   ) {}
 
   @Post()
-  @UseGuards(AuthGuard)
-  @Roles(userRole.AUTHOR, userRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.AUTHOR, userRole.ADMIN, userRole.SUPERADMIN)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'bookCover', maxCount: 1 },
@@ -189,12 +194,22 @@ export class BooksController {
   }
 
   @Get('pending')
-  @UseGuards(AuthGuard)
-  @Roles(userRole.ADMIN, userRole.MODERATOR)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.ADMIN, userRole.SUPERADMIN, userRole.MODERATOR)
   @ApiOperation({ summary: 'Get all pending (submitted) books for review' })
   @ApiResponse({ status: 200, description: 'List of pending books' })
   async getPendingBooks(@Query() query: BookQueryParams) {
     return this.getBooksUseCase.getPending(query);
+  }
+
+  @Get('mine')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.AUTHOR, userRole.ADMIN, userRole.SUPERADMIN)
+  @ApiOperation({ summary: 'Get all books owned by the current author' })
+  @ApiResponse({ status: 200, description: 'Paginated author book list' })
+  async getMyBooks(@Req() req: Request, @Query() query: BookQueryParams) {
+    const user = (req as unknown as { user: { id: string } }).user;
+    return this.getBooksUseCase.getByAuthor(user.id, query);
   }
 
   @Get('author/:authorId')
@@ -204,21 +219,26 @@ export class BooksController {
     @Param('authorId') authorId: string,
     @Query() query: BookQueryParams,
   ) {
-    return this.getBooksUseCase.getByAuthor(authorId, query);
+    return this.getBooksUseCase.getByAuthor(authorId, {
+      ...query,
+      status: BookStatus.APPROVED,
+    });
   }
 
   @Get(':id')
+  @UseGuards(OptionalAuthGuard)
   @ApiOperation({ summary: 'Get a single book by ID' })
   @ApiResponse({ status: 200, description: 'Book details' })
   @ApiResponse({ status: 404, description: 'Book not found' })
   async getBook(@Param('id') id: string, @Req() req: Request) {
-    const user = (req as unknown as { user?: { id: string } })?.user;
-    return this.getBookUseCase.execute(id, user?.id);
+    const user = (req as unknown as { user?: { id: string; role: userRole } })
+      .user;
+    return this.getBookUseCase.execute(id, user);
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @Roles(userRole.AUTHOR, userRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.AUTHOR, userRole.ADMIN, userRole.SUPERADMIN)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'bookCover', maxCount: 1 },
@@ -230,7 +250,7 @@ export class BooksController {
       { name: 'coverPdf', maxCount: 1 },
     ]),
   )
-  @ApiOperation({ summary: 'Update a book (only draft status)' })
+  @ApiOperation({ summary: 'Update a draft or rejected book' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description:
@@ -244,7 +264,8 @@ export class BooksController {
     @UploadedFiles() files: { [fieldname: string]: Express.Multer.File[] },
     @Body() body: UpdateBookRequest,
   ) {
-    const user = (req as unknown as { user: { id: string } }).user;
+    const user = (req as unknown as { user: { id: string; role: userRole } })
+      .user;
     const uploadedFiles = await this.s3Storage.uploadBookFiles(
       files || {},
       user.id,
@@ -309,12 +330,14 @@ export class BooksController {
       publicationDetails: body.publicationDetails,
       files: inputFiles,
       printEdition: body.printEdition,
+      isAdmin:
+        user.role === userRole.ADMIN || user.role === userRole.SUPERADMIN,
     });
   }
 
   @Patch(':id/submit')
-  @UseGuards(AuthGuard)
-  @Roles(userRole.AUTHOR, userRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.AUTHOR, userRole.ADMIN, userRole.SUPERADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Submit a draft book for review' })
   @ApiResponse({ status: 200, description: 'Book submitted for review' })
@@ -324,8 +347,8 @@ export class BooksController {
   }
 
   @Patch(':id/approve')
-  @UseGuards(AuthGuard)
-  @Roles(userRole.ADMIN, userRole.MODERATOR)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.ADMIN, userRole.SUPERADMIN, userRole.MODERATOR)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Approve or reject a submitted book' })
   @ApiBody({ type: ApproveBookRequest })
@@ -335,13 +358,18 @@ export class BooksController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @Roles(userRole.AUTHOR, userRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.AUTHOR, userRole.ADMIN, userRole.SUPERADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete a book' })
   @ApiResponse({ status: 200, description: 'Book deleted successfully' })
   async deleteBook(@Param('id') id: string, @Req() req: Request) {
-    const user = (req as unknown as { user: { id: string } }).user;
-    return this.deleteBookUseCase.execute(id, user.id);
+    const user = (req as unknown as { user: { id: string; role: userRole } })
+      .user;
+    return this.deleteBookUseCase.execute(
+      id,
+      user.id,
+      user.role === userRole.ADMIN || user.role === userRole.SUPERADMIN,
+    );
   }
 }

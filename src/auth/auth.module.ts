@@ -13,6 +13,9 @@ import { RefreshTokenUseCase } from './application/services/refresh-token.use-ca
 import { VerifyEmailUseCase } from './application/services/verify-email.use-case';
 import { GoogleOAuthUseCase } from './application/services/google-oauth.use-case';
 import { UpdateUserStatusUseCase } from './application/services/update-user-status.use-case';
+import { ResendVerificationUseCase } from './application/services/resend-verification.use-case';
+import { GetAdminAuthorsUseCase } from './application/services/get-admin-authors.use-case';
+import { VerifyPasswordResetOtpUseCase } from './application/services/verify-password-reset-otp.use-case';
 
 import { PrismaAuthUserRepository } from './infrastructure/persistence/prisma-auth-user.repository';
 import { PrismaOtpStore } from './infrastructure/persistence/prisma-otp.store';
@@ -67,6 +70,9 @@ import { AppConfigService } from '../common/config/app-config.service';
     VerifyEmailUseCase,
     GoogleOAuthUseCase,
     UpdateUserStatusUseCase,
+    ResendVerificationUseCase,
+    GetAdminAuthorsUseCase,
+    VerifyPasswordResetOtpUseCase,
 
     // Infrastructure
     PrismaAuthUserRepository,

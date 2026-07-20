@@ -5,8 +5,14 @@ import {
   IsNotEmpty,
   IsString,
   MinLength,
+  IsIn,
+  IsInt,
+  IsOptional,
+  Max,
+  Min,
 } from 'class-validator';
 import { userRole } from '../../interfaces/auth.interface';
+import { Type } from 'class-transformer';
 
 export class RegisterRequest {
   @ApiProperty({ example: 'John' })
@@ -73,6 +79,18 @@ export class ResetPasswordRequest {
   password: string;
 }
 
+export class VerifyPasswordResetOtpRequest {
+  @ApiProperty({ example: 'john@example.com' })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({ example: '123456' })
+  @IsString()
+  @IsNotEmpty()
+  otp: string;
+}
+
 export class ChangePasswordRequest {
   @ApiProperty({ example: 'OldPass123!' })
   @IsString()
@@ -110,4 +128,38 @@ export class VerifyEmailRequest {
   @IsString()
   @IsNotEmpty()
   code: string;
+}
+
+export class ResendVerificationRequest {
+  @ApiProperty({ example: 'john@example.com' })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+}
+
+export class AdminAuthorQuery {
+  @ApiProperty({ required: false, enum: ['ACTIVE', 'INACTIVE', 'SUSPENDED'] })
+  @IsIn(['ACTIVE', 'INACTIVE', 'SUSPENDED'])
+  @IsOptional()
+  status?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  search?: string;
+
+  @ApiProperty({ required: false, default: 1 })
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  @Type(() => Number)
+  page?: number;
+
+  @ApiProperty({ required: false, default: 20 })
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  @IsOptional()
+  @Type(() => Number)
+  limit?: number;
 }

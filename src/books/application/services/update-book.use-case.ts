@@ -28,12 +28,12 @@ export class UpdateBookUseCase {
       throw AppError.notFound('Book not found');
     }
 
-    if (existing.book.authorId !== userId) {
+    if (existing.book.authorId !== userId && !input.isAdmin) {
       throw AppError.forbidden('You can only update your own books');
     }
 
-    if (!existing.book.isDraft()) {
-      throw AppError.badRequest('Only draft books can be edited');
+    if (!existing.book.isEditable()) {
+      throw AppError.badRequest('Only draft or rejected books can be edited');
     }
 
     const result = await this.bookRepository.update(id, {

@@ -23,7 +23,8 @@ export class ResetPasswordUseCase {
     otp: string,
     newPassword: string,
   ): Promise<{ message: string }> {
-    const valid = await this.otpStore.verify(email, otp);
+    const otpKey = `password-reset:${email}`;
+    const valid = await this.otpStore.verify(otpKey, otp);
     if (!valid) {
       throw AppError.badRequest('Invalid or expired OTP');
     }
@@ -40,7 +41,7 @@ export class ResetPasswordUseCase {
     await this.userRepository.updateSecurity(user.id, {
       lastPasswordChange: new Date(),
     });
-    await this.otpStore.delete(email);
+    await this.otpStore.delete(otpKey);
 
     return { message: 'Password reset successfully' };
   }

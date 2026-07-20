@@ -4,6 +4,7 @@ import type { IBookRepository } from '../../domain/interfaces/book.repository.in
 import { BookFileType } from '../../domain/interfaces/book.interface';
 import { AppError } from '../../../common/errors/app.error';
 import { BookOutput } from '../dto/book.dto';
+import { userRole } from '../../../auth/interfaces/auth.interface';
 
 @Injectable()
 export class GetBookUseCase {
@@ -12,9 +13,21 @@ export class GetBookUseCase {
     private readonly bookRepository: IBookRepository,
   ) {}
 
-  async execute(id: string, userId?: string): Promise<BookOutput> {
+  async execute(
+    id: string,
+    requester?: { id: string; role: userRole },
+  ): Promise<BookOutput> {
     const result = await this.bookRepository.findById(id);
     if (!result) {
+      throw AppError.notFound('Book not found');
+    }
+
+    const canViewPrivate =
+      requester?.id === result.book.authorId ||
+      requester?.role === userRole.ADMIN ||
+      requester?.role === userRole.SUPERADMIN ||
+      requester?.role === userRole.MODERATOR;
+    if (!result.book.isApproved() && !canViewPrivate) {
       throw AppError.notFound('Book not found');
     }
 
@@ -24,7 +37,7 @@ export class GetBookUseCase {
     );
     const printEdition = (result.book as any).printEdition;
     const isPrintEnabled = printEdition?.enabled === true;
-    const isAuthorOrAdmin = userId && userId === result.book.authorId;
+    const isAuthorOrAdmin = canViewPrivate;
 
     const output: BookOutput = {
       id: result.book.id,

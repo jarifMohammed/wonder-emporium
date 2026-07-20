@@ -11,6 +11,7 @@ import { GoogleOAuthStrategy } from '../../infrastructure/oauth/google-oauth.str
 import { userRole } from '../../interfaces/auth.interface';
 import type { AuthTokens, AuthUserOutput } from '../dto/auth.dto';
 import { AuthUser } from '../../domain/entities/auth-user.entity';
+import { AppError } from '../../../common/errors/app.error';
 
 @Injectable()
 export class GoogleOAuthUseCase {
@@ -56,6 +57,10 @@ export class GoogleOAuthUseCase {
     tokens: AuthTokens;
     user: AuthUserOutput;
   } {
+    if (!authUser.isActive()) {
+      throw AppError.unauthorized('Account is not active');
+    }
+
     const tokens = this.generateTokens(
       authUser.id,
       authUser.email,

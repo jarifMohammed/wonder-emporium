@@ -7,7 +7,7 @@ import { OtpGenerator } from '../../infrastructure/security/otp-generator';
 import { EmailService } from '../../../common/services/email.service';
 
 @Injectable()
-export class ForgotPasswordUseCase {
+export class ResendVerificationUseCase {
   constructor(
     @Inject(AUTH_USER_REPOSITORY_TOKEN)
     private readonly userRepository: IAuthUserRepository,
@@ -19,15 +19,13 @@ export class ForgotPasswordUseCase {
 
   async execute(email: string): Promise<{ message: string }> {
     const user = await this.userRepository.findByEmail(email);
-    if (!user) {
-      return { message: 'If the email exists, a reset code has been sent.' };
+    if (!user || user.isVerified()) {
+      return { message: 'If verification is required, a code has been sent.' };
     }
 
-    const otp = this.otpGenerator.generate(6);
-    await this.otpStore.save(`password-reset:${email}`, otp, 600);
-
-    await this.emailService.sendPasswordResetEmail(email, user.username, otp);
-
-    return { message: 'If the email exists, a reset code has been sent.' };
+    const code = this.otpGenerator.generate(6);
+    await this.otpStore.save(`verification:${email}`, code, 600);
+    await this.emailService.sendVerificationEmail(email, user.username, code);
+    return { message: 'If verification is required, a code has been sent.' };
   }
 }

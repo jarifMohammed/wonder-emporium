@@ -24,6 +24,12 @@ export class Book {
     return this.status === BookStatus.DRAFT;
   }
 
+  isEditable(): boolean {
+    return (
+      this.status === BookStatus.DRAFT || this.status === BookStatus.REJECTED
+    );
+  }
+
   isPendingReview(): boolean {
     return this.status === BookStatus.SUBMITTED;
   }
@@ -33,7 +39,7 @@ export class Book {
   }
 
   canSubmitForReview(): boolean {
-    return this.status === BookStatus.DRAFT;
+    return this.isEditable();
   }
 
   canApprove(): boolean {

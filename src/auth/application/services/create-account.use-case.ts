@@ -10,6 +10,10 @@ import type { IAuthUserRepository } from '../../domain/interfaces/auth-user.repo
 import { userRole } from '../../interfaces/auth.interface';
 import { AppError } from '../../../common/errors/app.error';
 import type { AuthTokens, AuthUserOutput } from '../dto/auth.dto';
+import { OTP_STORE_TOKEN } from '../../domain/interfaces/otp-store.interface';
+import type { IOtpStore } from '../../domain/interfaces/otp-store.interface';
+import { OtpGenerator } from '../../infrastructure/security/otp-generator';
+import { EmailService } from '../../../common/services/email.service';
 
 export interface RegisterInput {
   firstName: string;
@@ -30,6 +34,10 @@ export class CreateAccountUseCase {
     private readonly config: IAppConfig,
     @Inject(AUTH_USER_REPOSITORY_TOKEN)
     private readonly userRepository: IAuthUserRepository,
+    @Inject(OTP_STORE_TOKEN)
+    private readonly otpStore: IOtpStore,
+    private readonly otpGenerator: OtpGenerator,
+    private readonly emailService: EmailService,
   ) {}
 
   async execute(
@@ -77,6 +85,33 @@ export class CreateAccountUseCase {
       input.lastName,
     );
     await this.userRepository.createSecurity(authUser.id);
+
+    const verificationCode = this.otpGenerator.generate(6);
+    await this.otpStore.save(
+      `verification:${authUser.email}`,
+      verificationCode,
+      600,
+    );
+    await this.emailService.sendVerificationEmail(
+      authUser.email,
+      authUser.username,
+      verificationCode,
+    );
+
+    if (input.role === userRole.AUTHOR) {
+      await Promise.all([
+        this.emailService.sendAuthorPendingApprovalEmail(
+          authUser.email,
+          authUser.username,
+        ),
+        this.emailService.sendNewAuthorAdminNotificationEmail({
+          authorId: authUser.id,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: authUser.email,
+        }),
+      ]);
+    }
 
     const tokens = this.generateTokens(
       authUser.id,

@@ -19,6 +19,7 @@ import { PrismaBookRepository } from './infrastructure/persistence/prisma-book.r
 import { S3FileStorageService } from './infrastructure/storage/s3-file-storage.service';
 
 import { BOOK_REPOSITORY_TOKEN } from './domain/interfaces/book.repository.interface';
+import { OptionalAuthGuard } from '../common/guards/optional-auth.guard';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { BOOK_REPOSITORY_TOKEN } from './domain/interfaces/book.repository.inter
     SubmitBookUseCase,
     ApproveBookUseCase,
     DeleteBookUseCase,
+    OptionalAuthGuard,
   ],
   exports: [S3FileStorageService],
 })

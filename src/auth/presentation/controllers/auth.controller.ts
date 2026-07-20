@@ -27,6 +27,8 @@ import { RefreshTokenUseCase } from '../../application/services/refresh-token.us
 import { VerifyEmailUseCase } from '../../application/services/verify-email.use-case';
 import { GoogleOAuthUseCase } from '../../application/services/google-oauth.use-case';
 import { GoogleOAuthStrategy } from '../../infrastructure/oauth/google-oauth.strategy';
+import { ResendVerificationUseCase } from '../../application/services/resend-verification.use-case';
+import { VerifyPasswordResetOtpUseCase } from '../../application/services/verify-password-reset-otp.use-case';
 
 import {
   RegisterRequest,
@@ -37,6 +39,8 @@ import {
   RefreshTokenRequest,
   GoogleTokenRequest,
   VerifyEmailRequest,
+  ResendVerificationRequest,
+  VerifyPasswordResetOtpRequest,
 } from '../dto/auth.request.dto';
 
 import config from '../../../common/config/app.config';
@@ -55,6 +59,8 @@ export class AuthController {
     private readonly verifyEmailUseCase: VerifyEmailUseCase,
     private readonly googleOAuthUseCase: GoogleOAuthUseCase,
     private readonly googleOAuthStrategy: GoogleOAuthStrategy,
+    private readonly resendVerificationUseCase: ResendVerificationUseCase,
+    private readonly verifyPasswordResetOtpUseCase: VerifyPasswordResetOtpUseCase,
   ) {}
 
   @Post('register')
@@ -103,8 +109,27 @@ export class AuthController {
     return this.forgotPasswordUseCase.execute(body.email);
   }
 
+  @Post('resend-password-reset')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @ApiOperation({ summary: 'Resend password reset OTP' })
+  @ApiResponse({ status: 200, description: 'OTP sent if email exists' })
+  async resendPasswordReset(@Body() body: ForgotPasswordRequest) {
+    return this.forgotPasswordUseCase.execute(body.email);
+  }
+
+  @Post('verify-password-reset-otp')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @ApiOperation({ summary: 'Verify a password reset OTP' })
+  @ApiResponse({ status: 200, description: 'OTP verified successfully' })
+  async verifyPasswordResetOtp(@Body() body: VerifyPasswordResetOtpRequest) {
+    return this.verifyPasswordResetOtpUseCase.execute(body.email, body.otp);
+  }
+
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Reset password with OTP' })
   @ApiResponse({ status: 200, description: 'Password reset successfully' })
   async resetPassword(@Body() body: ResetPasswordRequest) {
@@ -142,10 +167,23 @@ export class AuthController {
 
   @Post('verify-email')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Verify email with code' })
   @ApiResponse({ status: 200, description: 'Email verified successfully' })
   async verifyEmail(@Body() body: VerifyEmailRequest) {
     return this.verifyEmailUseCase.execute(body.email, body.code);
+  }
+
+  @Post('resend-verification')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @ApiOperation({ summary: 'Resend email verification code' })
+  @ApiResponse({
+    status: 200,
+    description: 'Code sent if verification is required',
+  })
+  async resendVerification(@Body() body: ResendVerificationRequest) {
+    return this.resendVerificationUseCase.execute(body.email);
   }
 
   @Post('google')

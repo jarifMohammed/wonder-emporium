@@ -4,6 +4,9 @@ import { PrismaService } from '../../../common/services/prisma.service';
 import {
   IAuthUserRepository,
   AuthSecurityData,
+  AdminAuthorFilters,
+  AdminAuthorRecord,
+  PaginatedAdminAuthors,
 } from '../../domain/interfaces/auth-user.repository.interface';
 import { CreateAuthUserData } from '../../domain/interfaces/auth-user.repository.interface';
 import { AuthUser } from '../../domain/entities/auth-user.entity';
@@ -178,6 +181,108 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
         failureReason: data.failureReason,
       },
     });
+  }
+
+  async findAuthors(
+    filters: AdminAuthorFilters,
+  ): Promise<PaginatedAdminAuthors> {
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 20;
+    const where = {
+      role: $Enums.UserRole.AUTHOR,
+      deletedAt: null,
+      ...(filters.status
+        ? { status: filters.status as $Enums.UserStatus }
+        : {}),
+      ...(filters.search
+        ? {
+            OR: [
+              {
+                email: {
+                  contains: filters.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                username: {
+                  contains: filters.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                userProfile: {
+                  is: {
+                    OR: [
+                      {
+                        firstName: {
+                          contains: filters.search,
+                          mode: 'insensitive' as const,
+                        },
+                      },
+                      {
+                        lastName: {
+                          contains: filters.search,
+                          mode: 'insensitive' as const,
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          }
+        : {}),
+    };
+
+    const [authors, total] = await Promise.all([
+      this.prisma.authUser.findMany({
+        where,
+        include: { userProfile: true, _count: { select: { books: true } } },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.authUser.count({ where }),
+    ]);
+
+    return {
+      authors: authors.map((author) => this.toAdminAuthor(author)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async findAuthorDetails(id: string): Promise<AdminAuthorRecord | null> {
+    const author = await this.prisma.authUser.findFirst({
+      where: { id, role: $Enums.UserRole.AUTHOR, deletedAt: null },
+      include: { userProfile: true, _count: { select: { books: true } } },
+    });
+    return author ? this.toAdminAuthor(author) : null;
+  }
+
+  private toAdminAuthor(author: any): AdminAuthorRecord {
+    return {
+      id: author.id,
+      email: author.email,
+      username: author.username,
+      role: author.role as userRole,
+      verified: author.verified,
+      status: author.status,
+      isFoundingAuthor: author.isFoundingAuthor,
+      createdAt: author.createdAt,
+      updatedAt: author.updatedAt,
+      profile: author.userProfile
+        ? {
+            firstName: author.userProfile.firstName,
+            lastName: author.userProfile.lastName,
+            bio: author.userProfile.bio,
+            avatarUrl: author.userProfile.avatarUrl,
+          }
+        : null,
+      bookCount: author._count.books,
+    };
   }
 
   private toDomain(user: PrismaAuthUser): AuthUser {

@@ -1,7 +1,7 @@
 {
   "item": [
     {
-      "id": "f20d67a3-de66-4de6-a3d6-356cb5d17aaa",
+      "id": "a73cd71e-a416-4825-983f-7e4702c755d3",
       "name": "auth",
       "description": {
         "content": "Authentication and authorization endpoints",
@@ -11,7 +11,7 @@
       "event": []
     },
     {
-      "id": "621092ce-6b0b-437d-9e0f-1f852b8f44e9",
+      "id": "7cb3d857-f250-43d3-ae36-a98272c344c5",
       "name": "health",
       "description": {
         "content": "Health check endpoints",
@@ -21,7 +21,7 @@
       "event": []
     },
     {
-      "id": "97841796-ad2b-4d56-adcb-8fd48ff6093d",
+      "id": "72e1ba68-fe92-4d09-b567-c8c2fa18645f",
       "name": "metrics",
       "description": {
         "content": "Metrics and monitoring endpoints",
@@ -29,7 +29,7 @@
       },
       "item": [
         {
-          "id": "76532e97-0602-43ff-8d24-1fe3ad3c4e7c",
+          "id": "b75e2559-91f5-4118-8938-8deffd2c23ea",
           "name": "Get metrics in JSON format",
           "request": {
             "name": "Get metrics in JSON format",
@@ -50,7 +50,7 @@
           },
           "response": [
             {
-              "id": "aa303e9f-3ed3-4fff-8218-97c36ad4bf27",
+              "id": "bcf79f74-83f8-42e4-992a-11843a04c0b8",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -88,7 +88,7 @@
       "event": []
     },
     {
-      "id": "3b99bc2d-c3fa-42a0-a130-c09e6fd4f2d5",
+      "id": "e79445bd-f1dc-473b-a02e-c9e003f3a699",
       "name": "App",
       "description": {
         "content": "",
@@ -96,7 +96,7 @@
       },
       "item": [
         {
-          "id": "7f979f3a-dfa2-44c9-a909-0a7e558e6021",
+          "id": "e7148221-31f0-4d2c-afa9-6fa9cd6293a6",
           "name": "Health check endpoint",
           "request": {
             "name": "Health check endpoint",
@@ -116,7 +116,7 @@
           },
           "response": [
             {
-              "id": "928e87b5-12a3-4eef-b286-20769a368cd2",
+              "id": "f9993763-526b-42d5-9669-0c66a8a2a2a8",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -150,7 +150,7 @@
           }
         },
         {
-          "id": "3cfe8678-c5da-444f-8af6-ce7750f61c2b",
+          "id": "9ad3a77f-2b0b-4542-9426-727c8219523b",
           "name": "Liveness probe",
           "request": {
             "name": "Liveness probe",
@@ -170,7 +170,7 @@
           },
           "response": [
             {
-              "id": "4dda1709-2515-4867-9d7a-8af31a2506fe",
+              "id": "ce000ede-6835-4387-aa31-86bb599a8847",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -204,7 +204,7 @@
           }
         },
         {
-          "id": "ee21d426-092f-479b-8713-315233dfa9fd",
+          "id": "befee701-326b-4c68-9a51-bdc2b41bdbf6",
           "name": "Readiness probe",
           "request": {
             "name": "Readiness probe",
@@ -224,7 +224,7 @@
           },
           "response": [
             {
-              "id": "4f9d5d54-3855-428c-8b73-20091e4fd60b",
+              "id": "00389719-e00e-4d80-964d-09611f66454d",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -258,7 +258,7 @@
           }
         },
         {
-          "id": "92f211d3-f895-4e22-9492-f102571ac1a2",
+          "id": "8077d37b-0553-4bda-92c5-8f127dce7659",
           "name": "Contact Us endpoint (User/Author to Admin)",
           "request": {
             "name": "Contact Us endpoint (User/Author to Admin)",
@@ -293,7 +293,7 @@
           },
           "response": [
             {
-              "id": "b8426c48-d7e1-4c82-9a7d-e9e86edb16c9",
+              "id": "6728d64f-137b-43c3-8524-628c8ebc421a",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -338,7 +338,7 @@
       "event": []
     },
     {
-      "id": "1f30ae40-09e0-4599-b2ff-fb1ed0763c33",
+      "id": "67462291-4262-4333-8e26-3d3954c78e24",
       "name": "Users",
       "description": {
         "content": "",
@@ -346,7 +346,7 @@
       },
       "item": [
         {
-          "id": "62fbcac1-5997-4fd9-a212-7b5f9e786a9d",
+          "id": "8f50cf93-eded-4634-852c-aba20af560ab",
           "name": "Create a new account",
           "request": {
             "name": "Create a new account",
@@ -385,7 +385,7 @@
           },
           "response": [
             {
-              "id": "6bc348c5-14c1-4fda-9303-0325dc78f3c5",
+              "id": "a8b53b18-0938-4434-a4d1-4fd1fe3efb45",
               "name": "Account created successfully",
               "originalRequest": {
                 "url": {
@@ -423,7 +423,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "0bb0a483-64b1-407c-9d6e-3541877c16a2",
+              "id": "7c27c042-3c35-47ac-ab2e-5ad56ee7fdd9",
               "name": "Email already registered",
               "originalRequest": {
                 "url": {
@@ -467,7 +467,7 @@
           }
         },
         {
-          "id": "e8f044b5-2d93-42e4-84be-c26023e4a99d",
+          "id": "f28f93d9-c1a8-4ecd-a908-55532fb78fae",
           "name": "Login with email and password",
           "request": {
             "name": "Login with email and password",
@@ -506,7 +506,7 @@
           },
           "response": [
             {
-              "id": "be996ce7-b258-4b4b-b02c-7deafb37f455",
+              "id": "8d8adfbf-d78f-4617-a32c-8a15eb6cbfb4",
               "name": "Login successful",
               "originalRequest": {
                 "url": {
@@ -550,7 +550,7 @@
           }
         },
         {
-          "id": "5722eeaa-8215-4259-b361-ae2841584b76",
+          "id": "196bd2ec-13fe-4153-9394-19211be44396",
           "name": "Request password reset OTP",
           "request": {
             "name": "Request password reset OTP",
@@ -586,7 +586,7 @@
           },
           "response": [
             {
-              "id": "411580c1-e4eb-44fd-a2e3-1c04f09a45a9",
+              "id": "bea58349-9866-48c0-aadc-48fa94de63c7",
               "name": "OTP sent if email exists",
               "originalRequest": {
                 "url": {
@@ -630,7 +630,167 @@
           }
         },
         {
-          "id": "4428274f-6449-492f-9752-d84159102045",
+          "id": "a64def7a-9796-48aa-b74f-041aac3ad80c",
+          "name": "Resend password reset OTP",
+          "request": {
+            "name": "Resend password reset OTP",
+            "description": {},
+            "url": {
+              "path": [
+                "auth",
+                "resend-password-reset"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "de680769-b5d5-4322-afd1-2fafe36b01ce",
+              "name": "OTP sent if email exists",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "auth",
+                    "resend-password-reset"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b521ad8f-66b3-44c1-9939-8071543f98e2",
+          "name": "Verify a password reset OTP",
+          "request": {
+            "name": "Verify a password reset OTP",
+            "description": {},
+            "url": {
+              "path": [
+                "auth",
+                "verify-password-reset-otp"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"<string>\",\n  \"otp\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "56828859-c71e-43ee-98cd-c1bbfd5f8aa3",
+              "name": "OTP verified successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "auth",
+                    "verify-password-reset-otp"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john@example.com\",\n  \"otp\": \"123456\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "aab29ada-f8b6-40eb-8d07-39c54d52ef70",
           "name": "Reset password with OTP",
           "request": {
             "name": "Reset password with OTP",
@@ -666,7 +826,7 @@
           },
           "response": [
             {
-              "id": "8806fc3e-c281-4052-ad71-6d3b5b00efdc",
+              "id": "dc690b7f-1b3b-4265-b850-b0aafe26bd3a",
               "name": "Password reset successfully",
               "originalRequest": {
                 "url": {
@@ -710,7 +870,7 @@
           }
         },
         {
-          "id": "2e2ac96d-7f0c-47f5-be34-080cb8717ddf",
+          "id": "1c601f01-8244-4742-a350-23bf94663612",
           "name": "Change password (authenticated)",
           "request": {
             "name": "Change password (authenticated)",
@@ -746,7 +906,7 @@
           },
           "response": [
             {
-              "id": "c222e6b4-ca18-4981-a6a4-dfdea540a7be",
+              "id": "d1c47a51-6c6c-4876-813d-b7ef1fdf543a",
               "name": "Password changed successfully",
               "originalRequest": {
                 "url": {
@@ -790,7 +950,7 @@
           }
         },
         {
-          "id": "40db87e2-8854-483e-bac9-38203cbf1236",
+          "id": "65d76a7a-cb13-455d-89f8-c45977c8745b",
           "name": "Refresh access token",
           "request": {
             "name": "Refresh access token",
@@ -826,7 +986,7 @@
           },
           "response": [
             {
-              "id": "0d7aa1d1-b4eb-4fc5-a600-ba81feb50a89",
+              "id": "46bc42cd-3304-49bc-b2cb-46a4fb1679c1",
               "name": "Tokens refreshed successfully",
               "originalRequest": {
                 "url": {
@@ -870,7 +1030,7 @@
           }
         },
         {
-          "id": "4d377f7a-00c6-46fa-b99d-6c48f175afc6",
+          "id": "cf759cc3-bee0-4318-ad28-8d354513bf24",
           "name": "Verify email with code",
           "request": {
             "name": "Verify email with code",
@@ -906,7 +1066,7 @@
           },
           "response": [
             {
-              "id": "401b83f2-5ec2-44da-b33d-d286c8d2cfa3",
+              "id": "5b2999c0-6eb7-43f6-9346-816f666cb1cb",
               "name": "Email verified successfully",
               "originalRequest": {
                 "url": {
@@ -950,7 +1110,87 @@
           }
         },
         {
-          "id": "780c91ec-f57d-4eaa-8735-4ca4be5d3f4d",
+          "id": "784a048e-077e-4383-a77e-cf528af59a0e",
+          "name": "Resend email verification code",
+          "request": {
+            "name": "Resend email verification code",
+            "description": {},
+            "url": {
+              "path": [
+                "auth",
+                "resend-verification"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "6eea2e75-e4c8-4c3d-88dc-a86836e15dc3",
+              "name": "Code sent if verification is required",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "auth",
+                    "resend-verification"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2e5e2281-e29c-4d38-89d0-05ec8fbfcb4a",
           "name": "Login or register with Google ID token",
           "request": {
             "name": "Login or register with Google ID token",
@@ -986,7 +1226,7 @@
           },
           "response": [
             {
-              "id": "31044a0b-05e3-4f7d-bb90-2eea7ae840dc",
+              "id": "eb8f455a-783f-4f35-a691-23e4a8d4ed0d",
               "name": "Google authentication successful",
               "originalRequest": {
                 "url": {
@@ -1030,7 +1270,7 @@
           }
         },
         {
-          "id": "034d7506-d660-4191-81aa-e96fe8f42d0a",
+          "id": "b80bbc74-f9f9-4126-912d-73c8418e5a9c",
           "name": "Redirect to Google OAuth consent screen",
           "request": {
             "name": "Redirect to Google OAuth consent screen",
@@ -1051,7 +1291,7 @@
           },
           "response": [
             {
-              "id": "a0148540-6a89-4fb6-b081-29745d4abd18",
+              "id": "bb21e9d3-8e4f-4b5f-9d17-1a8d3c948b16",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -1086,7 +1326,7 @@
           }
         },
         {
-          "id": "cd0dc051-1c06-4e63-850f-40d3254fdeb0",
+          "id": "69e359b5-7b89-4115-89e4-4b4b439b7552",
           "name": "Google OAuth callback",
           "request": {
             "name": "Google OAuth callback",
@@ -1115,7 +1355,7 @@
           },
           "response": [
             {
-              "id": "b50a0302-bb94-43ac-99c0-1a99816bc969",
+              "id": "6fd694db-ca59-4517-9091-a5a51b23814b",
               "name": "Google authentication successful",
               "originalRequest": {
                 "url": {
@@ -1157,7 +1397,7 @@
           }
         },
         {
-          "id": "df22b846-9020-402e-b96c-5cd0122c3f9a",
+          "id": "88a978a9-a658-4038-b8f2-16da682fc298",
           "name": "Logout (invalidate tokens)",
           "request": {
             "name": "Logout (invalidate tokens)",
@@ -1178,7 +1418,7 @@
           },
           "response": [
             {
-              "id": "30651c0d-868c-465a-9e3d-716390411cd6",
+              "id": "cae991ef-daa8-4b2d-a1b7-e46d7f9b23df",
               "name": "Logged out successfully",
               "originalRequest": {
                 "url": {
@@ -1214,7 +1454,7 @@
           }
         },
         {
-          "id": "bdba1002-b33c-4f95-9252-e0485a6f02d1",
+          "id": "dc49484b-8d75-49f8-945d-027f6d836f5e",
           "name": "Get current user profile",
           "request": {
             "name": "Get current user profile",
@@ -1238,7 +1478,7 @@
           },
           "response": [
             {
-              "id": "c9157b67-f48f-45f5-b526-41d8b3429f83",
+              "id": "0e9dccea-0222-4fb9-876e-3556c366b242",
               "name": "Current user profile",
               "originalRequest": {
                 "url": {
@@ -1274,7 +1514,7 @@
           }
         },
         {
-          "id": "29bea93a-e613-457e-aeeb-285dce94d902",
+          "id": "c0fb479c-fca1-470b-bcc5-654855b314ef",
           "name": "Get order history for logged-in user",
           "request": {
             "name": "Get order history for logged-in user",
@@ -1316,7 +1556,7 @@
           },
           "response": [
             {
-              "id": "37da4f4a-d7ac-41af-a411-daf37dbce6ff",
+              "id": "39c9c703-60ad-43f2-8176-a7bf5e702c92",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -1364,7 +1604,7 @@
           }
         },
         {
-          "id": "e31a5ea1-c6a1-473f-93eb-07bdda4f6870",
+          "id": "4bc3dbc8-fb40-4c07-a139-80ab1372f112",
           "name": "Create Stripe Checkout Session for cart items",
           "request": {
             "name": "Create Stripe Checkout Session for cart items",
@@ -1403,7 +1643,7 @@
           },
           "response": [
             {
-              "id": "f655e245-5162-490c-b74c-3370d47a541e",
+              "id": "ae7179e2-77aa-4880-aa32-3dccaac9f91b",
               "name": "Returns a checkout URL",
               "originalRequest": {
                 "url": {
@@ -1450,7 +1690,7 @@
       "event": []
     },
     {
-      "id": "2d717d50-03de-4e16-a46b-f57e100b23ad",
+      "id": "3bd1613a-26c9-4ab3-8c84-caaff8a8513e",
       "name": "Admin Users",
       "description": {
         "content": "",
@@ -1458,7 +1698,267 @@
       },
       "item": [
         {
-          "id": "7d9c92c3-f529-45ef-a419-c070bdf4fe42",
+          "id": "e64cd4d8-fcb9-459c-a85f-e076766f7666",
+          "name": "Get all authors with filtering and pagination",
+          "request": {
+            "name": "Get all authors with filtering and pagination",
+            "description": {},
+            "url": {
+              "path": [
+                "admin",
+                "users",
+                "authors"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "search",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9e99c13a-f008-4d98-ac06-4a0203c5068a",
+              "name": "Paginated author list",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "admin",
+                    "users",
+                    "authors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "search",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1bb020ab-3a65-41ec-9767-54b4428bad80",
+          "name": "Get a single author",
+          "request": {
+            "name": "Get a single author",
+            "description": {},
+            "url": {
+              "path": [
+                "admin",
+                "users",
+                "authors",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "98d77dae-da3c-4f23-a5d7-be2fa8b9812a",
+              "name": "Author details",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "admin",
+                    "users",
+                    "authors",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "dc253560-ee3e-4a43-b43a-b64166df8de2",
+              "name": "Author not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "admin",
+                    "users",
+                    "authors",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8739a79e-ab17-48d9-8bcf-37c287cb4fea",
           "name": "Approve a user (set status to ACTIVE)",
           "request": {
             "name": "Approve a user (set status to ACTIVE)",
@@ -1497,7 +1997,7 @@
           },
           "response": [
             {
-              "id": "ab70b483-95b4-4582-a693-b9ffa2fe782c",
+              "id": "667e1185-28d2-4706-ac06-9d0a3a128dae",
               "name": "User approved successfully",
               "originalRequest": {
                 "url": {
@@ -1553,7 +2053,7 @@
           }
         },
         {
-          "id": "5abc129a-fbae-4f8c-afbb-f62d5b4f0398",
+          "id": "2fe622bc-de29-4fdb-8bce-c01c0695ed94",
           "name": "Suspend a user (set status to SUSPENDED)",
           "request": {
             "name": "Suspend a user (set status to SUSPENDED)",
@@ -1592,7 +2092,7 @@
           },
           "response": [
             {
-              "id": "a70a6231-a88b-4cd5-a6f1-84187ec0e947",
+              "id": "42fa6ae8-a7a9-4364-8e4a-a1e10e07d98f",
               "name": "User suspended successfully",
               "originalRequest": {
                 "url": {
@@ -1651,7 +2151,7 @@
       "event": []
     },
     {
-      "id": "50b87e4a-1b54-4c0a-a022-06d7f0f90aac",
+      "id": "b8e9a241-ea33-4722-88b7-7b6ce1292978",
       "name": "Books",
       "description": {
         "content": "",
@@ -1659,7 +2159,7 @@
       },
       "item": [
         {
-          "id": "3df6474f-a10b-4797-91d4-38083b87615a",
+          "id": "b399723e-01c0-43c5-90b0-9688821abc40",
           "name": "Create a new book (draft or submit for review)",
           "request": {
             "name": "Create a new book (draft or submit for review)",
@@ -1759,7 +2259,7 @@
           },
           "response": [
             {
-              "id": "021bf23a-2a1c-4de1-817a-a4215d623011",
+              "id": "cb76fcea-4d11-47e0-b4ff-de5c09ca51c1",
               "name": "Book created successfully",
               "originalRequest": {
                 "url": {
@@ -1897,7 +2397,7 @@
           }
         },
         {
-          "id": "1ce3e9ba-10df-4497-a585-72f79502ba9a",
+          "id": "b45e576d-ad6e-4783-93a4-03ec6933cc7c",
           "name": "Get all books with filtering, search, and pagination",
           "request": {
             "name": "Get all books with filtering, search, and pagination",
@@ -1978,7 +2478,7 @@
           },
           "response": [
             {
-              "id": "096c8a25-aced-445a-b471-7f5fb84caff5",
+              "id": "fde2aff5-9a65-45de-be46-fa897e3a90b4",
               "name": "List of books",
               "originalRequest": {
                 "url": {
@@ -2062,7 +2562,7 @@
           }
         },
         {
-          "id": "f54a5cd7-baf5-4207-93d5-e237e7cef886",
+          "id": "dfdf4ead-cb29-4fc9-b094-5186a1b2341d",
           "name": "Get all approved/published books",
           "request": {
             "name": "Get all approved/published books",
@@ -2124,7 +2624,7 @@
           },
           "response": [
             {
-              "id": "7275b86b-2f17-4304-a20f-21ccedecb9e7",
+              "id": "4e0a2d6e-6f0b-4f18-9a32-730cb7992d5c",
               "name": "List of approved books",
               "originalRequest": {
                 "url": {
@@ -2193,7 +2693,7 @@
           }
         },
         {
-          "id": "e013b3c8-bbdd-48e1-b3db-89a441ecedbe",
+          "id": "d52fbef0-ef78-4d7b-b192-f1fd241ade9f",
           "name": "Get all pending (submitted) books for review",
           "request": {
             "name": "Get all pending (submitted) books for review",
@@ -2255,7 +2755,7 @@
           },
           "response": [
             {
-              "id": "f584f5dd-f277-4dd1-9162-f63ccf3af704",
+              "id": "8ff755a0-d97f-44e0-872a-0cde76ef8181",
               "name": "List of pending books",
               "originalRequest": {
                 "url": {
@@ -2324,7 +2824,138 @@
           }
         },
         {
-          "id": "f4448a47-7b75-4907-a271-9f66c8826b81",
+          "id": "a728404a-5538-483e-8c99-1518e819e42f",
+          "name": "Get all books owned by the current author",
+          "request": {
+            "name": "Get all books owned by the current author",
+            "description": {},
+            "url": {
+              "path": [
+                "books",
+                "mine"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "search",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "category",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "language",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f0846058-8393-4b1a-b91c-e6c084de32d9",
+              "name": "Paginated author book list",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "books",
+                    "mine"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "search",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "category",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "language",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f400bb81-a496-4823-88c9-bd14ceba0c51",
           "name": "Get books by author ID",
           "request": {
             "name": "Get books by author ID",
@@ -2395,7 +3026,7 @@
           },
           "response": [
             {
-              "id": "3c2993a5-d45d-456f-ba50-8d36d23fb0d5",
+              "id": "dad708c1-be85-473c-b27d-d9c747f4c4b6",
               "name": "List of books by author",
               "originalRequest": {
                 "url": {
@@ -2473,7 +3104,7 @@
           }
         },
         {
-          "id": "761de665-7b37-4f60-9740-ab273f40e657",
+          "id": "2a1145b5-110e-4dda-9987-b430a5c886c0",
           "name": "Get a single book by ID",
           "request": {
             "name": "Get a single book by ID",
@@ -2502,7 +3133,7 @@
           },
           "response": [
             {
-              "id": "00d5c92f-ae03-4d0c-a2ab-324772ebb97f",
+              "id": "7a2f0fc6-8af6-4e63-af40-39788b46a67a",
               "name": "Book details",
               "originalRequest": {
                 "url": {
@@ -2540,7 +3171,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "8a4950e6-c522-45b1-9518-acc8014985cd",
+              "id": "1dbd85bc-776d-4ab3-80ee-2585a289752b",
               "name": "Book not found",
               "originalRequest": {
                 "url": {
@@ -2584,10 +3215,10 @@
           }
         },
         {
-          "id": "c559d21e-2721-4694-a289-65a310b4f832",
-          "name": "Update a book (only draft status)",
+          "id": "cd6434a6-219c-4cc9-a823-6d9c42817bf8",
+          "name": "Update a draft or rejected book",
           "request": {
-            "name": "Update a book (only draft status)",
+            "name": "Update a draft or rejected book",
             "description": {},
             "url": {
               "path": [
@@ -2690,7 +3321,7 @@
           },
           "response": [
             {
-              "id": "cf544cd5-0434-45cb-9335-05f2c70932f2",
+              "id": "d00126ae-523c-4167-9435-7f2a3070c2c2",
               "name": "Book updated successfully",
               "originalRequest": {
                 "url": {
@@ -2837,7 +3468,7 @@
           }
         },
         {
-          "id": "3dcb77a9-7026-44e8-8c90-feb1bf1e67f6",
+          "id": "4b79a66f-71d4-4c23-b9f9-27f93ae2dd36",
           "name": "Delete a book",
           "request": {
             "name": "Delete a book",
@@ -2866,7 +3497,7 @@
           },
           "response": [
             {
-              "id": "a44742fb-0fb2-4737-8a02-f14f970066f8",
+              "id": "5930b61f-8f8a-4896-a9cb-93bd59d0691d",
               "name": "Book deleted successfully",
               "originalRequest": {
                 "url": {
@@ -2910,7 +3541,7 @@
           }
         },
         {
-          "id": "fb7516fe-ac0b-4ab4-84f7-c80f2efc9a92",
+          "id": "1c310743-b44e-4c1d-8f62-c1ebc516c894",
           "name": "Submit a draft book for review",
           "request": {
             "name": "Submit a draft book for review",
@@ -2940,7 +3571,7 @@
           },
           "response": [
             {
-              "id": "5c6ca777-35b6-433b-83e4-b48029f7f956",
+              "id": "f2d6bb04-2541-4faa-9650-1bb68449e26f",
               "name": "Book submitted for review",
               "originalRequest": {
                 "url": {
@@ -2985,7 +3616,7 @@
           }
         },
         {
-          "id": "6a731f0e-1eae-4cde-85e6-ae7b66d8f021",
+          "id": "5438f34d-0240-454c-a1ae-0b7588ba3378",
           "name": "Approve or reject a submitted book",
           "request": {
             "name": "Approve or reject a submitted book",
@@ -3030,7 +3661,7 @@
           },
           "response": [
             {
-              "id": "1df94908-0307-4ca7-942c-30460f4431f0",
+              "id": "982dbd7e-4730-4d69-b85c-33accdd1d0e4",
               "name": "Book status updated",
               "originalRequest": {
                 "url": {
@@ -3086,7 +3717,7 @@
       "event": []
     },
     {
-      "id": "5ed1aea9-2173-4a18-b6da-e6084ffbe072",
+      "id": "a2df21ff-920e-40ab-98b0-a8b674680af9",
       "name": "Author",
       "description": {
         "content": "",
@@ -3094,7 +3725,7 @@
       },
       "item": [
         {
-          "id": "96b3d34a-4fed-452e-b8e6-1e05e4fd60db",
+          "id": "c11b2f1b-d097-4448-b014-caaa6cff20fa",
           "name": "Create a new book (draft or submit for review)",
           "request": {
             "name": "Create a new book (draft or submit for review)",
@@ -3194,7 +3825,7 @@
           },
           "response": [
             {
-              "id": "1765208a-ca13-46c8-9060-9bb406dc498a",
+              "id": "7ba8073a-91d5-49bb-84f2-94c6e6d21809",
               "name": "Book created successfully",
               "originalRequest": {
                 "url": {
@@ -3332,7 +3963,7 @@
           }
         },
         {
-          "id": "c2150bfc-5801-4662-b165-746fde648b1b",
+          "id": "8d4dc883-4fa4-42a5-bd9c-56eb487a4d21",
           "name": "Get all books with filtering, search, and pagination",
           "request": {
             "name": "Get all books with filtering, search, and pagination",
@@ -3413,7 +4044,7 @@
           },
           "response": [
             {
-              "id": "8639451d-256b-4658-8bc2-c68d45225978",
+              "id": "08ecd10b-7b7c-4b5b-9712-d344ed382441",
               "name": "List of books",
               "originalRequest": {
                 "url": {
@@ -3497,7 +4128,7 @@
           }
         },
         {
-          "id": "aa9907c0-c675-4ed4-94ca-7c3b4a385f41",
+          "id": "10b1c518-833f-4b6e-b36a-70a4f41f6f56",
           "name": "Get all approved/published books",
           "request": {
             "name": "Get all approved/published books",
@@ -3559,7 +4190,7 @@
           },
           "response": [
             {
-              "id": "7a33f2e9-7643-4807-8a3a-2273e2f9643d",
+              "id": "ba8995ce-b500-4fc9-890b-ebaa9898c5dc",
               "name": "List of approved books",
               "originalRequest": {
                 "url": {
@@ -3628,7 +4259,7 @@
           }
         },
         {
-          "id": "e10bca7a-1847-47b4-8d3a-ebb153192ae7",
+          "id": "8fc3ee68-86cd-49a6-baa3-affb7463c12c",
           "name": "Get all pending (submitted) books for review",
           "request": {
             "name": "Get all pending (submitted) books for review",
@@ -3690,7 +4321,7 @@
           },
           "response": [
             {
-              "id": "4b7c430c-eec8-4426-941d-9cf93a59311f",
+              "id": "9177b8ea-4bef-4a10-b1e3-c58eb5afe327",
               "name": "List of pending books",
               "originalRequest": {
                 "url": {
@@ -3759,7 +4390,138 @@
           }
         },
         {
-          "id": "1bfad574-2d90-4f3b-abdc-e91d36a0148b",
+          "id": "55236908-b2ed-4ff4-87a4-900f344ce386",
+          "name": "Get all books owned by the current author",
+          "request": {
+            "name": "Get all books owned by the current author",
+            "description": {},
+            "url": {
+              "path": [
+                "books",
+                "mine"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "search",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "category",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "language",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1a5294f7-09a2-45b9-ad34-bf9cf9860e1c",
+              "name": "Paginated author book list",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "books",
+                    "mine"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "search",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "category",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "language",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c19e73a1-5040-4191-b8c4-f4a8a0d7aba6",
           "name": "Get books by author ID",
           "request": {
             "name": "Get books by author ID",
@@ -3830,7 +4592,7 @@
           },
           "response": [
             {
-              "id": "89f7f094-18a3-4aee-9edb-eaec59a3bf23",
+              "id": "2a5f2875-ea60-4b7d-8814-5d2f438861fe",
               "name": "List of books by author",
               "originalRequest": {
                 "url": {
@@ -3908,7 +4670,7 @@
           }
         },
         {
-          "id": "d87815b2-2765-49bc-ac3a-f3c47771a913",
+          "id": "b19be9df-1a0b-4fd6-a928-406023c790f7",
           "name": "Get a single book by ID",
           "request": {
             "name": "Get a single book by ID",
@@ -3937,7 +4699,7 @@
           },
           "response": [
             {
-              "id": "6c226985-4fec-4e11-8d72-549b4c54ab45",
+              "id": "fc806f4a-c76c-4e28-912d-09a800d9107a",
               "name": "Book details",
               "originalRequest": {
                 "url": {
@@ -3975,7 +4737,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "e727a8b8-1d3a-429e-8941-8965b9bd36e8",
+              "id": "bac98fff-3bba-410b-9777-70f0f149e91d",
               "name": "Book not found",
               "originalRequest": {
                 "url": {
@@ -4019,10 +4781,10 @@
           }
         },
         {
-          "id": "5e4d94ed-dc59-4f7b-8425-93c28e9164b0",
-          "name": "Update a book (only draft status)",
+          "id": "33bfa4c0-0ca4-4b47-af84-4cf4f2055f32",
+          "name": "Update a draft or rejected book",
           "request": {
-            "name": "Update a book (only draft status)",
+            "name": "Update a draft or rejected book",
             "description": {},
             "url": {
               "path": [
@@ -4125,7 +4887,7 @@
           },
           "response": [
             {
-              "id": "963c6b57-fe43-4694-a677-95285dd1b8a5",
+              "id": "5159cdaf-5c19-4529-91b5-3ee8e422d007",
               "name": "Book updated successfully",
               "originalRequest": {
                 "url": {
@@ -4272,7 +5034,7 @@
           }
         },
         {
-          "id": "49298269-7ab6-4fde-b04c-b4003b3dd0c9",
+          "id": "9e20927b-409f-487d-873a-b4e219dd4f48",
           "name": "Delete a book",
           "request": {
             "name": "Delete a book",
@@ -4301,7 +5063,7 @@
           },
           "response": [
             {
-              "id": "1a321e58-a597-40e8-a75f-828929f46ae2",
+              "id": "f64047a9-3120-4f4d-8ffd-181d96d7fcd7",
               "name": "Book deleted successfully",
               "originalRequest": {
                 "url": {
@@ -4345,7 +5107,7 @@
           }
         },
         {
-          "id": "6623fad4-8f56-4a8d-8bba-a52433f30942",
+          "id": "4c8f76ff-3acc-4b59-997d-d4f7dedfde7e",
           "name": "Submit a draft book for review",
           "request": {
             "name": "Submit a draft book for review",
@@ -4375,7 +5137,7 @@
           },
           "response": [
             {
-              "id": "360618b7-3b40-43ba-a741-e43910b1ad70",
+              "id": "90204285-5f6d-4f21-a69e-afa6b38a0a65",
               "name": "Book submitted for review",
               "originalRequest": {
                 "url": {
@@ -4420,7 +5182,7 @@
           }
         },
         {
-          "id": "df930156-8e29-4cc7-ad94-4b42583e6666",
+          "id": "c1614984-f523-4b05-805b-217d14b30621",
           "name": "Approve or reject a submitted book",
           "request": {
             "name": "Approve or reject a submitted book",
@@ -4465,7 +5227,7 @@
           },
           "response": [
             {
-              "id": "d76167af-29aa-49cc-8696-995285472cb6",
+              "id": "fb02a0c8-f55c-4179-af3b-a5b9a75c3ce3",
               "name": "Book status updated",
               "originalRequest": {
                 "url": {
@@ -4518,7 +5280,7 @@
           }
         },
         {
-          "id": "5d4282a6-7e92-4579-8d97-aa52c3b68660",
+          "id": "fccafddd-51a3-42fa-99c2-6b5ab356f9a9",
           "name": "Create Stripe Connect onboarding link for authors",
           "request": {
             "name": "Create Stripe Connect onboarding link for authors",
@@ -4543,7 +5305,7 @@
           },
           "response": [
             {
-              "id": "eec54487-c642-4747-9c17-55350293bac7",
+              "id": "2938d4c1-9684-4765-be08-5f38b2f32786",
               "name": "Returns an onboarding URL",
               "originalRequest": {
                 "url": {
@@ -4580,7 +5342,7 @@
           }
         },
         {
-          "id": "7b2d2800-d71e-4de9-bda0-deefb4ddfd5d",
+          "id": "29b59859-25f4-4142-b547-fc0fefa914cf",
           "name": "Check Stripe Connect account status",
           "request": {
             "name": "Check Stripe Connect account status",
@@ -4602,7 +5364,7 @@
           },
           "response": [
             {
-              "id": "2b7f806c-fa8c-41e1-87d5-622cdca04447",
+              "id": "d22a5bf3-2a69-467d-b79a-a6505baefe57",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -4638,7 +5400,7 @@
           }
         },
         {
-          "id": "8beb7534-faa6-44ed-9501-9e96c03a633f",
+          "id": "6eb86c7a-db97-4bae-85c6-d5a3af64fa0a",
           "name": "Get Stripe Express Dashboard login link",
           "request": {
             "name": "Get Stripe Express Dashboard login link",
@@ -4660,7 +5422,7 @@
           },
           "response": [
             {
-              "id": "759934b9-dc9b-4b52-a81d-e2c02b0ce8b4",
+              "id": "ca900fb8-72fa-4226-b30c-2b28c72479c0",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -4699,7 +5461,7 @@
       "event": []
     },
     {
-      "id": "fca86b7d-5b79-439a-a37b-590e79608ca6",
+      "id": "cecd3592-43ce-4f31-bc01-00cd20f3d9ed",
       "name": "Admin",
       "description": {
         "content": "",
@@ -4707,7 +5469,7 @@
       },
       "item": [
         {
-          "id": "cee950c6-0e0d-45d0-9491-79a06dc9d009",
+          "id": "0c60f475-9679-451d-93ad-bfd3faf41125",
           "name": "Create a new book (draft or submit for review)",
           "request": {
             "name": "Create a new book (draft or submit for review)",
@@ -4807,7 +5569,7 @@
           },
           "response": [
             {
-              "id": "0fd7b115-2ce9-4c97-9798-18e49af4a7f5",
+              "id": "0f469827-ae8c-4fbe-82da-33f0605248b5",
               "name": "Book created successfully",
               "originalRequest": {
                 "url": {
@@ -4945,7 +5707,7 @@
           }
         },
         {
-          "id": "fad61351-19d1-4659-9790-0ab139667d80",
+          "id": "d9fb6294-a000-469d-92fa-67425900024e",
           "name": "Get all books with filtering, search, and pagination",
           "request": {
             "name": "Get all books with filtering, search, and pagination",
@@ -5026,7 +5788,7 @@
           },
           "response": [
             {
-              "id": "a73a60cf-04d7-46d3-8138-1de07c7707ed",
+              "id": "a4136ef3-fb5e-4f4d-baa0-48e83cdee3ff",
               "name": "List of books",
               "originalRequest": {
                 "url": {
@@ -5110,7 +5872,7 @@
           }
         },
         {
-          "id": "fbc9c2fe-f27e-4af3-b269-d4063daca46d",
+          "id": "981665b0-7d23-4076-b564-57fbbc8093d4",
           "name": "Get all approved/published books",
           "request": {
             "name": "Get all approved/published books",
@@ -5172,7 +5934,7 @@
           },
           "response": [
             {
-              "id": "3f0fd550-26c7-4c55-8a67-a90698a379ba",
+              "id": "0ad24ba1-4fc8-4110-9291-19fde0fb96f0",
               "name": "List of approved books",
               "originalRequest": {
                 "url": {
@@ -5241,7 +6003,7 @@
           }
         },
         {
-          "id": "7cc9ba77-48a1-4e30-b91e-810d4d4efb0c",
+          "id": "175389b3-cd3a-4b52-92df-7370dd10051e",
           "name": "Get all pending (submitted) books for review",
           "request": {
             "name": "Get all pending (submitted) books for review",
@@ -5303,7 +6065,7 @@
           },
           "response": [
             {
-              "id": "52afa945-0611-4925-ad1a-8008ecc75b1b",
+              "id": "73fc15c3-c6d8-4865-9adb-11807df5e0b8",
               "name": "List of pending books",
               "originalRequest": {
                 "url": {
@@ -5372,7 +6134,138 @@
           }
         },
         {
-          "id": "0b6500ca-6b43-49b8-a7f4-70a59ada2345",
+          "id": "1cc92fca-be64-42d4-a498-06a21b034ca4",
+          "name": "Get all books owned by the current author",
+          "request": {
+            "name": "Get all books owned by the current author",
+            "description": {},
+            "url": {
+              "path": [
+                "books",
+                "mine"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "search",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "category",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "language",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c62c8020-e28e-4104-a2cb-62435c5701c4",
+              "name": "Paginated author book list",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "books",
+                    "mine"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "search",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "category",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "language",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1d4335ce-7ae6-43a0-827f-399c92884d80",
           "name": "Get books by author ID",
           "request": {
             "name": "Get books by author ID",
@@ -5443,7 +6336,7 @@
           },
           "response": [
             {
-              "id": "d278d644-fa2b-4b28-926f-9d6fac1603d4",
+              "id": "399b441f-f011-4ce6-b899-edd28f16ebdc",
               "name": "List of books by author",
               "originalRequest": {
                 "url": {
@@ -5521,7 +6414,7 @@
           }
         },
         {
-          "id": "39a187f7-9830-4570-bc3b-22458948c57e",
+          "id": "7be8f4f5-8e0e-4c18-9b5d-6c1cfae4c9cb",
           "name": "Get a single book by ID",
           "request": {
             "name": "Get a single book by ID",
@@ -5550,7 +6443,7 @@
           },
           "response": [
             {
-              "id": "d3fa9275-d840-4ec4-9f74-938a75887cd8",
+              "id": "230f099f-70e7-43ac-a49b-6f19c99d54ad",
               "name": "Book details",
               "originalRequest": {
                 "url": {
@@ -5588,7 +6481,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "1adaa5cd-b176-48c4-9d61-ead54244d3ee",
+              "id": "fdec047b-169b-4dd8-992a-99d7baaaa5de",
               "name": "Book not found",
               "originalRequest": {
                 "url": {
@@ -5632,10 +6525,10 @@
           }
         },
         {
-          "id": "07dc8efc-33bc-44e3-b391-b8717c08dd6a",
-          "name": "Update a book (only draft status)",
+          "id": "71c0e625-4d68-4d5f-865f-290e0617ae56",
+          "name": "Update a draft or rejected book",
           "request": {
-            "name": "Update a book (only draft status)",
+            "name": "Update a draft or rejected book",
             "description": {},
             "url": {
               "path": [
@@ -5738,7 +6631,7 @@
           },
           "response": [
             {
-              "id": "228059cd-a2c6-4d9a-b78b-cba8e594d2fe",
+              "id": "553e4331-1c4e-49db-ae24-11b965094449",
               "name": "Book updated successfully",
               "originalRequest": {
                 "url": {
@@ -5885,7 +6778,7 @@
           }
         },
         {
-          "id": "4d75fd39-a7aa-4f0a-b67e-4d4fd553407d",
+          "id": "083f217a-9876-4a47-9dfb-e2fb7aa76f2e",
           "name": "Delete a book",
           "request": {
             "name": "Delete a book",
@@ -5914,7 +6807,7 @@
           },
           "response": [
             {
-              "id": "3e338e53-32e7-4e4d-a915-6e25f7bf4c65",
+              "id": "05e68acd-f165-4b62-87e2-c208ff722ab9",
               "name": "Book deleted successfully",
               "originalRequest": {
                 "url": {
@@ -5958,7 +6851,7 @@
           }
         },
         {
-          "id": "b37f5712-c171-4513-bc8c-b12e47392dcb",
+          "id": "23d9bc03-eab5-4fc1-93b4-b220c2d115cc",
           "name": "Submit a draft book for review",
           "request": {
             "name": "Submit a draft book for review",
@@ -5988,7 +6881,7 @@
           },
           "response": [
             {
-              "id": "388c11b5-b3ca-4754-8810-adbc9c8c2a08",
+              "id": "dd49216d-e7d5-4c34-acec-9e41c14e671c",
               "name": "Book submitted for review",
               "originalRequest": {
                 "url": {
@@ -6033,7 +6926,7 @@
           }
         },
         {
-          "id": "d3decf14-7bdb-497e-b737-c728ba07209b",
+          "id": "65b33b60-8f0e-4734-b93c-7b02c454c71c",
           "name": "Approve or reject a submitted book",
           "request": {
             "name": "Approve or reject a submitted book",
@@ -6078,7 +6971,7 @@
           },
           "response": [
             {
-              "id": "defa92a3-d442-445c-a57e-53d8884f01c3",
+              "id": "7e84a6df-0882-4d40-bafe-bb8070e1550b",
               "name": "Book status updated",
               "originalRequest": {
                 "url": {
@@ -6131,7 +7024,7 @@
           }
         },
         {
-          "id": "5aaa278e-df1c-4971-bd34-c6fca57050bf",
+          "id": "44b42df1-d514-4487-ba28-a64952368e7c",
           "name": "Create Stripe Connect onboarding link for authors",
           "request": {
             "name": "Create Stripe Connect onboarding link for authors",
@@ -6156,7 +7049,7 @@
           },
           "response": [
             {
-              "id": "6e1eff2c-1846-4513-b713-252143d0db42",
+              "id": "983786d5-5a0c-443b-bedb-c0eca9148e57",
               "name": "Returns an onboarding URL",
               "originalRequest": {
                 "url": {
@@ -6193,7 +7086,7 @@
           }
         },
         {
-          "id": "8a6f03c6-791c-445b-9d55-e0bf01209c3f",
+          "id": "f10caa02-4589-46d1-808c-31dcad004fbe",
           "name": "Check Stripe Connect account status",
           "request": {
             "name": "Check Stripe Connect account status",
@@ -6215,7 +7108,7 @@
           },
           "response": [
             {
-              "id": "c92be08a-832c-48be-ab03-10a66a53a7c5",
+              "id": "b1be32e4-713e-4ebb-9162-60b3a0ba65f4",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -6251,7 +7144,7 @@
           }
         },
         {
-          "id": "9afa28f4-4d28-4cb6-a38d-7aad39e0b6c0",
+          "id": "9ed43188-a51a-4d1d-a760-fa4eb6b63c2d",
           "name": "Get Stripe Express Dashboard login link",
           "request": {
             "name": "Get Stripe Express Dashboard login link",
@@ -6273,7 +7166,7 @@
           },
           "response": [
             {
-              "id": "521ea8f9-2a4a-47ea-8964-7471ca9b215a",
+              "id": "2e16b109-fb38-4432-92aa-13d77d3ccb0d",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -6309,7 +7202,7 @@
           }
         },
         {
-          "id": "8deda35d-23be-47ef-8780-96d960dd09ac",
+          "id": "6ccbc61c-86a1-49ed-858a-d3b649f64693",
           "name": "Get order history for logged-in user",
           "request": {
             "name": "Get order history for logged-in user",
@@ -6351,7 +7244,7 @@
           },
           "response": [
             {
-              "id": "2a014403-e8a9-464e-a591-ec3ff3cdc4b4",
+              "id": "86f7ce27-afd5-47d7-902f-2b217f0f414f",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -6399,7 +7292,7 @@
           }
         },
         {
-          "id": "0f49fffd-843a-465b-867f-197dfcbe6e88",
+          "id": "e3e49a7a-4549-422e-9906-949165babeea",
           "name": "Create Stripe Checkout Session for cart items",
           "request": {
             "name": "Create Stripe Checkout Session for cart items",
@@ -6438,7 +7331,7 @@
           },
           "response": [
             {
-              "id": "9f859394-8240-4877-91dd-e9243444557b",
+              "id": "dcd3c616-850f-4b0e-9614-f7b2811c6d63",
               "name": "Returns a checkout URL",
               "originalRequest": {
                 "url": {
@@ -6485,7 +7378,7 @@
       "event": []
     },
     {
-      "id": "c3a174ff-4baf-4a38-bf02-b2eee4a0f661",
+      "id": "5edc21c0-182a-48cf-a26c-c7602cda6485",
       "name": "Commerce",
       "description": {
         "content": "",
@@ -6493,7 +7386,7 @@
       },
       "item": [
         {
-          "id": "3e9b0563-794e-48d2-9326-aa1c12ec26ff",
+          "id": "e0c57f71-3eed-4b17-acb3-17b817636588",
           "name": "Create Stripe Connect onboarding link for authors",
           "request": {
             "name": "Create Stripe Connect onboarding link for authors",
@@ -6518,7 +7411,7 @@
           },
           "response": [
             {
-              "id": "236a390a-0efe-4143-b0ed-f001680310b9",
+              "id": "84072810-619d-40e5-8100-6f819cac4bdd",
               "name": "Returns an onboarding URL",
               "originalRequest": {
                 "url": {
@@ -6555,7 +7448,7 @@
           }
         },
         {
-          "id": "5acf61d4-60f2-4719-a1fe-fffb7574a5c5",
+          "id": "62c714f4-8d23-483d-8241-9ffcac2d9156",
           "name": "Check Stripe Connect account status",
           "request": {
             "name": "Check Stripe Connect account status",
@@ -6577,7 +7470,7 @@
           },
           "response": [
             {
-              "id": "091690b9-f869-4a6d-9c9c-8ac68a63d03e",
+              "id": "ef51cb28-0db9-4d66-a34e-906ebfd4d755",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -6613,7 +7506,7 @@
           }
         },
         {
-          "id": "f9b788c6-ae3a-4fbc-8c6d-f0facdf653e3",
+          "id": "8f983cc1-53f4-4cf2-95bb-d1884266a6f7",
           "name": "Get Stripe Express Dashboard login link",
           "request": {
             "name": "Get Stripe Express Dashboard login link",
@@ -6635,7 +7528,7 @@
           },
           "response": [
             {
-              "id": "f8f74b92-0ac3-40e9-9f84-27615fab7ef9",
+              "id": "4cc49a74-6770-4003-bb88-ec85838e26e2",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -6674,7 +7567,7 @@
       "event": []
     },
     {
-      "id": "355b9d56-15c6-477c-8ea8-0625da168230",
+      "id": "1d9fb5cc-bfa4-4deb-a868-cfb8b12b6c42",
       "name": "Webhooks",
       "description": {
         "content": "",
@@ -6682,7 +7575,7 @@
       },
       "item": [
         {
-          "id": "97c7e328-c7b8-4deb-975a-ee7668a19334",
+          "id": "73b54aad-ce95-4ddc-82f9-0be6fb0ce6fe",
           "name": "Stripe standard checkout webhook",
           "request": {
             "name": "Stripe standard checkout webhook",
@@ -6703,7 +7596,7 @@
           },
           "response": [
             {
-              "id": "b7cf6943-752f-454c-b95a-58f7beac8d4d",
+              "id": "f5488038-1340-4f43-88a4-2ca1a1cd4e7a",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -6738,7 +7631,7 @@
           }
         },
         {
-          "id": "2e261e8b-1294-493d-9a98-9436147aaa5e",
+          "id": "f4effa4b-5e10-452b-b771-15f09926ea7c",
           "name": "Stripe Connect account webhook",
           "request": {
             "name": "Stripe Connect account webhook",
@@ -6760,7 +7653,7 @@
           },
           "response": [
             {
-              "id": "dc16d58e-1992-4149-8cdf-2c580363f2b6",
+              "id": "9d824e71-d9a9-4842-8dd1-10ec3248c3fa",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -6799,7 +7692,7 @@
       "event": []
     },
     {
-      "id": "cbe1314f-f51f-4ec7-b719-2464b937e31c",
+      "id": "faa4358c-35b7-4e82-9493-08aae1802a85",
       "name": "Orders",
       "description": {
         "content": "",
@@ -6807,7 +7700,7 @@
       },
       "item": [
         {
-          "id": "b408ab45-7a5d-4851-8641-e39a8046a5b1",
+          "id": "5f5c0904-3b37-485c-aa98-c9a70bd91e46",
           "name": "Get order history for logged-in user",
           "request": {
             "name": "Get order history for logged-in user",
@@ -6849,7 +7742,7 @@
           },
           "response": [
             {
-              "id": "0e0269e8-0e4b-4005-9355-f0e692be71c7",
+              "id": "56ba8d80-f9cf-4648-bf03-bd57e07dbf4c",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -6897,7 +7790,7 @@
           }
         },
         {
-          "id": "59a10a3a-172d-43cb-a5a9-822e532b44ef",
+          "id": "eede9e73-e40b-47e0-b53a-8b2f746a08f9",
           "name": "Create Stripe Checkout Session for cart items",
           "request": {
             "name": "Create Stripe Checkout Session for cart items",
@@ -6936,7 +7829,7 @@
           },
           "response": [
             {
-              "id": "0f3fc98a-2a9d-4aed-9722-515d31efe0c0",
+              "id": "0f0f942c-68f0-465c-a6d6-a9482d57d9e3",
               "name": "Returns a checkout URL",
               "originalRequest": {
                 "url": {
@@ -6983,7 +7876,7 @@
       "event": []
     },
     {
-      "id": "caf362ce-1073-4e7d-9d48-a40b54e43a4c",
+      "id": "c26d82e6-47a1-4e7c-86c3-512443e290bc",
       "name": "Payouts",
       "description": {
         "content": "",
@@ -6991,7 +7884,7 @@
       },
       "item": [
         {
-          "id": "34a628d5-a9f9-47c0-9745-b03e93dc8cc4",
+          "id": "7a1f6ef1-151b-4632-a9ce-5a515f0b2c49",
           "name": "Get all payouts (orders) for the logged-in author",
           "request": {
             "name": "Get all payouts (orders) for the logged-in author",
@@ -7018,7 +7911,7 @@
           },
           "response": [
             {
-              "id": "de12e7f6-f447-4089-b8eb-69681068516b",
+              "id": "013d4372-67a2-4248-95f9-e3d5c3420d5e",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -7058,7 +7951,7 @@
           }
         },
         {
-          "id": "a97b6649-3311-436d-91c7-7e58025fffbf",
+          "id": "19acad6d-14f8-45e8-a9fb-17a2447ed405",
           "name": "Request a payout for a specific order",
           "request": {
             "name": "Request a payout for a specific order",
@@ -7089,7 +7982,7 @@
           },
           "response": [
             {
-              "id": "0bea9c5a-79ca-4087-b837-845f2295bd7f",
+              "id": "88bf746d-9905-4c3b-937c-cc22c27aff71",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -7134,7 +8027,7 @@
           }
         },
         {
-          "id": "d260d0e9-ec5b-4c59-b1c8-79af74d743d1",
+          "id": "a4542d1c-b747-4816-b688-0ee4ce9f9606",
           "name": "Get all platform payouts",
           "request": {
             "name": "Get all platform payouts",
@@ -7161,7 +8054,7 @@
           },
           "response": [
             {
-              "id": "410af8a9-88e2-4c13-baaf-74c6f72e5521",
+              "id": "6b0a9c7e-896a-4d1d-89c2-de443cde9850",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -7201,7 +8094,7 @@
           }
         },
         {
-          "id": "598fc094-2537-4c5f-a188-ee60028bea2c",
+          "id": "03d8535e-6b8e-4b37-b448-d8b56f5521e1",
           "name": "Approve a requested payout and trigger Stripe Transfer",
           "request": {
             "name": "Approve a requested payout and trigger Stripe Transfer",
@@ -7232,7 +8125,7 @@
           },
           "response": [
             {
-              "id": "e3dfd528-de16-4246-ac7d-718a7ee5e23d",
+              "id": "682cebbf-b0f1-409e-9d32-b217a982aa77",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -7280,7 +8173,7 @@
       "event": []
     },
     {
-      "id": "fc6ab807-bbc5-4304-b140-f381ba19f892",
+      "id": "a44c21ac-55c7-4c03-9aba-4a2db9cab94a",
       "name": "Statistics",
       "description": {
         "content": "",
@@ -7288,7 +8181,7 @@
       },
       "item": [
         {
-          "id": "d6454c6c-891d-43bc-9d19-a13aaec5713e",
+          "id": "8571fdc4-c9b0-4fc9-8411-017eb951596b",
           "name": "Get platform-wide statistics for admins",
           "request": {
             "name": "Get platform-wide statistics for admins",
@@ -7309,7 +8202,7 @@
           },
           "response": [
             {
-              "id": "f4d7d998-b698-43d0-adf3-48a1184d5d86",
+              "id": "4d019bd5-73f0-4bd9-947b-86d322464d9e",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -7344,7 +8237,7 @@
           }
         },
         {
-          "id": "48342e19-6c52-4eff-be67-b72d69a7b088",
+          "id": "8ae69b7a-938b-4319-9727-b5c0b690fce6",
           "name": "Get statistics for the logged-in author",
           "request": {
             "name": "Get statistics for the logged-in author",
@@ -7365,7 +8258,7 @@
           },
           "response": [
             {
-              "id": "c0e19c4f-82cc-4b62-8be9-267d36395bf5",
+              "id": "785881fb-d25c-4d99-a5ec-3f8c0234f355",
               "originalRequest": {
                 "url": {
                   "path": [
@@ -7401,6 +8294,232 @@
         }
       ],
       "event": []
+    },
+    {
+      "id": "13fc6025-912d-4c63-b670-c81c2e1ecc87",
+      "name": "Library",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "9c4a1927-1bdf-464e-b578-4f8cd387d96c",
+          "name": "Get the logged-in user's purchased digital books",
+          "request": {
+            "name": "Get the logged-in user's purchased digital books",
+            "description": {},
+            "url": {
+              "path": [
+                "library"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "20469cb6-3ae9-4548-933f-32cd0d1a172d",
+              "name": "Purchased ebooks and audiobooks",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "library"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f2836502-44bc-4657-9e95-6dd952ccf65d",
+          "name": "Create a short-lived URL for a purchased file",
+          "request": {
+            "name": "Create a short-lived URL for a purchased file",
+            "description": {},
+            "url": {
+              "path": [
+                "library",
+                ":orderItemId",
+                "access"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "orderItemId",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9dfeee24-6571-4de8-bfb1-a25d31984a21",
+              "name": "Five-minute signed access URL",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "library",
+                    ":orderItemId",
+                    "access"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "orderItemId",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "c44d6b9c-310e-469a-b76f-b62d26e983f2",
+              "name": "Purchased item or file not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "library",
+                    ":orderItemId",
+                    "access"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "orderItemId",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
     }
   ],
   "event": [],
@@ -7412,7 +8531,7 @@
     }
   ],
   "info": {
-    "_postman_id": "1b08cbad-7da7-4342-a884-140d0dd6ebe3",
+    "_postman_id": "b658b613-f432-4f5b-a5a1-6c73a2d3a94d",
     "name": "NestJS API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

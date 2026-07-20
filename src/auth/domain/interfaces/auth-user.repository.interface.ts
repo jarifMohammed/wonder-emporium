@@ -47,6 +47,42 @@ export interface IAuthUserRepository {
       failureReason?: string;
     },
   ): Promise<void>;
+  findAuthors(filters: AdminAuthorFilters): Promise<PaginatedAdminAuthors>;
+  findAuthorDetails(id: string): Promise<AdminAuthorRecord | null>;
+}
+
+export interface AdminAuthorFilters {
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminAuthorRecord {
+  id: string;
+  email: string;
+  username: string;
+  role: userRole;
+  verified: boolean;
+  status: string;
+  isFoundingAuthor: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  profile: {
+    firstName: string | null;
+    lastName: string | null;
+    bio: string | null;
+    avatarUrl: string | null;
+  } | null;
+  bookCount: number;
+}
+
+export interface PaginatedAdminAuthors {
+  authors: AdminAuthorRecord[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface AuthSecurityData {

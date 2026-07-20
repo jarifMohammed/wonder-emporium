@@ -234,6 +234,43 @@ export class EmailService {
     });
   }
 
+  async sendAuthorPendingApprovalEmail(
+    email: string,
+    username: string,
+  ): Promise<void> {
+    const html = this.getEmailTemplate('author-pending-approval.html', {
+      username,
+      year: new Date().getFullYear().toString(),
+    });
+
+    await this.sendEmail({
+      to: email,
+      subject: 'Your author application is under review',
+      html,
+    });
+  }
+
+  async sendNewAuthorAdminNotificationEmail(data: {
+    authorId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  }): Promise<void> {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@wonderemporium.com';
+    const html = this.getEmailTemplate('new-author-admin.html', {
+      authorId: data.authorId,
+      authorName: `${data.firstName} ${data.lastName}`.trim(),
+      authorEmail: data.email,
+      year: new Date().getFullYear().toString(),
+    });
+
+    await this.sendEmail({
+      to: adminEmail,
+      subject: `New author awaiting approval: ${data.firstName} ${data.lastName}`,
+      html,
+    });
+  }
+
   /**
    * Send contact us email to admin
    */
