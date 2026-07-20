@@ -43,6 +43,13 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
       return true;
     }
 
+    // Skip throttling for admin routes — already gated by AuthGuard + RolesGuard
+    // (ADMIN / SUPERADMIN only), so rate-limiting adds no security benefit and
+    // actively breaks dashboard server-component fetches.
+    if (path.includes('/admin/')) {
+      return true;
+    }
+
     // Check if route has @SkipThrottle decorator
     return super.shouldSkip(context);
   }

@@ -57,6 +57,15 @@ export class CreateAccountUseCase {
       throw AppError.badRequest('Role must be READER or AUTHOR');
     }
 
+    // OTP storage is required for account verification. Persist it before
+    // creating the user so a Redis outage cannot leave an unverifiable account.
+    const verificationCode = this.otpGenerator.generate(6);
+    await this.otpStore.save(
+      `verification:${input.email}`,
+      verificationCode,
+      600,
+    );
+
     const hashedPassword = await this.passwordHasher.hash(input.password);
     const username = this.generateUsername(input.email);
 
@@ -86,12 +95,6 @@ export class CreateAccountUseCase {
     );
     await this.userRepository.createSecurity(authUser.id);
 
-    const verificationCode = this.otpGenerator.generate(6);
-    await this.otpStore.save(
-      `verification:${authUser.email}`,
-      verificationCode,
-      600,
-    );
     // Do not hold the registration response open while SMTP completes. The OTP
     // is already persisted, so the user can continue to verification and use
     // the resend endpoint if delivery fails.

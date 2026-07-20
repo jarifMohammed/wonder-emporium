@@ -49,6 +49,10 @@ export class LoginUseCase {
       throw AppError.unauthorized('Account is not active');
     }
 
+    if (!authUser.isVerified()) {
+      throw AppError.unauthorized('Email is not verified');
+    }
+
     const security = await this.userRepository.findSecurityByAuthId(
       authUser.id,
     );

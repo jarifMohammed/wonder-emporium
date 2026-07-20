@@ -53,6 +53,7 @@ export class AdminUsersController {
   @ApiOperation({ summary: 'Approve a user (set status to ACTIVE)' })
   @ApiResponse({ status: 200, description: 'User approved successfully' })
   async approveUser(@Param('id') id: string) {
+    await this.getAdminAuthorsUseCase.getById(id);
     await this.updateUserStatusUseCase.execute(id, 'ACTIVE');
     return { message: 'User approved successfully' };
   }

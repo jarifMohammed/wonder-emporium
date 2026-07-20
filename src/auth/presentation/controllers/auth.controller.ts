@@ -47,6 +47,12 @@ import config from '../../../common/config/app.config';
 import { AuthPrincipal } from '../../interfaces/auth.interface';
 
 @ApiTags('Users')
+@Throttle({
+  default: { limit: 500, ttl: 60000 },
+  strict: { limit: 500, ttl: 60000 },
+  auth: { limit: 500, ttl: 60000 },
+  relaxed: { limit: 500, ttl: 60000 },
+})
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -84,7 +90,6 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({
     summary: 'Login with email and password',
     description:
@@ -102,7 +107,6 @@ export class AuthController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 3, ttl: 60000 } })
   @ApiOperation({ summary: 'Request password reset OTP' })
   @ApiResponse({ status: 200, description: 'OTP sent if email exists' })
   async forgotPassword(@Body() body: ForgotPasswordRequest) {
@@ -111,7 +115,6 @@ export class AuthController {
 
   @Post('resend-password-reset')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 3, ttl: 60000 } })
   @ApiOperation({ summary: 'Resend password reset OTP' })
   @ApiResponse({ status: 200, description: 'OTP sent if email exists' })
   async resendPasswordReset(@Body() body: ForgotPasswordRequest) {
@@ -120,7 +123,6 @@ export class AuthController {
 
   @Post('verify-password-reset-otp')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Verify a password reset OTP' })
   @ApiResponse({ status: 200, description: 'OTP verified successfully' })
   async verifyPasswordResetOtp(@Body() body: VerifyPasswordResetOtpRequest) {
@@ -129,7 +131,6 @@ export class AuthController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Reset password with OTP' })
   @ApiResponse({ status: 200, description: 'Password reset successfully' })
   async resetPassword(@Body() body: ResetPasswordRequest) {
@@ -167,7 +168,6 @@ export class AuthController {
 
   @Post('verify-email')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'Verify email with code' })
   @ApiResponse({ status: 200, description: 'Email verified successfully' })
   async verifyEmail(@Body() body: VerifyEmailRequest) {
@@ -176,7 +176,6 @@ export class AuthController {
 
   @Post('resend-verification')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 3, ttl: 60000 } })
   @ApiOperation({ summary: 'Resend email verification code' })
   @ApiResponse({
     status: 200,
