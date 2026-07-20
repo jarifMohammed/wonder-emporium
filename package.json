@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "postinstall": "prisma generate",
     "prisma:push": "prisma db push",
+    "prisma:deploy": "prisma migrate deploy",
     "prisma:generate": "prisma generate",
     "docker:dev": "docker compose -f docker-compose.yaml up -d"
   },
