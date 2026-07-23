@@ -45,6 +45,15 @@ export class EmailProcessor extends WorkerHost {
         case 'contact-us':
           await this.handleContactUsEmail(job);
           break;
+        case 'password-reset':
+          await this.handlePasswordResetEmail(job);
+          break;
+        case 'author-pending-approval':
+          await this.handleAuthorPendingApprovalEmail(job);
+          break;
+        case 'new-author-admin':
+          await this.handleNewAuthorAdminNotificationEmail(job);
+          break;
         default:
           this.logger.warn(
             `Unknown email job type: ${String((job.data as { type?: string }).type || 'undefined')}`,
@@ -232,6 +241,89 @@ export class EmailProcessor extends WorkerHost {
         email,
         error: error instanceof Error ? error.message : String(error),
       });
+      throw error; // Re-throw to trigger retry
+    }
+  }
+
+  private async handlePasswordResetEmail(job: Job<EmailJob>): Promise<void> {
+    const jobData = job.data as Extract<EmailJob, { type: 'password-reset' }>;
+    const { email, username, resetCode } = jobData;
+
+    try {
+      await this.emailService.sendPasswordResetEmail(
+        email,
+        username,
+        resetCode,
+      );
+      this.logger.info(`Password reset email sent successfully to ${email}`, {
+        context: 'EmailProcessor',
+        jobId: job.id,
+        email,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send password reset email to ${email}`, {
+        context: 'EmailProcessor',
+        email,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error; // Re-throw to trigger retry
+    }
+  }
+
+  private async handleAuthorPendingApprovalEmail(
+    job: Job<EmailJob>,
+  ): Promise<void> {
+    const jobData = job.data as Extract<
+      EmailJob,
+      { type: 'author-pending-approval' }
+    >;
+    const { email, username } = jobData;
+
+    try {
+      await this.emailService.sendAuthorPendingApprovalEmail(email, username);
+      this.logger.info(`Author pending approval email sent to ${email}`, {
+        context: 'EmailProcessor',
+        jobId: job.id,
+        email,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to send author pending approval email to ${email}`,
+        {
+          context: 'EmailProcessor',
+          email,
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
+      throw error; // Re-throw to trigger retry
+    }
+  }
+
+  private async handleNewAuthorAdminNotificationEmail(
+    job: Job<EmailJob>,
+  ): Promise<void> {
+    const jobData = job.data as Extract<EmailJob, { type: 'new-author-admin' }>;
+    const { data } = jobData;
+
+    try {
+      await this.emailService.sendNewAuthorAdminNotificationEmail(data);
+      this.logger.info(
+        `New author admin notification email sent for ${data.email}`,
+        {
+          context: 'EmailProcessor',
+          jobId: job.id,
+          authorEmail: data.email,
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to send new author admin notification email for ${data.email}`,
+        {
+          context: 'EmailProcessor',
+          authorEmail: data.email,
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
       throw error; // Re-throw to trigger retry
     }
   }

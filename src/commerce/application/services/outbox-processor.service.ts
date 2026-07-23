@@ -110,7 +110,7 @@ export class OutboxProcessorService {
         continue;
       }
 
-      const platformFeePercentage = authorUser.isFoundingAuthor ? 0.15 : 0.35;
+      const platformFeePercentage = authorUser.isFoundingAuthor ? 0.35 : 0.3;
       const platformFee = Math.round(amountInCents * platformFeePercentage);
       const authorPayout = amountInCents - platformFee;
 
@@ -141,7 +141,9 @@ export class OutboxProcessorService {
         });
       } catch (txError: any) {
         if (txError.code === 'P2002') {
-          this.logger.warn(`Payout for order ${orderId} and author ${authorId} already exists. Skipping duplicate.`);
+          this.logger.warn(
+            `Payout for order ${orderId} and author ${authorId} already exists. Skipping duplicate.`,
+          );
         } else {
           throw txError;
         }

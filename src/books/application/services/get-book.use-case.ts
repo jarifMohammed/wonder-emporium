@@ -63,6 +63,7 @@ export class GetBookUseCase {
       sellingPrice: isPrintEnabled
         ? printEdition?.pricing?.sellingPrice
         : undefined,
+      author: result.author,
     };
 
     if (isAuthorOrAdmin && isPrintEnabled) {

@@ -62,10 +62,24 @@ export interface CreateFileData {
   size?: number;
 }
 
+export interface BookAuthorData {
+  id: string;
+  username: string;
+  email: string;
+  isFoundingAuthor: boolean;
+  profile: {
+    firstName: string | null;
+    lastName: string | null;
+    bio: string | null;
+    avatarUrl: string | null;
+  } | null;
+}
+
 export interface BookWithFilesAndFormats {
   book: Book;
   files: BookFileData[];
   formats: BookFormatData[];
+  author?: BookAuthorData;
 }
 
 export interface PaginatedBooks {
@@ -76,6 +90,11 @@ export interface PaginatedBooks {
   totalPages: number;
 }
 
+export interface BookCategoryCount {
+  name: string;
+  count: number;
+}
+
 export interface IBookRepository {
   create(data: CreateBookData): Promise<BookWithFilesAndFormats>;
   findById(id: string): Promise<BookWithFilesAndFormats | null>;
@@ -84,11 +103,13 @@ export interface IBookRepository {
     authorId: string,
     filters: BookFilters,
   ): Promise<PaginatedBooks>;
+  findByFoundingAuthors(filters: BookFilters): Promise<PaginatedBooks>;
   update(id: string, data: UpdateBookData): Promise<BookWithFilesAndFormats>;
   updateStatus(id: string, status: BookStatus): Promise<void>;
   delete(id: string): Promise<void>;
   addFile(data: CreateFileData): Promise<BookFileData>;
   getFiles(bookId: string): Promise<BookFileData[]>;
+  findApprovedCategoryCounts(): Promise<BookCategoryCount[]>;
 }
 
 export const BOOK_REPOSITORY_TOKEN = Symbol('IBookRepository');

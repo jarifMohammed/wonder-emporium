@@ -11,6 +11,7 @@ export interface AuthUserOutput {
   username: string;
   role: userRole;
   verified: boolean;
+  isFoundingAuthor?: boolean;
   firstName?: string;
   lastName?: string;
   createdAt: Date;

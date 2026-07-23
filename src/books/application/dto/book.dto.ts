@@ -16,6 +16,8 @@ export interface BookOutput {
   language: string | null;
   ageGroup: string | null;
   formats: {
+    id: string;
+    bookId: string;
     formatType: string;
     listPrice: number;
     sku: string | null;
@@ -35,6 +37,18 @@ export interface BookOutput {
   printAvailable?: boolean;
   ebookAvailable?: boolean;
   audiobookAvailable?: boolean;
+  author?: {
+    id: string;
+    username: string;
+    email: string;
+    profile: {
+      firstName: string | null;
+      lastName: string | null;
+      bio: string | null;
+      avatarUrl: string | null;
+    } | null;
+    isFoundingAuthor: boolean;
+  };
 }
 
 export interface PaginatedBooksOutput {
@@ -43,6 +57,16 @@ export interface PaginatedBooksOutput {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+export interface BookCategoryOutput {
+  name: string;
+  count: number;
+}
+
+export interface BookCategoriesOutput {
+  categories: BookCategoryOutput[];
+  total: number;
 }
 
 export interface CreateBookInput {
@@ -83,9 +107,14 @@ export interface CreateBookInput {
     bindingType: string;
     interiorColor: string;
     paperType: string;
+    interiorPpi?: number;
     coverFinish: string;
     bookType: string;
     printQuality?: string;
+    linenColor?: string;
+    foilColor?: string;
+    printInsideCover?: string;
+    podPackageId?: string;
     authorProfit?: number;
     sellingPrice?: number;
   };
@@ -128,9 +157,14 @@ export interface UpdateBookInput {
     bindingType: string;
     interiorColor: string;
     paperType: string;
+    interiorPpi?: number;
     coverFinish: string;
     bookType: string;
     printQuality?: string;
+    linenColor?: string;
+    foilColor?: string;
+    printInsideCover?: string;
+    podPackageId?: string;
     authorProfit?: number;
     sellingPrice?: number;
   };

@@ -30,6 +30,7 @@ model AuthUser {
   orders            Order[]
   stripeAccount     StripeConnectedAccount?
   payouts           AuthorOrderPayout[]
+  cart              Cart?
 
   // MongoDB: @unique already creates an index, so don't duplicate with @@index
   // Compound index for lookups by email+id+providerId

@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { AuthController } from './presentation/controllers/auth.controller';
 import { AdminUsersController } from './presentation/controllers/admin-users.controller';
+import { AuthorsController } from './presentation/controllers/authors.controller';
 
 import { AccessTokenAuthenticator } from './application/services/access-token-authenticator.service';
 import { CreateAccountUseCase } from './application/services/create-account.use-case';
@@ -16,6 +17,9 @@ import { UpdateUserStatusUseCase } from './application/services/update-user-stat
 import { ResendVerificationUseCase } from './application/services/resend-verification.use-case';
 import { GetAdminAuthorsUseCase } from './application/services/get-admin-authors.use-case';
 import { VerifyPasswordResetOtpUseCase } from './application/services/verify-password-reset-otp.use-case';
+import { UpdateProfileUseCase } from './application/services/update-profile.use-case';
+import { UpdateEmailUseCase } from './application/services/update-email.use-case';
+import { GetFoundingAuthorsUseCase } from './application/services/get-founding-authors.use-case';
 
 import { PrismaAuthUserRepository } from './infrastructure/persistence/prisma-auth-user.repository';
 import { PrismaOtpStore } from './infrastructure/persistence/prisma-otp.store';
@@ -24,7 +28,8 @@ import { OtpGenerator } from './infrastructure/security/otp-generator';
 
 import { BcryptPasswordHasher } from '../common/infrastructure/security/bcrypt-password-hasher';
 import { JsonWebTokenSigner } from '../common/infrastructure/security/jsonwebtoken-token-signer';
-import { EmailService } from '../common/services/email.service';
+import { QueueModule } from '../common/modules/queue.module';
+import { BooksModule } from '../books/books.module';
 
 import { PASSWORD_HASHER_TOKEN } from '../common/domain/interfaces/password-hasher.interface';
 import { TOKEN_SIGNER_TOKEN } from '../common/domain/interfaces/token-signer.interface';
@@ -34,8 +39,8 @@ import { APP_CONFIG_TOKEN } from '../common/domain/interfaces/app-config.interfa
 import { AppConfigService } from '../common/config/app-config.service';
 
 @Module({
-  imports: [],
-  controllers: [AuthController, AdminUsersController],
+  imports: [QueueModule, forwardRef(() => BooksModule)],
+  controllers: [AuthController, AdminUsersController, AuthorsController],
   providers: [
     // Domain interfaces → Infrastructure implementations
     {
@@ -73,13 +78,15 @@ import { AppConfigService } from '../common/config/app-config.service';
     ResendVerificationUseCase,
     GetAdminAuthorsUseCase,
     VerifyPasswordResetOtpUseCase,
+    UpdateProfileUseCase,
+    UpdateEmailUseCase,
+    GetFoundingAuthorsUseCase,
 
     // Infrastructure
     PrismaAuthUserRepository,
     PrismaOtpStore,
     GoogleOAuthStrategy,
     OtpGenerator,
-    EmailService,
   ],
   exports: [AccessTokenAuthenticator, AUTH_USER_REPOSITORY_TOKEN],
 })

@@ -29,6 +29,16 @@ export class PrismaPrintRepository implements IPrintRepository {
       pageCount: data.pageCount ?? current?.pageCount ?? 0,
       trimSize: data.trimSize ?? current?.trimSize ?? '',
       bindingType: data.bindingType ?? current?.bindingType ?? '',
+      bookType: data.bookType ?? current?.bookType ?? '',
+      interiorColor: data.interiorColor ?? current?.interiorColor ?? '',
+      printQuality: data.printQuality ?? current?.printQuality ?? 'Standard',
+      paperType: data.paperType ?? current?.paperType ?? '',
+      interiorPpi: data.interiorPpi ?? current?.interiorPpi ?? 0,
+      coverFinish: data.coverFinish ?? current?.coverFinish ?? '',
+      linenColor: data.linenColor ?? current?.linenColor ?? 'X',
+      foilColor: data.foilColor ?? current?.foilColor ?? 'X',
+      printInsideCover:
+        data.printInsideCover ?? current?.printInsideCover ?? 'No',
       podPackageId: data.podPackageId ?? current?.podPackageId ?? '',
       pricing: {
         manufacturingCost:
@@ -61,6 +71,14 @@ export class PrismaPrintRepository implements IPrintRepository {
         coverStatus:
           data.validation?.coverStatus ??
           current?.validation?.coverStatus ??
+          null,
+        validPodPackageIds:
+          data.validation?.validPodPackageIds ??
+          current?.validation?.validPodPackageIds ??
+          [],
+        coverDimensions:
+          data.validation?.coverDimensions ??
+          current?.validation?.coverDimensions ??
           null,
         validated:
           data.validation?.validated ?? current?.validation?.validated ?? false,

@@ -13,7 +13,8 @@ import type { AuthTokens, AuthUserOutput } from '../dto/auth.dto';
 import { OTP_STORE_TOKEN } from '../../domain/interfaces/otp-store.interface';
 import type { IOtpStore } from '../../domain/interfaces/otp-store.interface';
 import { OtpGenerator } from '../../infrastructure/security/otp-generator';
-import { EmailService } from '../../../common/services/email.service';
+import { EMAIL_SENDER_TOKEN } from '../../../common/domain/interfaces/email-sender.interface';
+import type { IEmailSender } from '../../../common/domain/interfaces/email-sender.interface';
 
 export interface RegisterInput {
   firstName: string;
@@ -37,7 +38,8 @@ export class CreateAccountUseCase {
     @Inject(OTP_STORE_TOKEN)
     private readonly otpStore: IOtpStore,
     private readonly otpGenerator: OtpGenerator,
-    private readonly emailService: EmailService,
+    @Inject(EMAIL_SENDER_TOKEN)
+    private readonly emailSender: IEmailSender,
   ) {}
 
   async execute(
@@ -128,6 +130,7 @@ export class CreateAccountUseCase {
         username: authUser.username,
         role: authUser.role,
         verified: authUser.verified,
+        isFoundingAuthor: authUser.isFoundingAuthor,
         firstName: input.firstName,
         lastName: input.lastName,
         createdAt: authUser.createdAt,
@@ -144,7 +147,7 @@ export class CreateAccountUseCase {
     const accessToken = this.tokenSigner.sign(
       { sub: userId, email, role, tokenVersion, type: 'access' },
       this.config.jwt_access_secret,
-      { expiresIn: '15m' },
+      { expiresIn: '10d' },
     );
     const refreshToken = this.tokenSigner.sign(
       { sub: userId, email, role, tokenVersion, type: 'refresh' },
@@ -166,20 +169,21 @@ export class CreateAccountUseCase {
     lastName: string;
   }): Promise<void> {
     const emails: Promise<void>[] = [
-      this.emailService.sendVerificationEmail(
+      this.emailSender.sendVerificationEmail(
         input.authUser.email,
         input.authUser.username,
         input.verificationCode,
+        input.authUser.id,
       ),
     ];
 
     if (input.authUser.role === userRole.AUTHOR) {
       emails.push(
-        this.emailService.sendAuthorPendingApprovalEmail(
+        this.emailSender.sendAuthorPendingApprovalEmail(
           input.authUser.email,
           input.authUser.username,
         ),
-        this.emailService.sendNewAuthorAdminNotificationEmail({
+        this.emailSender.sendNewAuthorAdminNotificationEmail({
           authorId: input.authUser.id,
           firstName: input.firstName,
           lastName: input.lastName,

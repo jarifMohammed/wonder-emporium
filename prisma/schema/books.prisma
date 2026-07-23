@@ -18,11 +18,12 @@ model Book {
   status             BookStatus @default(DRAFT)
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
-
+// Relations
   author       AuthUser            @relation(fields: [authorId], references: [id])
   files        BookFile[]
   formats      BookFormatPricing[]
   orderItems   OrderItem[]
+  cartItems    CartItem[]
   printEdition Json?
 
   @@index([authorId])
@@ -60,6 +61,7 @@ model BookFormatPricing {
   updatedAt   DateTime @updatedAt
 
   orderItems OrderItem[]
+  cartItems  CartItem[]
 
   @@index([bookId])
 }

@@ -76,6 +76,7 @@ export class GoogleOAuthUseCase {
         username: authUser.username,
         role: authUser.role,
         verified: authUser.verified,
+        isFoundingAuthor: authUser.isFoundingAuthor,
         createdAt: authUser.createdAt,
       },
     };
@@ -125,6 +126,7 @@ export class GoogleOAuthUseCase {
         username: authUser.username,
         role: authUser.role,
         verified: true,
+        isFoundingAuthor: authUser.isFoundingAuthor,
         firstName: firstName || email.split('@')[0],
         lastName: lastName || '',
         createdAt: authUser.createdAt,
@@ -141,7 +143,7 @@ export class GoogleOAuthUseCase {
     const accessToken = this.tokenSigner.sign(
       { sub: userId, email, role, tokenVersion, type: 'access' },
       this.config.jwt_access_secret,
-      { expiresIn: '15m' },
+      { expiresIn: '10d' },
     );
     const refreshToken = this.tokenSigner.sign(
       { sub: userId, email, role, tokenVersion, type: 'refresh' },

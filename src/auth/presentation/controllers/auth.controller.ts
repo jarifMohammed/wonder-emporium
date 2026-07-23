@@ -4,13 +4,23 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
+  Patch,
   Post,
   Req,
   Redirect,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { Request } from 'express';
 import { AuthGuard } from '../../../common/guards/auth.guard';
@@ -29,6 +39,8 @@ import { GoogleOAuthUseCase } from '../../application/services/google-oauth.use-
 import { GoogleOAuthStrategy } from '../../infrastructure/oauth/google-oauth.strategy';
 import { ResendVerificationUseCase } from '../../application/services/resend-verification.use-case';
 import { VerifyPasswordResetOtpUseCase } from '../../application/services/verify-password-reset-otp.use-case';
+import { UpdateProfileUseCase } from '../../application/services/update-profile.use-case';
+import { UpdateEmailUseCase } from '../../application/services/update-email.use-case';
 
 import {
   RegisterRequest,
@@ -41,10 +53,15 @@ import {
   VerifyEmailRequest,
   ResendVerificationRequest,
   VerifyPasswordResetOtpRequest,
+  UpdateProfileRequest,
+  UpdateEmailRequest,
 } from '../dto/auth.request.dto';
 
 import config from '../../../common/config/app.config';
 import { AuthPrincipal } from '../../interfaces/auth.interface';
+import { S3FileStorageService } from '../../../books/infrastructure/storage/s3-file-storage.service';
+import { AUTH_USER_REPOSITORY_TOKEN } from '../../domain/interfaces/auth-user.repository.interface';
+import type { IAuthUserRepository } from '../../domain/interfaces/auth-user.repository.interface';
 
 @ApiTags('Users')
 @Throttle({
@@ -67,6 +84,11 @@ export class AuthController {
     private readonly googleOAuthStrategy: GoogleOAuthStrategy,
     private readonly resendVerificationUseCase: ResendVerificationUseCase,
     private readonly verifyPasswordResetOtpUseCase: VerifyPasswordResetOtpUseCase,
+    private readonly updateProfileUseCase: UpdateProfileUseCase,
+    private readonly updateEmailUseCase: UpdateEmailUseCase,
+    private readonly s3Storage: S3FileStorageService,
+    @Inject(AUTH_USER_REPOSITORY_TOKEN)
+    private readonly userRepository: IAuthUserRepository,
   ) {}
 
   @Post('register')
@@ -244,8 +266,73 @@ export class AuthController {
       'Fetches the profile details of the currently authenticated user. Validates the JWT token and returns user metadata.',
   })
   @ApiResponse({ status: 200, description: 'Current user profile' })
-  me(@Req() req: Request) {
+  async me(@Req() req: Request) {
     const user = (req as unknown as { user: AuthPrincipal }).user;
-    return { data: user };
+    const [authUser, profile] = await Promise.all([
+      this.userRepository.findById(user.id),
+      this.userRepository.findProfileByAuthId(user.id),
+    ]);
+    return {
+      data: {
+        ...user,
+        isFoundingAuthor: authUser?.isFoundingAuthor ?? false,
+        profile,
+      },
+    };
+  }
+
+  @Patch('profile')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Update author profile (name, location)' })
+  @ApiResponse({ status: 200, description: 'Profile updated successfully' })
+  async updateProfile(@Body() body: UpdateProfileRequest, @Req() req: Request) {
+    const user = (req as unknown as { user: AuthPrincipal }).user;
+    return this.updateProfileUseCase.execute(user.id, {
+      firstName: body.firstName,
+      lastName: body.lastName,
+      location: body.location,
+    });
+  }
+
+  @Patch('avatar')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload or update profile picture' })
+  @ApiResponse({ status: 200, description: 'Avatar updated successfully' })
+  async updateAvatar(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+  ) {
+    const user = (req as unknown as { user: AuthPrincipal }).user;
+    if (!file) {
+      return { message: 'No file provided' };
+    }
+    const uploaded = await this.s3Storage.uploadFile(
+      file,
+      `avatars/${user.id}`,
+    );
+    await this.updateProfileUseCase.execute(user.id, {
+      avatarUrl: uploaded.url,
+    });
+    return { message: 'Avatar updated successfully', avatarUrl: uploaded.url };
+  }
+
+  @Patch('email')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Change email address (requires password confirmation)',
+  })
+  @ApiResponse({ status: 200, description: 'Email updated successfully' })
+  async updateEmail(@Body() body: UpdateEmailRequest, @Req() req: Request) {
+    const user = (req as unknown as { user: AuthPrincipal }).user;
+    return this.updateEmailUseCase.execute(
+      user.id,
+      body.newEmail,
+      body.password,
+    );
   }
 }

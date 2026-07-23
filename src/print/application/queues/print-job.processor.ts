@@ -87,13 +87,17 @@ export class PrintJobProcessor extends WorkerHost {
       `Print job creation job ${job.id} failed: ${error.message}`,
     );
     if (job.attemptsMade >= job.opts.attempts!) {
-      this.logger.error(`Print job ${job.id} for order ${job.data.orderId} permanently failed.`);
+      this.logger.error(
+        `Print job ${job.id} for order ${job.data.orderId} permanently failed.`,
+      );
       try {
         await this.printRepo.updatePrintJob(job.data.orderId, {
           status: 'FAILED',
         } as Partial<PrintJobData>);
       } catch (e: any) {
-        this.logger.error(`Could not mark order ${job.data.orderId} print job as failed in DB: ${e.message}`);
+        this.logger.error(
+          `Could not mark order ${job.data.orderId} print job as failed in DB: ${e.message}`,
+        );
       }
     }
   }

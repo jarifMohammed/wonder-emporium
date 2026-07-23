@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { LuluAuthService } from './application/services/lulu-auth.service';
 import { PricingService } from './application/services/pricing.service';
+import { SpecificationService } from './application/services/specification.service';
 import { PdfUtilsService } from './application/services/pdf-utils.service';
 import { LuluApiService } from './infrastructure/lulu/lulu-api.service';
 import { PrismaPrintRepository } from './infrastructure/persistence/prisma-print.repository';
@@ -10,6 +11,7 @@ import { PricingProcessor } from './application/queues/pricing.processor';
 import { PrintJobProcessor } from './application/queues/print-job.processor';
 import { StatusSyncProcessor } from './application/queues/status-sync.processor';
 import { PRINT_REPOSITORY_TOKEN } from './domain/interfaces/print.repository.interface';
+import { PrintController } from './presentation/controllers/print.controller';
 
 @Module({
   imports: [
@@ -20,9 +22,11 @@ import { PRINT_REPOSITORY_TOKEN } from './domain/interfaces/print.repository.int
       { name: 'print-status-sync' },
     ),
   ],
+  controllers: [PrintController],
   providers: [
     LuluAuthService,
     PricingService,
+    SpecificationService,
     PdfUtilsService,
     LuluApiService,
     {
@@ -38,6 +42,7 @@ import { PRINT_REPOSITORY_TOKEN } from './domain/interfaces/print.repository.int
   exports: [
     LuluAuthService,
     PricingService,
+    SpecificationService,
     PdfUtilsService,
     LuluApiService,
     PrismaPrintRepository,

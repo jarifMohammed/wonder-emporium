@@ -103,10 +103,19 @@ export class UpdateBookUseCase {
             interiorColor:
               printEdition.interiorColor || existingPrint?.interiorColor || '',
             paperType: printEdition.paperType || existingPrint?.paperType || '',
+            interiorPpi: printEdition.interiorPpi || existingPrint?.interiorPpi,
             coverFinish:
               printEdition.coverFinish || existingPrint?.coverFinish || '',
-            bookType: printEdition.bookType || '',
+            bookType: printEdition.bookType || existingPrint?.bookType || '',
             printQuality: printEdition.printQuality || 'Standard',
+            linenColor: printEdition.linenColor || existingPrint?.linenColor || 'X',
+            foilColor: printEdition.foilColor || existingPrint?.foilColor || 'X',
+            printInsideCover:
+              printEdition.printInsideCover ||
+              existingPrint?.printInsideCover ||
+              'No',
+            podPackageId:
+              printEdition.podPackageId || existingPrint?.podPackageId || '',
           },
           {
             attempts: 3,

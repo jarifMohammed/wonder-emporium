@@ -52,6 +52,100 @@ export class LuluApiService {
     }
   }
 
+  async createInteriorValidation(
+    sourceUrl: string,
+  ): Promise<LuluValidationResponse> {
+    const headers = await this.getAuthHeaders();
+    try {
+      const response = await this.http.post(
+        '/validate-interior/',
+        { source_url: sourceUrl },
+        { headers },
+      );
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(
+        'Interior validation request failed',
+        error?.response?.data || error.message,
+      );
+      throw error;
+    }
+  }
+
+  async getInteriorValidation(
+    id: string | number,
+  ): Promise<LuluValidationResponse> {
+    const headers = await this.getAuthHeaders();
+    try {
+      const response = await this.http.get(`/validate-interior/${id}/`, {
+        headers,
+      });
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to get interior validation ${id}`,
+        error?.response?.data || error.message,
+      );
+      throw error;
+    }
+  }
+
+  async calculateCoverDimensions(request: {
+    pod_package_id: string;
+    interior_page_count: number;
+    unit?: 'pt' | 'mm' | 'inch';
+  }): Promise<{ width: string; height: string; unit: string }> {
+    const headers = await this.getAuthHeaders();
+    try {
+      const response = await this.http.post('/cover-dimensions/', request, {
+        headers,
+      });
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(
+        'Cover dimensions calculation failed',
+        error?.response?.data || error.message,
+      );
+      throw error;
+    }
+  }
+
+  async createCoverValidation(request: {
+    source_url: string;
+    pod_package_id: string;
+    interior_page_count: number;
+  }): Promise<LuluValidationResponse> {
+    const headers = await this.getAuthHeaders();
+    try {
+      const response = await this.http.post('/validate-cover/', request, {
+        headers,
+      });
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(
+        'Cover validation request failed',
+        error?.response?.data || error.message,
+      );
+      throw error;
+    }
+  }
+
+  async getCoverValidation(id: string | number): Promise<LuluValidationResponse> {
+    const headers = await this.getAuthHeaders();
+    try {
+      const response = await this.http.get(`/validate-cover/${id}/`, {
+        headers,
+      });
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to get cover validation ${id}`,
+        error?.response?.data || error.message,
+      );
+      throw error;
+    }
+  }
+
   async validateCoverPdf(
     fileUrl: string,
     fileName: string,

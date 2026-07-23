@@ -12,6 +12,36 @@ export interface CreateAuthUserData {
   isFoundingAuthor?: boolean;
 }
 
+export interface FoundingAuthor {
+  id: string;
+  username: string;
+  isFoundingAuthor: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  profile: {
+    firstName: string | null;
+    lastName: string | null;
+    bio: string | null;
+    avatarUrl: string | null;
+    coverImageUrl: string | null;
+    websiteUrl: string | null;
+    twitterUrl: string | null;
+    instagramUrl: string | null;
+    linkedinUrl: string | null;
+    location: string | null;
+  } | null;
+  bookCount: number;
+  categories: string[];
+}
+
+export interface PaginatedFoundingAuthors {
+  authors: FoundingAuthor[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface IAuthUserRepository {
   findById(id: string): Promise<AuthUser | null>;
   findByEmail(email: string): Promise<AuthUser | null>;
@@ -31,6 +61,16 @@ export interface IAuthUserRepository {
     firstName: string,
     lastName: string,
   ): Promise<void>;
+  updateProfile(
+    authId: string,
+    data: {
+      firstName?: string;
+      lastName?: string;
+      bio?: string;
+      avatarUrl?: string;
+      location?: string;
+    },
+  ): Promise<void>;
   findSecurityByAuthId(authId: string): Promise<AuthSecurityData | null>;
   createSecurity(authId: string): Promise<void>;
   updateSecurity(
@@ -49,6 +89,22 @@ export interface IAuthUserRepository {
   ): Promise<void>;
   findAuthors(filters: AdminAuthorFilters): Promise<PaginatedAdminAuthors>;
   findAuthorDetails(id: string): Promise<AdminAuthorRecord | null>;
+  findProfileByAuthId(authId: string): Promise<UserProfileData | null>;
+  findFoundingAuthors(filters?: { page?: number; limit?: number }): Promise<PaginatedFoundingAuthors>;
+  findFoundingAuthorById(id: string): Promise<FoundingAuthor | null>;
+}
+
+export interface UserProfileData {
+  firstName: string | null;
+  lastName: string | null;
+  bio: string | null;
+  avatarUrl: string | null;
+  coverImageUrl: string | null;
+  websiteUrl: string | null;
+  twitterUrl: string | null;
+  instagramUrl: string | null;
+  linkedinUrl: string | null;
+  location: string | null;
 }
 
 export interface AdminAuthorFilters {
@@ -73,6 +129,7 @@ export interface AdminAuthorRecord {
     lastName: string | null;
     bio: string | null;
     avatarUrl: string | null;
+    location: string | null;
   } | null;
   bookCount: number;
 }

@@ -69,7 +69,12 @@ export class HandleCheckoutCompletedUseCase {
         },
       });
 
-      if (order.items && order.items.length > 0 && subtotal > 0 && taxAmount > 0) {
+      if (
+        order.items &&
+        order.items.length > 0 &&
+        subtotal > 0 &&
+        taxAmount > 0
+      ) {
         for (const item of order.items) {
           const itemProportion = item.totalPrice / subtotal;
           const itemTax = itemProportion * taxAmount;
@@ -119,9 +124,7 @@ export class HandleCheckoutCompletedUseCase {
 
         if (
           !format ||
-          !['PAPERBACK', 'HARDCOVER'].includes(
-            format.formatType.toUpperCase(),
-          )
+          !['PAPERBACK', 'HARDCOVER'].includes(format.formatType.toUpperCase())
         ) {
           continue;
         }

@@ -5,7 +5,11 @@ import { LuluApiService } from '../../infrastructure/lulu/lulu-api.service';
 import { PrismaPrintRepository } from '../../infrastructure/persistence/prisma-print.repository';
 import { PricingService } from '../services/pricing.service';
 import { PdfUtilsService } from '../services/pdf-utils.service';
-import { PrintEditionData } from '../../domain/interfaces/lulu.types';
+import {
+  LuluValidationResponse,
+  LuluValidationStatus,
+  PrintEditionData,
+} from '../../domain/interfaces/lulu.types';
 
 interface ValidationJobData {
   bookId: string;
@@ -17,9 +21,14 @@ interface ValidationJobData {
   bindingType: string;
   interiorColor: string;
   paperType: string;
+  interiorPpi?: number;
   coverFinish: string;
   bookType: string;
   printQuality: string;
+  linenColor?: string;
+  foilColor?: string;
+  printInsideCover?: string;
+  podPackageId?: string;
 }
 
 @Processor('print-validation')
@@ -40,15 +49,18 @@ export class ValidationProcessor extends WorkerHost {
       bookId,
       interiorPdfUrl,
       coverPdfUrl,
-      interiorFileName,
-      coverFileName,
       trimSize,
       bindingType,
       interiorColor,
       paperType,
+      interiorPpi,
       coverFinish,
       bookType,
       printQuality,
+      linenColor,
+      foilColor,
+      printInsideCover,
+      podPackageId,
     } = job.data;
 
     this.logger.log(`Starting validation for book ${bookId} (job ${job.id})`);
@@ -59,34 +71,136 @@ export class ValidationProcessor extends WorkerHost {
 
       await this.printRepo.updatePrintEdition(bookId, {
         pageCount,
+        enabled: true,
+        trimSize,
+        bindingType,
+        bookType,
+        interiorColor,
+        printQuality: printQuality || 'Standard',
+        paperType,
+        interiorPpi,
+        coverFinish,
+        linenColor: linenColor || 'X',
+        foilColor: foilColor || 'X',
+        printInsideCover: printInsideCover || 'No',
+        podPackageId: podPackageId || '',
       } as Partial<PrintEditionData>);
 
       await job.updateProgress(30);
-      const interiorResult = await this.luluApi.validateInteriorPdf(
-        interiorPdfUrl,
-        interiorFileName,
-      );
+      const interiorStart =
+        await this.luluApi.createInteriorValidation(interiorPdfUrl);
+      await this.printRepo.updatePrintEdition(bookId, {
+        validation: {
+          interiorValidationId: String(interiorStart.id),
+          coverValidationId: null,
+          interiorStatus: interiorStart.status,
+          coverStatus: null,
+          validPodPackageIds: interiorStart.valid_pod_package_ids || [],
+          coverDimensions: null,
+          validated: false,
+          validationErrors: this.toValidationErrors(interiorStart.errors),
+          lastValidatedAt: new Date().toISOString(),
+        },
+      } as Partial<PrintEditionData>);
 
-      const coverResult = await this.luluApi.validateCoverPdf(
-        coverPdfUrl,
-        coverFileName,
+      const interiorResult = await this.pollValidation(
+        () => this.luluApi.getInteriorValidation(interiorStart.id),
+        ['VALIDATED'],
+        ['ERROR'],
       );
+      const detectedPageCount = Number(interiorResult.page_count) || pageCount;
+      const matchedPricingRow = this.pricingService.findPricingRow({
+        bookType,
+        bind: bindingType,
+        interiorColor,
+        paperType,
+        lamination: coverFinish,
+        pageCount: detectedPageCount,
+        printQuality: printQuality || 'Standard',
+      });
+      const selectedPodPackageId = podPackageId || matchedPricingRow?.newSku || '';
+      if (!selectedPodPackageId) {
+        throw new Error('No POD package ID could be resolved for print validation');
+      }
+      const validPodPackageIds = interiorResult.valid_pod_package_ids || [];
+      const packageIsAllowed =
+        !validPodPackageIds.length ||
+        validPodPackageIds.includes(selectedPodPackageId);
+
+      if (!packageIsAllowed) {
+        throw new Error(
+          `Selected POD package ${selectedPodPackageId} is not valid for interior PDF`,
+        );
+      }
+
+      await this.printRepo.updatePrintEdition(bookId, {
+        pageCount: detectedPageCount,
+        validation: {
+          interiorValidationId: String(interiorResult.id),
+          coverValidationId: null,
+          interiorStatus: interiorResult.status,
+          coverStatus: null,
+          validPodPackageIds,
+          coverDimensions: null,
+          validated: false,
+          validationErrors: this.toValidationErrors(interiorResult.errors),
+          lastValidatedAt: new Date().toISOString(),
+        },
+      } as Partial<PrintEditionData>);
+
+      await job.updateProgress(55);
+      const coverDimensions = await this.luluApi.calculateCoverDimensions({
+        pod_package_id: selectedPodPackageId,
+        interior_page_count: detectedPageCount,
+      });
+
+      const coverStart = await this.luluApi.createCoverValidation({
+        source_url: coverPdfUrl,
+        pod_package_id: selectedPodPackageId,
+        interior_page_count: detectedPageCount,
+      });
+
+      await this.printRepo.updatePrintEdition(bookId, {
+        validation: {
+          interiorValidationId: String(interiorResult.id),
+          coverValidationId: String(coverStart.id),
+          interiorStatus: interiorResult.status,
+          coverStatus: coverStart.status,
+          validPodPackageIds,
+          coverDimensions,
+          validated: false,
+          validationErrors: [
+            ...this.toValidationErrors(interiorResult.errors),
+            ...this.toValidationErrors(coverStart.errors),
+          ],
+          lastValidatedAt: new Date().toISOString(),
+        },
+      } as Partial<PrintEditionData>);
 
       await job.updateProgress(70);
+      const coverResult = await this.pollValidation(
+        () => this.luluApi.getCoverValidation(coverStart.id),
+        ['NORMALIZED'],
+        ['ERROR'],
+      );
+
       const isValid =
-        interiorResult.status === 'VALID' && coverResult.status === 'VALID';
+        interiorResult.status === 'VALIDATED' &&
+        coverResult.status === 'NORMALIZED';
 
       const errors = [
-        ...(interiorResult.errors || []),
-        ...(coverResult.errors || []),
+        ...this.toValidationErrors(interiorResult.errors),
+        ...this.toValidationErrors(coverResult.errors),
       ];
 
       await this.printRepo.updatePrintEdition(bookId, {
         validation: {
-          interiorValidationId: interiorResult.id,
-          coverValidationId: coverResult.id,
+          interiorValidationId: String(interiorResult.id),
+          coverValidationId: String(coverResult.id),
           interiorStatus: interiorResult.status,
           coverStatus: coverResult.status,
+          validPodPackageIds,
+          coverDimensions,
           validated: isValid,
           validationErrors: errors,
           lastValidatedAt: new Date().toISOString(),
@@ -95,25 +209,18 @@ export class ValidationProcessor extends WorkerHost {
 
       if (isValid) {
         await job.updateProgress(80);
-        const pricingRow = this.pricingService.findPricingRow({
-          bookType,
-          bind: bindingType,
-          interiorColor,
-          paperType,
-          lamination: coverFinish,
-          pageCount,
-          printQuality: printQuality || 'Standard',
-        });
+        const pricingRow = matchedPricingRow;
 
         if (pricingRow) {
           const manufacturingCost =
             this.pricingService.calculateManufacturingCost(
               pricingRow,
-              pageCount,
+              detectedPageCount,
               'USD',
             );
 
           await this.printRepo.updatePrintEdition(bookId, {
+            podPackageId: pricingRow.newSku,
             pricing: {
               manufacturingCost,
               currency: 'USD',
@@ -164,5 +271,46 @@ export class ValidationProcessor extends WorkerHost {
     this.logger.error(
       `Validation job ${job.id} failed after ${job.attemptsMade} attempts: ${error.message}`,
     );
+  }
+
+  private async pollValidation(
+    fetchStatus: () => Promise<LuluValidationResponse>,
+    successStatuses: LuluValidationStatus[],
+    failureStatuses: LuluValidationStatus[],
+  ): Promise<LuluValidationResponse> {
+    let latest = await fetchStatus();
+    for (let attempt = 0; attempt < 20; attempt++) {
+      if (successStatuses.includes(latest.status)) return latest;
+      if (failureStatuses.includes(latest.status)) {
+        throw new Error(
+          `Lulu validation failed with status ${latest.status}: ${JSON.stringify(latest.errors || [])}`,
+        );
+      }
+      await this.sleep(3000);
+      latest = await fetchStatus();
+    }
+    throw new Error(`Lulu validation timed out with status ${latest.status}`);
+  }
+
+  private toValidationErrors(errors: unknown) {
+    if (!errors) return [];
+    if (!Array.isArray(errors)) {
+      return [{ message: String(errors), code: 'LULU_VALIDATION_ERROR' }];
+    }
+    return errors.map((error) => {
+      if (typeof error === 'string') {
+        return { message: error, code: 'LULU_VALIDATION_ERROR' };
+      }
+      const item = error as { message?: string; code?: string; field?: string };
+      return {
+        message: item.message || JSON.stringify(error),
+        code: item.code || 'LULU_VALIDATION_ERROR',
+        field: item.field,
+      };
+    });
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

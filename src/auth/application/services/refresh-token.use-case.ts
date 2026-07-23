@@ -52,7 +52,7 @@ export class RefreshTokenUseCase {
         type: 'access',
       },
       this.config.jwt_access_secret,
-      { expiresIn: '15m' },
+      { expiresIn: '10d' },
     );
 
     const newRefreshToken = this.tokenSigner.sign(

@@ -15,6 +15,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
@@ -39,6 +40,11 @@ import { SubmitBookUseCase } from '../../application/services/submit-book.use-ca
 import { ApproveBookUseCase } from '../../application/services/approve-book.use-case';
 import { DeleteBookUseCase } from '../../application/services/delete-book.use-case';
 import { S3FileStorageService } from '../../infrastructure/storage/s3-file-storage.service';
+import { LuluApiService } from '../../../print/infrastructure/lulu/lulu-api.service';
+import {
+  LuluValidationResponse,
+  LuluValidationStatus,
+} from '../../../print/domain/interfaces/lulu.types';
 
 import {
   CreateBookRequest,
@@ -51,6 +57,7 @@ import {
   BookStatus,
 } from '../../domain/interfaces/book.interface';
 
+@SkipThrottle()
 @ApiTags('Books', 'Author', 'Admin')
 @Controller('books')
 export class BooksController {
@@ -63,7 +70,106 @@ export class BooksController {
     private readonly approveBookUseCase: ApproveBookUseCase,
     private readonly deleteBookUseCase: DeleteBookUseCase,
     private readonly s3Storage: S3FileStorageService,
+    private readonly luluApi: LuluApiService,
   ) {}
+
+  @Post('validate-print-files')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.AUTHOR, userRole.ADMIN, userRole.SUPERADMIN)
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'interiorPdf', maxCount: 1 },
+      { name: 'coverPdf', maxCount: 1 },
+    ]),
+  )
+  @ApiOperation({
+    summary: 'Upload and validate print-ready interior and cover PDFs',
+  })
+  @ApiConsumes('multipart/form-data')
+  async validatePrintFiles(
+    @Req() req: Request,
+    @UploadedFiles() files: { [fieldname: string]: Express.Multer.File[] },
+    @Body()
+    body: {
+      podPackageId: string;
+      pageCount?: string;
+    },
+  ) {
+    const user = (req as unknown as { user: { id: string } }).user;
+    const interiorFile = files?.interiorPdf?.[0];
+    const coverFile = files?.coverPdf?.[0];
+
+    if (!interiorFile || !coverFile) {
+      return {
+        valid: false,
+        message: 'Interior PDF and Cover PDF are required.',
+      };
+    }
+    if (!body.podPackageId) {
+      return {
+        valid: false,
+        message: 'POD package ID is required before validation.',
+      };
+    }
+
+    const uploaded = await this.s3Storage.uploadBookFiles(
+      { interiorPdf: [interiorFile], coverPdf: [coverFile] },
+      user.id,
+    );
+    const interiorUrl = uploaded.interiorPdf!.url;
+    const coverUrl = uploaded.coverPdf!.url;
+
+    const interiorStart =
+      await this.luluApi.createInteriorValidation(interiorUrl);
+    const interior = await this.pollLuluValidation(
+      () => this.luluApi.getInteriorValidation(interiorStart.id),
+      ['VALIDATED'],
+      ['ERROR'],
+    );
+    const interiorPageCount =
+      Number(interior.page_count) || Number(body.pageCount) || 0;
+    const validPodPackageIds = interior.valid_pod_package_ids || [];
+    const podPackageAllowed =
+      !validPodPackageIds.length ||
+      validPodPackageIds.includes(body.podPackageId);
+
+    if (!podPackageAllowed) {
+      return {
+        valid: false,
+        message: 'Selected POD package is not valid for this interior PDF.',
+        interior,
+        validPodPackageIds,
+      };
+    }
+
+    const coverDimensions = await this.luluApi.calculateCoverDimensions({
+      pod_package_id: body.podPackageId,
+      interior_page_count: interiorPageCount,
+    });
+    const coverStart = await this.luluApi.createCoverValidation({
+      source_url: coverUrl,
+      pod_package_id: body.podPackageId,
+      interior_page_count: interiorPageCount,
+    });
+    const cover = await this.pollLuluValidation(
+      () => this.luluApi.getCoverValidation(coverStart.id),
+      ['NORMALIZED'],
+      ['ERROR'],
+    );
+
+    return {
+      valid: true,
+      podPackageId: body.podPackageId,
+      interiorPageCount,
+      interior,
+      cover,
+      coverDimensions,
+      files: {
+        interiorPdf: uploaded.interiorPdf,
+        coverPdf: uploaded.coverPdf,
+      },
+    };
+  }
 
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
@@ -191,6 +297,34 @@ export class BooksController {
   @ApiResponse({ status: 200, description: 'List of approved books' })
   async getApprovedBooks(@Query() query: BookQueryParams) {
     return this.getBooksUseCase.getApproved(query);
+  }
+
+  @Get('categories')
+  @ApiOperation({ summary: 'Get distinct categories from approved books' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of book categories with counts',
+  })
+  async getBookCategories() {
+    return this.getBooksUseCase.getApprovedCategories();
+  }
+
+  @Get('founding-authors')
+  @ApiOperation({ summary: 'Get books by founding authors' })
+  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiQuery({ name: 'category', required: false, type: String })
+  @ApiQuery({ name: 'tag', required: false, type: String })
+  @ApiQuery({ name: 'minPrice', required: false, type: Number })
+  @ApiQuery({ name: 'maxPrice', required: false, type: Number })
+  @ApiQuery({ name: 'language', required: false, type: String })
+  @ApiQuery({ name: 'ageGroup', required: false, type: String })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'sortBy', required: false, type: String })
+  @ApiQuery({ name: 'sortOrder', required: false, type: String })
+  @ApiResponse({ status: 200, description: 'List of books by founding authors' })
+  async getFoundingAuthorBooks(@Query() query: BookQueryParams) {
+    return this.getBooksUseCase.getByFoundingAuthors(query);
   }
 
   @Get('pending')
@@ -371,5 +505,24 @@ export class BooksController {
       user.id,
       user.role === userRole.ADMIN || user.role === userRole.SUPERADMIN,
     );
+  }
+
+  private async pollLuluValidation(
+    fetchStatus: () => Promise<LuluValidationResponse>,
+    successStatuses: LuluValidationStatus[],
+    failureStatuses: LuluValidationStatus[],
+  ): Promise<LuluValidationResponse> {
+    let latest = await fetchStatus();
+    for (let attempt = 0; attempt < 20; attempt++) {
+      if (successStatuses.includes(latest.status)) return latest;
+      if (failureStatuses.includes(latest.status)) {
+        throw new Error(
+          `Lulu validation failed with status ${latest.status}: ${JSON.stringify(latest.errors || [])}`,
+        );
+      }
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      latest = await fetchStatus();
+    }
+    throw new Error(`Lulu validation timed out with status ${latest.status}`);
   }
 }

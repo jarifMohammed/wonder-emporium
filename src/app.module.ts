@@ -17,6 +17,8 @@ import { PrintModule } from './print/print.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { QueueModule } from './common/modules/queue.module';
 import { CommerceModule } from './commerce/commerce.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
+import { CartModule } from './cart/cart.module';
 
 import { MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { RequestIdMiddleware } from './common/middlewares/request-id.middleware';
@@ -49,6 +51,8 @@ import { RequestIdMiddleware } from './common/middlewares/request-id.middleware'
     BooksModule,
     PrintModule,
     CommerceModule,
+    NewsletterModule,
+    CartModule,
     QueueModule,
     // Event Emitter module
     EventEmitterModule.forRoot(),

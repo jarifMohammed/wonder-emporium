@@ -2,6 +2,9 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import * as path from 'path';
 import {
+  PrintOptionValue,
+  PrintOptionsResponse,
+  PrintProductOption,
   PricingRow,
   SupportedCurrency,
 } from '../../domain/interfaces/lulu.types';
@@ -55,6 +58,9 @@ export class PricingService implements OnModuleInit {
         paperType: String(row['Paper Type'] || '').trim(),
         interiorPpi: Number(row['Interior PPI']) || 0,
         lamination: String(row['Lamination'] || '').trim(),
+        linenColor: String(row['Linen Color'] || '').trim(),
+        foilColor: String(row['Foil Color'] || '').trim(),
+        printInsideCover: String(row['Print Inside Cover'] || '').trim(),
       }));
 
       this.logger.log(
@@ -63,6 +69,103 @@ export class PricingService implements OnModuleInit {
     } catch (error: any) {
       this.logger.error('Failed to load pricing spreadsheet', error.message);
     }
+  }
+
+  getPrintOptions(): PrintOptionsResponse {
+    const products = this.pricingRows.map((row) => ({
+      newSku: row.newSku,
+      bookType: row.bookType,
+      minPage: row.minPage,
+      maxPage: row.maxPage,
+      trimWidthIn: row.trimWidthIn,
+      trimHeightIn: row.trimHeightIn,
+      interiorColor: row.interiorColor,
+      printQuality: row.printQuality,
+      bind: row.bind,
+      paperType: row.paperType,
+      lamination: row.lamination,
+      linenColor: row.linenColor || 'X',
+      foilColor: row.foilColor || 'X',
+      printInsideCover: row.printInsideCover || 'No',
+    }));
+
+    const uniqueProducts = this.uniqueProducts(products);
+    const paperbackBindings = ['Perfect', 'Coil', 'Saddle Stitch', 'Wire O'];
+    const hardcoverBindings = ['Case Wrap', 'Linen Wrap'];
+    const paperback = uniqueProducts.filter((option) =>
+      paperbackBindings.includes(option.bind),
+    );
+    const hardcover = uniqueProducts.filter((option) =>
+      hardcoverBindings.includes(option.bind),
+    );
+
+    return {
+      paperback,
+      hardcover,
+      categories: {
+        paperbackBindings: this.toOptions(paperbackBindings),
+        hardcoverBindings: this.toOptions(hardcoverBindings),
+        bookTypes: this.toOptions(
+          uniqueProducts.map((option) => option.bookType),
+        ),
+        interiorColors: this.toOptions(
+          uniqueProducts.map((option) => option.interiorColor),
+        ),
+        printQualities: this.toOptions(
+          uniqueProducts.map((option) => option.printQuality),
+        ),
+        paperTypes: this.toOptions(
+          uniqueProducts.map((option) => option.paperType),
+        ),
+        laminations: this.toOptions(
+          uniqueProducts.map((option) => option.lamination),
+        ),
+        linenColors: this.toOptions(
+          uniqueProducts
+            .map((option) => option.linenColor)
+            .filter((value) => value !== 'X'),
+        ),
+        foilColors: this.toOptions(
+          uniqueProducts
+            .map((option) => option.foilColor)
+            .filter((value) => value !== 'X'),
+        ),
+        printInsideCover: this.toOptions(
+          uniqueProducts.map((option) => option.printInsideCover),
+        ),
+      },
+    };
+  }
+
+  private uniqueProducts(products: PrintProductOption[]): PrintProductOption[] {
+    const seen = new Set<string>();
+    return products.filter((product) => {
+      const key = [
+        product.bookType,
+        product.minPage,
+        product.maxPage,
+        product.trimWidthIn,
+        product.trimHeightIn,
+        product.interiorColor,
+        product.printQuality,
+        product.bind,
+        product.paperType,
+        product.lamination,
+        product.linenColor,
+        product.foilColor,
+        product.printInsideCover,
+      ].join('|');
+
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  private toOptions(values: string[]): PrintOptionValue[] {
+    return [...new Set(values.filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b))
+      .map((value) => ({ value, label: value }));
   }
 
   findPricingRow(params: {
@@ -114,7 +217,7 @@ export class PricingService implements OnModuleInit {
 
     if (candidates.length > 1 && !params.printQuality) {
       const standard = candidates.find(
-        (c) => c.printQuality.toLowerCase() === 'standard'
+        (c) => c.printQuality.toLowerCase() === 'standard',
       );
       if (standard) return standard;
     }

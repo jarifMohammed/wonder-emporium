@@ -13,7 +13,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
+import { Type, Transform, plainToInstance } from 'class-transformer';
 import { BookStatus } from '../../domain/interfaces/book.interface';
 
 export class BookFormatDto {
@@ -81,6 +81,13 @@ export class PrintEditionDto {
   @IsNotEmpty()
   paperType: string;
 
+  @ApiPropertyOptional({ example: 444 })
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  @Type(() => Number)
+  interiorPpi?: number;
+
   @ApiProperty({ example: 'Pocketbook' })
   @IsString()
   @IsNotEmpty()
@@ -95,6 +102,26 @@ export class PrintEditionDto {
   @IsString()
   @IsNotEmpty()
   coverFinish: string;
+
+  @ApiPropertyOptional({ example: 'X' })
+  @IsString()
+  @IsOptional()
+  linenColor?: string;
+
+  @ApiPropertyOptional({ example: 'X' })
+  @IsString()
+  @IsOptional()
+  foilColor?: string;
+
+  @ApiPropertyOptional({ example: 'No' })
+  @IsString()
+  @IsOptional()
+  printInsideCover?: string;
+
+  @ApiPropertyOptional({ example: '0600X0900.BW.STD.PB.060UW444.GXX' })
+  @IsString()
+  @IsOptional()
+  podPackageId?: string;
 
   @ApiPropertyOptional({ example: 4.0 })
   @IsNumber()
@@ -165,12 +192,17 @@ export class CreateBookRequest {
   @Type(() => BookFormatDto)
   @IsOptional()
   @Transform(({ value }: { value: unknown }) => {
-    if (typeof value !== 'string') return value;
-    try {
-      return JSON.parse(value) as BookFormatDto[];
-    } catch {
-      return value;
+    let parsed = value;
+    if (typeof value === 'string') {
+      try {
+        parsed = JSON.parse(value);
+      } catch {
+        return value;
+      }
     }
+    return Array.isArray(parsed)
+      ? parsed.map((item) => plainToInstance(BookFormatDto, item))
+      : parsed;
   })
   formats?: BookFormatDto[];
 
@@ -191,12 +223,15 @@ export class CreateBookRequest {
   @Type(() => PrintEditionDto)
   @IsOptional()
   @Transform(({ value }: { value: unknown }) => {
-    if (typeof value !== 'string') return value;
-    try {
-      return JSON.parse(value) as PrintEditionDto;
-    } catch {
-      return value;
+    let parsed = value;
+    if (typeof value === 'string') {
+      try {
+        parsed = JSON.parse(value);
+      } catch {
+        return value;
+      }
     }
+    return plainToInstance(PrintEditionDto, parsed);
   })
   printEdition?: PrintEditionDto;
 }
@@ -255,12 +290,17 @@ export class UpdateBookRequest {
   @Type(() => BookFormatDto)
   @IsOptional()
   @Transform(({ value }: { value: unknown }) => {
-    if (typeof value !== 'string') return value;
-    try {
-      return JSON.parse(value) as BookFormatDto[];
-    } catch {
-      return value;
+    let parsed = value;
+    if (typeof value === 'string') {
+      try {
+        parsed = JSON.parse(value);
+      } catch {
+        return value;
+      }
     }
+    return Array.isArray(parsed)
+      ? parsed.map((item) => plainToInstance(BookFormatDto, item))
+      : parsed;
   })
   formats?: BookFormatDto[];
 
@@ -281,12 +321,15 @@ export class UpdateBookRequest {
   @Type(() => PrintEditionDto)
   @IsOptional()
   @Transform(({ value }: { value: unknown }) => {
-    if (typeof value !== 'string') return value;
-    try {
-      return JSON.parse(value) as PrintEditionDto;
-    } catch {
-      return value;
+    let parsed = value;
+    if (typeof value === 'string') {
+      try {
+        parsed = JSON.parse(value);
+      } catch {
+        return value;
+      }
     }
+    return plainToInstance(PrintEditionDto, parsed);
   })
   printEdition?: PrintEditionDto;
 }

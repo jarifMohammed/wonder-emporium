@@ -41,16 +41,23 @@ export interface LuluTracking {
 }
 
 export interface LuluValidationResponse {
-  id: string;
+  id: string | number;
+  source_url?: string;
+  page_count?: number;
   status: LuluValidationStatus;
-  created_at: string;
-  updated_at: string;
-  errors?: LuluValidationError[];
+  created_at?: string;
+  updated_at?: string;
+  errors?: LuluValidationError[] | string[] | null;
+  valid_pod_package_ids?: string[] | null;
 }
 
 export type LuluValidationStatus =
   | 'PENDING'
   | 'VALIDATING'
+  | 'VALIDATED'
+  | 'NORMALIZING'
+  | 'NORMALIZED'
+  | 'ERROR'
   | 'VALID'
   | 'INVALID'
   | 'FAILED';
@@ -101,6 +108,12 @@ export interface PrintEditionValidation {
   coverValidationId: string | null;
   interiorStatus: LuluValidationStatus | null;
   coverStatus: LuluValidationStatus | null;
+  validPodPackageIds?: string[];
+  coverDimensions?: {
+    width: string;
+    height: string;
+    unit: string;
+  } | null;
   validated: boolean;
   validationErrors: LuluValidationError[];
   lastValidatedAt: string | null;
@@ -113,6 +126,15 @@ export interface PrintEditionData {
   pageCount: number;
   trimSize: string;
   bindingType: string;
+  bookType?: string;
+  interiorColor?: string;
+  printQuality?: string;
+  paperType?: string;
+  interiorPpi?: number;
+  coverFinish?: string;
+  linenColor?: string;
+  foilColor?: string;
+  printInsideCover?: string;
   podPackageId: string;
   pricing: PrintEditionPricing;
   validation: PrintEditionValidation;
@@ -152,6 +174,48 @@ export interface PricingRow {
   paperType: string;
   interiorPpi: number;
   lamination: string;
+  linenColor: string;
+  foilColor: string;
+  printInsideCover: string;
+}
+
+export interface PrintOptionValue {
+  value: string;
+  label: string;
+}
+
+export interface PrintProductOption {
+  newSku: string;
+  bookType: string;
+  minPage: number;
+  maxPage: number;
+  trimWidthIn: number;
+  trimHeightIn: number;
+  interiorColor: string;
+  printQuality: string;
+  bind: string;
+  paperType: string;
+  lamination: string;
+  linenColor: string;
+  foilColor: string;
+  printInsideCover: string;
+}
+
+export interface PrintOptionsResponse {
+  paperback: PrintProductOption[];
+  hardcover: PrintProductOption[];
+  categories: {
+    paperbackBindings: PrintOptionValue[];
+    hardcoverBindings: PrintOptionValue[];
+    bookTypes: PrintOptionValue[];
+    interiorColors: PrintOptionValue[];
+    printQualities: PrintOptionValue[];
+    paperTypes: PrintOptionValue[];
+    laminations: PrintOptionValue[];
+    linenColors: PrintOptionValue[];
+    foilColors: PrintOptionValue[];
+    printInsideCover: PrintOptionValue[];
+  };
 }
 
 export type SupportedCurrency = 'USD' | 'GBP' | 'EUR' | 'AUD' | 'CAD';

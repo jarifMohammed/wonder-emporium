@@ -163,3 +163,32 @@ export class AdminAuthorQuery {
   @Type(() => Number)
   limit?: number;
 }
+
+export class UpdateProfileRequest {
+  @ApiProperty({ example: 'John', required: false })
+  @IsString()
+  @IsOptional()
+  firstName?: string;
+
+  @ApiProperty({ example: 'Doe', required: false })
+  @IsString()
+  @IsOptional()
+  lastName?: string;
+
+  @ApiProperty({ example: 'New York, USA', required: false })
+  @IsString()
+  @IsOptional()
+  location?: string;
+}
+
+export class UpdateEmailRequest {
+  @ApiProperty({ example: 'newemail@example.com' })
+  @IsEmail()
+  @IsNotEmpty()
+  newEmail: string;
+
+  @ApiProperty({ example: 'MyPassword123!' })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

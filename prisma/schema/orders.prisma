@@ -63,3 +63,35 @@ model AuthorOrderPayout {
   @@index([authorId])
   @@index([status])
 }
+
+// ================================
+// Cart & CartItem Models
+// ================================
+
+model Cart {
+  id        String     @id @default(uuid()) @db.Uuid
+  userId    String     @unique @db.Uuid
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user  AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  cartId    String   @db.Uuid
+  bookId    String   @db.Uuid
+  formatId  String   @db.Uuid
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart   Cart              @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  book   Book              @relation(fields: [bookId], references: [id])
+  format BookFormatPricing @relation(fields: [formatId], references: [id])
+
+  @@index([cartId])
+  @@index([bookId])
+  @@unique([cartId, bookId, formatId])
+}

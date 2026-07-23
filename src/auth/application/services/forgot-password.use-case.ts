@@ -4,7 +4,8 @@ import type { IAuthUserRepository } from '../../domain/interfaces/auth-user.repo
 import { OTP_STORE_TOKEN } from '../../domain/interfaces/otp-store.interface';
 import type { IOtpStore } from '../../domain/interfaces/otp-store.interface';
 import { OtpGenerator } from '../../infrastructure/security/otp-generator';
-import { EmailService } from '../../../common/services/email.service';
+import { EMAIL_SENDER_TOKEN } from '../../../common/domain/interfaces/email-sender.interface';
+import type { IEmailSender } from '../../../common/domain/interfaces/email-sender.interface';
 
 @Injectable()
 export class ForgotPasswordUseCase {
@@ -14,7 +15,8 @@ export class ForgotPasswordUseCase {
     @Inject(OTP_STORE_TOKEN)
     private readonly otpStore: IOtpStore,
     private readonly otpGenerator: OtpGenerator,
-    private readonly emailService: EmailService,
+    @Inject(EMAIL_SENDER_TOKEN)
+    private readonly emailSender: IEmailSender,
   ) {}
 
   async execute(email: string): Promise<{ message: string }> {
@@ -26,7 +28,7 @@ export class ForgotPasswordUseCase {
     const otp = this.otpGenerator.generate(6);
     await this.otpStore.save(`password-reset:${email}`, otp, 600);
 
-    await this.emailService.sendPasswordResetEmail(email, user.username, otp);
+    await this.emailSender.sendPasswordResetEmail(email, user.username, otp);
 
     return { message: 'If the email exists, a reset code has been sent.' };
   }

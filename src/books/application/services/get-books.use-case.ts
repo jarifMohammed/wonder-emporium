@@ -9,6 +9,7 @@ import {
   BookFiltersInput,
   PaginatedBooksOutput,
   BookOutput,
+  BookCategoriesOutput,
 } from '../dto/book.dto';
 
 @Injectable()
@@ -55,6 +56,28 @@ export class GetBooksUseCase {
     };
   }
 
+  async getApprovedCategories(): Promise<BookCategoriesOutput> {
+    const categories = await this.bookRepository.findApprovedCategoryCounts();
+    const total = categories.reduce((sum, category) => sum + category.count, 0);
+
+    return { categories, total };
+  }
+
+  async getByFoundingAuthors(filters: BookFiltersInput): Promise<PaginatedBooksOutput> {
+    const result = await this.bookRepository.findByFoundingAuthors({
+      ...filters,
+      status: BookStatus.APPROVED,
+    });
+
+    return {
+      books: result.books.map((b) => this.mapBook(b)),
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+      totalPages: result.totalPages,
+    };
+  }
+
   private mapBook(b: any): BookOutput {
     const printEdition = b.book.printEdition;
     const isPrintEnabled = printEdition?.enabled === true;
@@ -62,6 +85,23 @@ export class GetBooksUseCase {
     const hasAudiobook = b.files.some(
       (f: any) => f.type === BookFileType.AUDIOBOOK,
     );
+
+    const author = b.author
+      ? {
+          id: b.author.id,
+          username: b.author.username,
+          email: b.author.email,
+          isFoundingAuthor: b.author.isFoundingAuthor,
+          profile: b.author.userProfile
+            ? {
+                firstName: b.author.userProfile.firstName,
+                lastName: b.author.userProfile.lastName,
+                bio: b.author.userProfile.bio,
+                avatarUrl: b.author.userProfile.avatarUrl,
+              }
+            : null,
+        }
+      : undefined;
 
     return {
       id: b.book.id,
@@ -87,6 +127,7 @@ export class GetBooksUseCase {
       printAvailable: isPrintEnabled,
       ebookAvailable: hasEbook,
       audiobookAvailable: hasAudiobook,
+      author,
     };
   }
 }

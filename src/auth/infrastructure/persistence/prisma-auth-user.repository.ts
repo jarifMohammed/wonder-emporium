@@ -7,6 +7,7 @@ import {
   AdminAuthorFilters,
   AdminAuthorRecord,
   PaginatedAdminAuthors,
+  UserProfileData,
 } from '../../domain/interfaces/auth-user.repository.interface';
 import { CreateAuthUserData } from '../../domain/interfaces/auth-user.repository.interface';
 import { AuthUser } from '../../domain/entities/auth-user.entity';
@@ -119,6 +120,58 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
     await this.prisma.userProfile.create({
       data: { authId, firstName, lastName },
     });
+  }
+
+  async updateProfile(
+    authId: string,
+    data: {
+      firstName?: string;
+      lastName?: string;
+      bio?: string;
+      avatarUrl?: string;
+      coverImageUrl?: string;
+      websiteUrl?: string;
+      twitterUrl?: string;
+      instagramUrl?: string;
+      linkedinUrl?: string;
+      location?: string;
+    },
+  ): Promise<void> {
+    const updateData: Record<string, unknown> = {};
+    if (data.firstName !== undefined) updateData.firstName = data.firstName;
+    if (data.lastName !== undefined) updateData.lastName = data.lastName;
+    if (data.bio !== undefined) updateData.bio = data.bio;
+    if (data.avatarUrl !== undefined) updateData.avatarUrl = data.avatarUrl;
+    if (data.coverImageUrl !== undefined) updateData.coverImageUrl = data.coverImageUrl;
+    if (data.websiteUrl !== undefined) updateData.websiteUrl = data.websiteUrl;
+    if (data.twitterUrl !== undefined) updateData.twitterUrl = data.twitterUrl;
+    if (data.instagramUrl !== undefined) updateData.instagramUrl = data.instagramUrl;
+    if (data.linkedinUrl !== undefined) updateData.linkedinUrl = data.linkedinUrl;
+    if (data.location !== undefined) updateData.location = data.location;
+
+    await this.prisma.userProfile.update({
+      where: { authId },
+      data: updateData,
+    });
+  }
+
+  async findProfileByAuthId(authId: string): Promise<UserProfileData | null> {
+    const profile = await this.prisma.userProfile.findUnique({
+      where: { authId },
+    });
+    if (!profile) return null;
+    return {
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      bio: profile.bio,
+      avatarUrl: profile.avatarUrl,
+      coverImageUrl: profile.coverImageUrl,
+      websiteUrl: profile.websiteUrl,
+      twitterUrl: profile.twitterUrl,
+      instagramUrl: profile.instagramUrl,
+      linkedinUrl: profile.linkedinUrl,
+      location: profile.location,
+    };
   }
 
   async findSecurityByAuthId(authId: string): Promise<AuthSecurityData | null> {
@@ -262,6 +315,99 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
     return author ? this.toAdminAuthor(author) : null;
   }
 
+  async findFoundingAuthors(filters?: { page?: number; limit?: number }): Promise<any> {
+    const page = filters?.page ?? 1;
+    const limit = filters?.limit ?? 20;
+    const where = {
+      isFoundingAuthor: true,
+      role: $Enums.UserRole.AUTHOR,
+      deletedAt: null,
+      status: $Enums.UserStatus.ACTIVE,
+    };
+
+    const [authors, total] = await Promise.all([
+      this.prisma.authUser.findMany({
+        where,
+        include: { 
+          userProfile: true, 
+          books: {
+            select: {
+              category: true
+            },
+            where: {
+              status: $Enums.BookStatus.APPROVED
+            }
+          },
+          _count: { select: { books: true } } 
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.authUser.count({ where }),
+    ]);
+
+    return {
+      authors: authors.map((author) => this.toFoundingAuthor(author)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async findFoundingAuthorById(id: string): Promise<any> {
+    const author = await this.prisma.authUser.findFirst({
+      where: { id, isFoundingAuthor: true, role: $Enums.UserRole.AUTHOR, deletedAt: null, status: $Enums.UserStatus.ACTIVE },
+      include: { 
+        userProfile: true, 
+        books: {
+          select: {
+            category: true
+          },
+          where: {
+            status: $Enums.BookStatus.APPROVED
+          }
+        },
+        _count: { select: { books: true } } 
+      },
+    });
+    return author ? this.toFoundingAuthor(author) : null;
+  }
+
+  private toFoundingAuthor(author: any): any {
+    // Get unique categories from approved books
+    const categories = [...new Set(
+      author.books
+        .map((book: any) => book.category)
+        .filter((cat: any) => cat !== null && cat !== undefined)
+    )];
+
+    return {
+      id: author.id,
+      username: author.username,
+      isFoundingAuthor: author.isFoundingAuthor,
+      createdAt: author.createdAt,
+      updatedAt: author.updatedAt,
+      profile: author.userProfile
+        ? {
+            firstName: author.userProfile.firstName,
+            lastName: author.userProfile.lastName,
+            bio: author.userProfile.bio,
+            avatarUrl: author.userProfile.avatarUrl,
+            coverImageUrl: author.userProfile.coverImageUrl ?? null,
+            websiteUrl: author.userProfile.websiteUrl ?? null,
+            twitterUrl: author.userProfile.twitterUrl ?? null,
+            instagramUrl: author.userProfile.instagramUrl ?? null,
+            linkedinUrl: author.userProfile.linkedinUrl ?? null,
+            location: author.userProfile.location ?? null,
+          }
+        : null,
+      bookCount: author._count.books,
+      categories,
+    };
+  }
+
   private toAdminAuthor(author: any): AdminAuthorRecord {
     return {
       id: author.id,
@@ -279,6 +425,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
             lastName: author.userProfile.lastName,
             bio: author.userProfile.bio,
             avatarUrl: author.userProfile.avatarUrl,
+            location: author.userProfile.location ?? null,
           }
         : null,
       bookCount: author._count.books,

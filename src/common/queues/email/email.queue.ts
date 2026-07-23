@@ -40,13 +40,47 @@ export interface AuthorOnboardingApprovedEmailJob {
   username: string;
 }
 
+export interface ContactUsEmailJob {
+  type: 'contact-us';
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+export interface PasswordResetEmailJob {
+  type: 'password-reset';
+  email: string;
+  username: string;
+  resetCode: string;
+}
+
+export interface AuthorPendingApprovalEmailJob {
+  type: 'author-pending-approval';
+  email: string;
+  username: string;
+}
+
+export interface NewAuthorAdminNotificationEmailJob {
+  type: 'new-author-admin';
+  data: {
+    authorId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
+
 export type EmailJob =
   | VerificationEmailJob
   | WelcomeEmailJob
   | OrderReceiptEmailJob
   | AuthorSaleEmailJob
   | AuthorOnboardingApprovedEmailJob
-  | ContactUsEmailJob;
+  | ContactUsEmailJob
+  | PasswordResetEmailJob
+  | AuthorPendingApprovalEmailJob
+  | NewAuthorAdminNotificationEmailJob;
 
 export interface ContactUsEmailJob {
   type: 'contact-us';
@@ -196,6 +230,78 @@ export class EmailQueueService implements IEmailSender {
         subject,
         message,
       } as ContactUsEmailJob,
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
+        removeOnComplete: 100,
+        removeOnFail: 500,
+      },
+    );
+  }
+
+  async sendPasswordResetEmail(
+    email: string,
+    username: string,
+    resetCode: string,
+  ): Promise<void> {
+    await this.emailQueue.add(
+      'send-password-reset',
+      {
+        type: 'password-reset',
+        email,
+        username,
+        resetCode,
+      } as PasswordResetEmailJob,
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
+        removeOnComplete: 100,
+        removeOnFail: 500,
+      },
+    );
+  }
+
+  async sendAuthorPendingApprovalEmail(
+    email: string,
+    username: string,
+  ): Promise<void> {
+    await this.emailQueue.add(
+      'send-author-pending-approval',
+      {
+        type: 'author-pending-approval',
+        email,
+        username,
+      } as AuthorPendingApprovalEmailJob,
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
+        removeOnComplete: 100,
+        removeOnFail: 500,
+      },
+    );
+  }
+
+  async sendNewAuthorAdminNotificationEmail(data: {
+    authorId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  }): Promise<void> {
+    await this.emailQueue.add(
+      'send-new-author-admin',
+      {
+        type: 'new-author-admin',
+        data,
+      } as NewAuthorAdminNotificationEmailJob,
       {
         attempts: 3,
         backoff: {

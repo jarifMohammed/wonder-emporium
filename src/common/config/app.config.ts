@@ -23,6 +23,7 @@ interface AppConfig {
   aws_s3_bucket: string;
   // Lulu Print API
   lulu_api_base_url: string;
+  lulu_auth_basic: string;
   lulu_client_key: string;
   lulu_client_secret: string;
   lulu_shipping_origin_country: string;
@@ -61,6 +62,7 @@ const config: AppConfig = {
   aws_s3_bucket: process.env.AWS_S3_BUCKET || 'wonder-emporium-books',
   // Lulu Print API
   lulu_api_base_url: process.env.LULU_API_BASE_URL || 'https://api.lulu.com',
+  lulu_auth_basic: process.env.LULU_AUTH_BASIC || '',
   lulu_client_key: process.env.LULU_CLIENT_KEY || '',
   lulu_client_secret: process.env.LULU_CLIENT_SECRET || '',
   lulu_shipping_origin_country:

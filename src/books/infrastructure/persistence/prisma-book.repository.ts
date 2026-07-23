@@ -7,7 +7,9 @@ import {
   UpdateBookData,
   CreateFileData,
   BookWithFilesAndFormats,
+  BookAuthorData,
   PaginatedBooks,
+  BookCategoryCount,
 } from '../../domain/interfaces/book.repository.interface';
 import {
   BookStatus,
@@ -107,13 +109,14 @@ export class PrismaBookRepository implements IBookRepository {
   async findById(id: string): Promise<BookWithFilesAndFormats | null> {
     const book = await this.prisma.book.findUnique({
       where: { id },
-      include: { files: true, formats: true },
+      include: { files: true, formats: true, author: { include: { userProfile: true } } },
     });
     if (!book) return null;
     return this.toBookWithFilesAndFormats(
       book as unknown as PrismaBook,
       book.files as PrismaBookFile[],
       (book as any).formats as PrismaBookFormatPricing[],
+      (book as any).author,
     );
   }
 
@@ -145,7 +148,11 @@ export class PrismaBookRepository implements IBookRepository {
         orderBy,
         skip,
         take: limit,
-        include: { files: true, formats: true },
+        include: {
+          files: true,
+          formats: true,
+          author: { include: { userProfile: true } },
+        },
       }),
       this.prisma.book.count({ where }),
     ]);
@@ -156,6 +163,7 @@ export class PrismaBookRepository implements IBookRepository {
           b as unknown as PrismaBook,
           (b as any).files as PrismaBookFile[],
           (b as any).formats as PrismaBookFormatPricing[],
+          (b as any).author,
         ),
       ),
       total,
@@ -170,6 +178,89 @@ export class PrismaBookRepository implements IBookRepository {
     filters: BookFilters,
   ): Promise<PaginatedBooks> {
     return this.findAll({ ...filters, authorId });
+  }
+
+  async findByFoundingAuthors(filters: BookFilters): Promise<PaginatedBooks> {
+    const where: Record<string, unknown> = {};
+    const orderBy: Record<string, string> = {};
+
+    where.status = filters.status ?? BookStatus.APPROVED;
+    if (filters.category) where.category = filters.category;
+    if (filters.language) where.language = filters.language;
+    if (filters.search) {
+      where.title = { contains: filters.search, mode: 'insensitive' };
+    }
+
+    if (filters.sortBy) {
+      orderBy[filters.sortBy] = filters.sortOrder ?? 'desc';
+    } else {
+      orderBy.createdAt = 'desc';
+    }
+
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 20;
+    const skip = (page - 1) * limit;
+
+    const [books, total] = await Promise.all([
+      this.prisma.book.findMany({
+        where: {
+          ...where,
+          author: {
+            isFoundingAuthor: true,
+          },
+        },
+        orderBy,
+        skip,
+        take: limit,
+        include: {
+          files: true,
+          formats: true,
+          author: { include: { userProfile: true } },
+        },
+      }),
+      this.prisma.book.count({
+        where: {
+          ...where,
+          author: {
+            isFoundingAuthor: true,
+          },
+        },
+      }),
+    ]);
+
+    return {
+      books: books.map((b) =>
+        this.toBookWithFilesAndFormats(
+          b as unknown as PrismaBook,
+          (b as any).files as PrismaBookFile[],
+          (b as any).formats as PrismaBookFormatPricing[],
+          (b as any).author,
+        ),
+      ),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async findApprovedCategoryCounts(): Promise<BookCategoryCount[]> {
+    const groups = await this.prisma.book.groupBy({
+      by: ['category'],
+      where: {
+        status: BookStatus.APPROVED as $Enums.BookStatus,
+        category: { not: null },
+      },
+      _count: { category: true },
+      orderBy: { category: 'asc' },
+    });
+
+    return groups
+      .filter((group) => group.category)
+      .map((group) => ({
+        name: group.category as string,
+        count: group._count.category,
+      }));
   }
 
   async update(
@@ -287,7 +378,25 @@ export class PrismaBookRepository implements IBookRepository {
     book: PrismaBook,
     files: PrismaBookFile[],
     formats: PrismaBookFormatPricing[] = [],
+    rawAuthor?: any,
   ): BookWithFilesAndFormats {
+    const author: BookAuthorData | undefined = rawAuthor
+      ? {
+          id: rawAuthor.id,
+          username: rawAuthor.username,
+          email: rawAuthor.email,
+          isFoundingAuthor: rawAuthor.isFoundingAuthor,
+          profile: rawAuthor.userProfile
+            ? {
+                firstName: rawAuthor.userProfile.firstName,
+                lastName: rawAuthor.userProfile.lastName,
+                bio: rawAuthor.userProfile.bio,
+                avatarUrl: rawAuthor.userProfile.avatarUrl,
+              }
+            : null,
+        }
+      : undefined;
+
     return {
       book: this.toDomain(book),
       files: files.map((f) => this.toFileData(f)),
@@ -304,6 +413,7 @@ export class PrismaBookRepository implements IBookRepository {
         createdAt: f.createdAt,
         updatedAt: f.updatedAt,
       })),
+      author,
     };
   }
 }

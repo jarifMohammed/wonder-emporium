@@ -21,6 +21,12 @@ async function bootstrap() {
     rawBody: true, // Required for Stripe webhook signature verification
   });
 
+  // Trust proxy headers for correct client IP detection in rate limiting
+  const expressApp = app.getHttpAdapter().getInstance();
+  if (typeof expressApp.set === 'function') {
+    expressApp.set('trust proxy', 1);
+  }
+
   // Enable API Versioning
   app.enableVersioning({
     type: VersioningType.URI,

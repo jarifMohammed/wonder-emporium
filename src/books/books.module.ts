@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { BullModule } from '@nestjs/bullmq';
 
@@ -23,7 +23,7 @@ import { OptionalAuthGuard } from '../common/guards/optional-auth.guard';
 
 @Module({
   imports: [
-    AuthModule,
+    forwardRef(() => AuthModule),
     PrintModule,
     BullModule.registerQueue(
       { name: 'print-validation' },
