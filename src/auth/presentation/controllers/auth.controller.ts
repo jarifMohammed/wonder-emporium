@@ -21,7 +21,7 @@ import {
   ApiResponse,
   ApiConsumes,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+// Rate limiting is globally disabled — @Throttle import removed
 import type { Request } from 'express';
 import { AuthGuard } from '../../../common/guards/auth.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
@@ -64,12 +64,6 @@ import { AUTH_USER_REPOSITORY_TOKEN } from '../../domain/interfaces/auth-user.re
 import type { IAuthUserRepository } from '../../domain/interfaces/auth-user.repository.interface';
 
 @ApiTags('Users')
-@Throttle({
-  default: { limit: 500, ttl: 60000 },
-  strict: { limit: 500, ttl: 60000 },
-  auth: { limit: 500, ttl: 60000 },
-  relaxed: { limit: 500, ttl: 60000 },
-})
 @Controller('auth')
 export class AuthController {
   constructor(
