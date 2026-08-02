@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { AppError } from '../../../common/errors/app.error';
 import { PrismaKycRepository, SubmitKycInput } from '../../infrastructure/persistence/prisma-kyc.repository';
 import { S3FileStorageService } from '../../../books/infrastructure/storage/s3-file-storage.service';
-import { EmailService } from '../../../common/services/email.service';
+import { EMAIL_SENDER_TOKEN } from '../../../common/domain/interfaces/email-sender.interface';
+import type { IEmailSender } from '../../../common/domain/interfaces/email-sender.interface';
 
 @Injectable()
 export class SubmitKycUseCase {
   constructor(
     private readonly kycRepo: PrismaKycRepository,
     private readonly s3: S3FileStorageService,
-    private readonly emailService: EmailService,
+    @Inject(EMAIL_SENDER_TOKEN)
+    private readonly emailService: IEmailSender,
   ) {}
 
   async execute(

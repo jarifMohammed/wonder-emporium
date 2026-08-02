@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { AppError } from '../../../common/errors/app.error';
 import { PrismaKycRepository } from '../../infrastructure/persistence/prisma-kyc.repository';
-import { EmailService } from '../../../common/services/email.service';
+import { EMAIL_SENDER_TOKEN } from '../../../common/domain/interfaces/email-sender.interface';
+import type { IEmailSender } from '../../../common/domain/interfaces/email-sender.interface';
 import { AUTH_USER_REPOSITORY_TOKEN } from '../../domain/interfaces/auth-user.repository.interface';
 import type { IAuthUserRepository } from '../../domain/interfaces/auth-user.repository.interface';
 import { Inject } from '@nestjs/common';
@@ -10,7 +11,8 @@ import { Inject } from '@nestjs/common';
 export class ReviewKycUseCase {
   constructor(
     private readonly kycRepo: PrismaKycRepository,
-    private readonly emailService: EmailService,
+    @Inject(EMAIL_SENDER_TOKEN)
+    private readonly emailService: IEmailSender,
     @Inject(AUTH_USER_REPOSITORY_TOKEN)
     private readonly userRepository: IAuthUserRepository,
   ) {}
