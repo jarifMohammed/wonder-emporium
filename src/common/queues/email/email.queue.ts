@@ -304,13 +304,38 @@ export class EmailQueueService implements IEmailSender {
       } as NewAuthorAdminNotificationEmailJob,
       {
         attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 2000,
-        },
+        backoff: { type: 'exponential', delay: 2000 },
         removeOnComplete: 100,
         removeOnFail: 500,
       },
+    );
+  }
+
+  async sendTaxFormSubmittedAdminNotificationEmail(data: {
+    authorId: string;
+    authorEmail: string;
+    authorUsername: string;
+  }): Promise<void> {
+    await this.emailQueue.add(
+      'send-kyc-admin-notification',
+      { type: 'kyc-admin-notification', data },
+      { attempts: 3, backoff: { type: 'exponential', delay: 2000 }, removeOnComplete: 100, removeOnFail: 500 },
+    );
+  }
+
+  async sendKycApprovedEmail(email: string, username: string): Promise<void> {
+    await this.emailQueue.add(
+      'send-kyc-approved',
+      { type: 'kyc-approved', email, username },
+      { attempts: 3, backoff: { type: 'exponential', delay: 2000 }, removeOnComplete: 100, removeOnFail: 500 },
+    );
+  }
+
+  async sendKycRejectedEmail(email: string, username: string, adminNote?: string): Promise<void> {
+    await this.emailQueue.add(
+      'send-kyc-rejected',
+      { type: 'kyc-rejected', email, username, adminNote },
+      { attempts: 3, backoff: { type: 'exponential', delay: 2000 }, removeOnComplete: 100, removeOnFail: 500 },
     );
   }
 }

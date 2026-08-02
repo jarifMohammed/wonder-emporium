@@ -29,6 +29,7 @@ import type { Request } from 'express';
 import { AuthGuard } from '../../../common/guards/auth.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { OptionalAuthGuard } from '../../../common/guards/optional-auth.guard';
+import { KycApprovedGuard } from '../../../common/guards/kyc-approved.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../../auth/interfaces/auth.interface';
 
@@ -172,7 +173,7 @@ export class BooksController {
   }
 
   @Post()
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard, KycApprovedGuard)
   @Roles(userRole.AUTHOR, userRole.ADMIN, userRole.SUPERADMIN)
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -470,7 +471,7 @@ export class BooksController {
   }
 
   @Patch(':id/submit')
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard, KycApprovedGuard)
   @Roles(userRole.AUTHOR, userRole.ADMIN, userRole.SUPERADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Submit a draft book for review' })

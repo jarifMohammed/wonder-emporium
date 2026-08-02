@@ -4,6 +4,7 @@ import { BullModule } from '@nestjs/bullmq';
 
 import { AuthModule } from '../auth/auth.module';
 import { PrintModule } from '../print/print.module';
+import { KycApprovedGuard } from '../common/guards/kyc-approved.guard';
 
 import { BooksController } from './presentation/controllers/books.controller';
 
@@ -53,6 +54,7 @@ import { OptionalAuthGuard } from '../common/guards/optional-auth.guard';
     ApproveBookUseCase,
     DeleteBookUseCase,
     OptionalAuthGuard,
+    KycApprovedGuard,
   ],
   exports: [S3FileStorageService],
 })

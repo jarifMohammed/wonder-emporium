@@ -31,6 +31,7 @@ model AuthUser {
   stripeAccount     StripeConnectedAccount?
   payouts           AuthorOrderPayout[]
   cart              Cart?
+  authorKyc         AuthorKyc?
 
   // MongoDB: @unique already creates an index, so don't duplicate with @@index
   // Compound index for lookups by email+id+providerId
@@ -73,6 +74,42 @@ model StripeConnectedAccount {
   pendingBalance  Float    @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  // Relations
+  authUser AuthUser @relation(fields: [authId], references: [id], onDelete: Cascade)
+}
+
+// ================================
+// Author KYC / Tax Forms Model
+// ================================
+
+model AuthorKyc {
+  id                String    @id @default(uuid()) @db.Uuid
+  authId            String    @unique @db.Uuid
+
+  // ID document photos
+  idFrontUrl        String?
+  idFrontKey        String?
+  idBackUrl         String?
+  idBackKey         String?
+
+  // Tax form fields
+  taxFormType       String?   // e.g. "W-9", "W-8BEN", "Other"
+  taxpayerName      String?
+  taxId             String?   // SSN / EIN / foreign TIN (store encrypted in prod)
+  taxCountry        String?   // Country of tax residence
+  taxFormFileUrl    String?   // optional: uploaded PDF of the tax form
+  taxFormFileKey    String?
+
+  // Status & admin review
+  kycStatus         KycStatus @default(NOT_SUBMITTED)
+  adminNote         String?   // rejection reason or admin note
+  submittedAt       DateTime?
+  reviewedAt        DateTime?
+  reviewedById      String?   @db.Uuid
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   // Relations
   authUser AuthUser @relation(fields: [authId], references: [id], onDelete: Cascade)

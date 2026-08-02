@@ -3,6 +3,8 @@ import { Module, forwardRef } from '@nestjs/common';
 import { AuthController } from './presentation/controllers/auth.controller';
 import { AdminUsersController } from './presentation/controllers/admin-users.controller';
 import { AuthorsController } from './presentation/controllers/authors.controller';
+import { AuthorKycController } from './presentation/controllers/author-kyc.controller';
+import { AdminKycController } from './presentation/controllers/admin-kyc.controller';
 
 import { AccessTokenAuthenticator } from './application/services/access-token-authenticator.service';
 import { CreateAccountUseCase } from './application/services/create-account.use-case';
@@ -20,9 +22,12 @@ import { VerifyPasswordResetOtpUseCase } from './application/services/verify-pas
 import { UpdateProfileUseCase } from './application/services/update-profile.use-case';
 import { UpdateEmailUseCase } from './application/services/update-email.use-case';
 import { GetFoundingAuthorsUseCase } from './application/services/get-founding-authors.use-case';
+import { SubmitKycUseCase } from './application/services/submit-kyc.use-case';
+import { ReviewKycUseCase } from './application/services/review-kyc.use-case';
 
 import { PrismaAuthUserRepository } from './infrastructure/persistence/prisma-auth-user.repository';
 import { PrismaOtpStore } from './infrastructure/persistence/prisma-otp.store';
+import { PrismaKycRepository } from './infrastructure/persistence/prisma-kyc.repository';
 import { GoogleOAuthStrategy } from './infrastructure/oauth/google-oauth.strategy';
 import { OtpGenerator } from './infrastructure/security/otp-generator';
 
@@ -40,7 +45,7 @@ import { AppConfigService } from '../common/config/app-config.service';
 
 @Module({
   imports: [QueueModule, forwardRef(() => BooksModule)],
-  controllers: [AuthController, AdminUsersController, AuthorsController],
+  controllers: [AuthController, AdminUsersController, AuthorsController, AuthorKycController, AdminKycController],
   providers: [
     // Domain interfaces → Infrastructure implementations
     {
@@ -81,13 +86,16 @@ import { AppConfigService } from '../common/config/app-config.service';
     UpdateProfileUseCase,
     UpdateEmailUseCase,
     GetFoundingAuthorsUseCase,
+    SubmitKycUseCase,
+    ReviewKycUseCase,
 
     // Infrastructure
     PrismaAuthUserRepository,
+    PrismaKycRepository,
     PrismaOtpStore,
     GoogleOAuthStrategy,
     OtpGenerator,
   ],
-  exports: [AccessTokenAuthenticator, AUTH_USER_REPOSITORY_TOKEN],
+  exports: [AccessTokenAuthenticator, AUTH_USER_REPOSITORY_TOKEN, PrismaKycRepository],
 })
 export class AuthModule {}

@@ -297,4 +297,72 @@ export class EmailService {
       html,
     });
   }
+
+  /**
+   * Notify admin that an author submitted KYC / tax forms
+   */
+  async sendTaxFormSubmittedAdminNotificationEmail(data: {
+    authorId: string;
+    authorEmail: string;
+    authorUsername: string;
+  }): Promise<void> {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@wonderemporium.com';
+    await this.sendEmail({
+      to: adminEmail,
+      subject: `KYC Review Required: ${data.authorUsername} has submitted tax forms`,
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+          <h2 style="color:#24352f;">📋 New KYC Submission</h2>
+          <p>An author has submitted their identity documents and tax forms for review.</p>
+          <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+            <tr><td style="padding:8px;font-weight:bold;color:#555;">Author ID</td><td style="padding:8px;">${data.authorId}</td></tr>
+            <tr><td style="padding:8px;font-weight:bold;color:#555;">Username</td><td style="padding:8px;">${data.authorUsername}</td></tr>
+            <tr><td style="padding:8px;font-weight:bold;color:#555;">Email</td><td style="padding:8px;">${data.authorEmail}</td></tr>
+          </table>
+          <p>Please log in to the admin dashboard to review and approve or reject the submission.</p>
+          <p style="color:#888;font-size:12px;">Wonder Emporium &copy; ${new Date().getFullYear()}</p>
+        </div>
+      `,
+    });
+  }
+
+  /**
+   * Notify author that their KYC was approved
+   */
+  async sendKycApprovedEmail(email: string, username: string): Promise<void> {
+    await this.sendEmail({
+      to: email,
+      subject: '✅ Your identity verification has been approved!',
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+          <h2 style="color:#24352f;">🎉 KYC Approved</h2>
+          <p>Hi <strong>${username}</strong>,</p>
+          <p>Great news! Your identity documents and tax forms have been reviewed and <strong>approved</strong> by our team.</p>
+          <p>You can now create and publish books on Wonder Emporium. Head to your dashboard to get started!</p>
+          <p style="color:#888;font-size:12px;">Wonder Emporium &copy; ${new Date().getFullYear()}</p>
+        </div>
+      `,
+    });
+  }
+
+  /**
+   * Notify author that their KYC was rejected
+   */
+  async sendKycRejectedEmail(email: string, username: string, adminNote?: string): Promise<void> {
+    await this.sendEmail({
+      to: email,
+      subject: '❌ Your identity verification needs attention',
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+          <h2 style="color:#c0392b;">KYC Submission Rejected</h2>
+          <p>Hi <strong>${username}</strong>,</p>
+          <p>Unfortunately, your KYC submission could not be approved at this time.</p>
+          ${adminNote ? `<div style="background:#fff3cd;border-left:4px solid #cfaf45;padding:12px 16px;margin:16px 0;"><strong>Admin Note:</strong> ${adminNote}</div>` : ''}
+          <p>Please log in to your dashboard, correct any issues, and resubmit your documents.</p>
+          <p>If you believe this is an error, please contact our support team.</p>
+          <p style="color:#888;font-size:12px;">Wonder Emporium &copy; ${new Date().getFullYear()}</p>
+        </div>
+      `,
+    });
+  }
 }

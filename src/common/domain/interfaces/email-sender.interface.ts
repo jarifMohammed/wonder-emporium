@@ -63,6 +63,16 @@ export interface IEmailSender {
     lastName: string;
     email: string;
   }): Promise<void>;
+
+  sendTaxFormSubmittedAdminNotificationEmail(data: {
+    authorId: string;
+    authorEmail: string;
+    authorUsername: string;
+  }): Promise<void>;
+
+  sendKycApprovedEmail(email: string, username: string): Promise<void>;
+
+  sendKycRejectedEmail(email: string, username: string, adminNote?: string): Promise<void>;
 }
 
 export const EMAIL_SENDER_TOKEN = Symbol('IEmailSender');

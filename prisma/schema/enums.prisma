@@ -19,6 +19,13 @@ enum UserStatus {
   BLOCKED
 }
 
+enum KycStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
 enum MfaMethod {
   totp
   sms
@@ -261,9 +268,13 @@ enum BookFileType {
 
 enum OrderStatus {
   PENDING
+  PROCESSING
   COMPLETED
   FAILED
   REFUNDED
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }
 
 enum OutboxStatus {
