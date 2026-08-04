@@ -29,12 +29,12 @@ export interface SubmitKycInput {
   idFrontKey: string;
   idBackUrl: string;
   idBackKey: string;
-  taxFormType: string;
-  taxpayerName: string;
-  taxId: string;
-  taxCountry: string;
-  taxFormFileUrl?: string;
-  taxFormFileKey?: string;
+  taxFormType?: string;
+  taxpayerName?: string;
+  taxId?: string;
+  taxCountry?: string;
+  taxFormFileUrl: string;
+  taxFormFileKey: string;
 }
 
 export interface ReviewKycInput {
@@ -58,12 +58,12 @@ export class PrismaKycRepository {
       idFrontKey: input.idFrontKey,
       idBackUrl: input.idBackUrl,
       idBackKey: input.idBackKey,
-      taxFormType: input.taxFormType,
-      taxpayerName: input.taxpayerName,
-      taxId: input.taxId,
-      taxCountry: input.taxCountry,
-      taxFormFileUrl: input.taxFormFileUrl ?? null,
-      taxFormFileKey: input.taxFormFileKey ?? null,
+      taxFormType: input.taxFormType ?? null,
+      taxpayerName: input.taxpayerName ?? null,
+      taxId: input.taxId ?? null,
+      taxCountry: input.taxCountry ?? null,
+      taxFormFileUrl: input.taxFormFileUrl,
+      taxFormFileKey: input.taxFormFileKey,
       kycStatus: $Enums.KycStatus.SUBMITTED,
       adminNote: null,
       submittedAt: new Date(),

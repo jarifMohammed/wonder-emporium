@@ -21,13 +21,13 @@ export class SubmitKycUseCase {
     files: {
       idFront: Express.Multer.File;
       idBack: Express.Multer.File;
-      taxFormFile?: Express.Multer.File;
+      taxFormFile: Express.Multer.File;
     },
     body: {
-      taxFormType: string;
-      taxpayerName: string;
-      taxId: string;
-      taxCountry: string;
+      taxFormType?: string;
+      taxpayerName?: string;
+      taxId?: string;
+      taxCountry?: string;
     },
   ) {
     const existing = await this.kycRepo.findByAuthId(authId);
@@ -41,13 +41,7 @@ export class SubmitKycUseCase {
       this.s3.uploadFile(files.idBack, `${folder}/id-back`),
     ]);
 
-    let taxFormFileUrl: string | undefined;
-    let taxFormFileKey: string | undefined;
-    if (files.taxFormFile) {
-      const taxUpload = await this.s3.uploadFile(files.taxFormFile, `${folder}/tax-form`);
-      taxFormFileUrl = taxUpload.url;
-      taxFormFileKey = taxUpload.fileKey;
-    }
+    const taxUpload = await this.s3.uploadFile(files.taxFormFile, `${folder}/tax-form`);
 
     const input: SubmitKycInput = {
       authId,
@@ -59,8 +53,8 @@ export class SubmitKycUseCase {
       taxpayerName: body.taxpayerName,
       taxId: body.taxId,
       taxCountry: body.taxCountry,
-      taxFormFileUrl,
-      taxFormFileKey,
+      taxFormFileUrl: taxUpload.url,
+      taxFormFileKey: taxUpload.fileKey,
     };
 
     const kyc = await this.kycRepo.upsert(input);

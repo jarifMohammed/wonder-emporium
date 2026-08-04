@@ -14,21 +14,52 @@ import {
   ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsInt,
+  IsString,
+  IsUrl,
+  IsUUID,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { AuthGuard } from '../../../common/guards/auth.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../../auth/interfaces/auth.interface';
 import { CreateCheckoutSessionUseCase } from '../../application/services/create-checkout-session.use-case';
 import { UserGetOrderHistoryUseCase } from '../../application/services/user-get-order-history.use-case';
+import { AdminGetOrdersUseCase } from '../../application/services/admin-get-orders.use-case';
 import type { Request } from 'express';
 
 class CheckoutItemDto {
+  @IsUUID()
   formatId: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   quantity: number;
 }
 
 class CreateCheckoutDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => CheckoutItemDto)
   items: CheckoutItemDto[];
+
+  @IsString()
+  @IsUrl({
+    require_tld: false,
+  })
   successUrl: string;
+
+  @IsString()
+  @IsUrl({
+    require_tld: false,
+  })
   cancelUrl: string;
 }
 
@@ -38,7 +69,17 @@ export class OrdersController {
   constructor(
     private readonly createCheckoutSessionUseCase: CreateCheckoutSessionUseCase,
     private readonly userGetOrderHistoryUseCase: UserGetOrderHistoryUseCase,
+    private readonly adminGetOrdersUseCase: AdminGetOrdersUseCase,
   ) {}
+
+  @Get('admin')
+  @UseGuards(AuthGuard)
+  @Roles(userRole.ADMIN, userRole.SUPERADMIN)
+  @ApiOperation({ summary: 'Get all orders for admin dashboard' })
+  @ApiResponse({ status: 200, description: 'Admin order list' })
+  async getAdminOrders() {
+    return this.adminGetOrdersUseCase.execute();
+  }
 
   @Get('history')
   @UseGuards(AuthGuard)

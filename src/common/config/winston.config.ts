@@ -2,13 +2,14 @@ import { WinstonModuleOptions } from 'nest-winston';
 import * as winston from 'winston';
 import LokiTransport from 'winston-loki';
 
-// Check if Loki is available
-const lokiEnabled = process.env.LOKI_ENABLED !== 'false';
+const isProduction = process.env.NODE_ENV === 'production';
+const lokiEnabled =
+  process.env.LOKI_ENABLED != null
+    ? process.env.LOKI_ENABLED === 'true'
+    : isProduction;
 const lokiHost =
   process.env.LOKI_URL ||
-  (process.env.NODE_ENV === 'production'
-    ? 'http://loki:3100'
-    : 'http://localhost:3100');
+  (isProduction ? 'http://loki:3100' : 'http://localhost:3100');
 
 const transports: winston.transport[] = [
   // Console transport for development
@@ -26,7 +27,8 @@ const transports: winston.transport[] = [
   }),
 ];
 
-// Only add Loki transport if enabled and not explicitly disabled
+// Enable Loki explicitly in development to avoid noisy startup errors
+// when the local monitoring stack is not running.
 if (lokiEnabled) {
   try {
     transports.push(
@@ -40,8 +42,7 @@ if (lokiEnabled) {
         format: winston.format.json(),
         replaceTimestamp: true,
         onConnectionError: (err) => {
-          // Silently log connection errors to avoid spam
-          if (process.env.NODE_ENV === 'development') {
+          if (!isProduction) {
             const errorMessage =
               err instanceof Error ? err.message : String(err);
             console.error('Loki connection error:', errorMessage);

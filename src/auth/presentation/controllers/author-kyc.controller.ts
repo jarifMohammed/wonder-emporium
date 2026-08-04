@@ -25,28 +25,29 @@ import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../interfaces/auth.interface';
 import { SubmitKycUseCase } from '../../application/services/submit-kyc.use-case';
 import { ReviewKycUseCase } from '../../application/services/review-kyc.use-case';
-import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 class SubmitKycBody {
-  @ApiProperty({ example: 'W-9', description: 'Tax form type: W-9, W-8BEN, or Other' })
-  @IsIn(['W-9', 'W-8BEN', 'Other'])
-  taxFormType: string;
-
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ example: 'W-9', required: false, description: 'Optional tax form type metadata' })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  taxpayerName: string;
+  taxFormType?: string;
 
-  @ApiProperty({ example: '123-45-6789', description: 'SSN, EIN, or foreign TIN' })
+  @ApiProperty({ example: 'John Doe', required: false })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  taxId: string;
+  taxpayerName?: string;
 
-  @ApiProperty({ example: 'US' })
+  @ApiProperty({ example: '123-45-6789', required: false, description: 'Optional SSN, EIN, or foreign TIN metadata' })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  taxCountry: string;
+  taxId?: string;
+
+  @ApiProperty({ example: 'US', required: false })
+  @IsOptional()
+  @IsString()
+  taxCountry?: string;
 }
 
 @ApiTags('Author KYC')
@@ -78,13 +79,13 @@ export class AuthorKycController {
   )
   @ApiOperation({
     summary: 'Submit ID documents and tax form for KYC verification',
-    description: 'Upload ID front, ID back photos, optional tax form PDF, plus tax form fields. Author cannot list books until KYC is APPROVED.',
+    description: 'Upload ID front, ID back photos, and a required tax form document. Author cannot list books until KYC is APPROVED.',
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['idFront', 'idBack', 'taxFormType', 'taxpayerName', 'taxId', 'taxCountry'],
+      required: ['idFront', 'idBack', 'taxFormFile'],
       properties: {
         idFront: { type: 'string', format: 'binary' },
         idBack: { type: 'string', format: 'binary' },
@@ -108,8 +109,8 @@ export class AuthorKycController {
   ) {
     const user = (req as any).user as { id: string; email: string; username: string };
 
-    if (!files?.idFront?.[0] || !files?.idBack?.[0]) {
-      return { error: 'Both idFront and idBack files are required.' };
+    if (!files?.idFront?.[0] || !files?.idBack?.[0] || !files?.taxFormFile?.[0]) {
+      return { error: 'idFront, idBack, and taxFormFile are required.' };
     }
 
     return this.submitKycUseCase.execute(
@@ -119,7 +120,7 @@ export class AuthorKycController {
       {
         idFront: files.idFront[0],
         idBack: files.idBack[0],
-        taxFormFile: files.taxFormFile?.[0],
+        taxFormFile: files.taxFormFile[0],
       },
       {
         taxFormType: body.taxFormType,

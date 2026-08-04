@@ -12,6 +12,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { AuthGuard } from '../../../common/guards/auth.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
 import { GetCartUseCase } from '../../application/services/get-cart.use-case';
@@ -21,12 +23,23 @@ import { RemoveItemFromCartUseCase } from '../../application/services/remove-ite
 import { ClearCartUseCase } from '../../application/services/clear-cart.use-case';
 
 class AddItemDto {
+  @IsUUID()
   bookId: string;
+
+  @IsUUID()
   formatId: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   quantity?: number;
 }
 
 class UpdateQuantityDto {
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   quantity: number;
 }
 

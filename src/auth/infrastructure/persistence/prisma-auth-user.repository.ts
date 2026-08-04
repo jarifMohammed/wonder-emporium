@@ -6,7 +6,9 @@ import {
   AuthSecurityData,
   AdminAuthorFilters,
   AdminAuthorRecord,
+  FoundingAuthor,
   PaginatedAdminAuthors,
+  PaginatedFoundingAuthors,
   UserProfileData,
 } from '../../domain/interfaces/auth-user.repository.interface';
 import { CreateAuthUserData } from '../../domain/interfaces/auth-user.repository.interface';
@@ -28,6 +30,34 @@ interface PrismaAuthUser {
   createdAt: Date;
   updatedAt: Date;
   isFoundingAuthor: boolean;
+}
+
+interface PrismaFoundingAuthorBook {
+  category: string | null;
+}
+
+interface PrismaFoundingAuthorRecord {
+  id: string;
+  username: string;
+  isFoundingAuthor: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  userProfile: {
+    firstName: string | null;
+    lastName: string | null;
+    bio: string | null;
+    avatarUrl: string | null;
+    coverImageUrl: string | null;
+    websiteUrl: string | null;
+    twitterUrl: string | null;
+    instagramUrl: string | null;
+    linkedinUrl: string | null;
+    location: string | null;
+  } | null;
+  books: PrismaFoundingAuthorBook[];
+  _count: {
+    books: number;
+  };
 }
 
 @Injectable()
@@ -315,7 +345,9 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
     return author ? this.toAdminAuthor(author) : null;
   }
 
-  async findFoundingAuthors(filters?: { page?: number; limit?: number }): Promise<any> {
+  async findFoundingAuthors(
+    filters?: { page?: number; limit?: number },
+  ): Promise<PaginatedFoundingAuthors> {
     const page = filters?.page ?? 1;
     const limit = filters?.limit ?? 20;
     const where = {
@@ -356,7 +388,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
     };
   }
 
-  async findFoundingAuthorById(id: string): Promise<any> {
+  async findFoundingAuthorById(id: string): Promise<FoundingAuthor | null> {
     const author = await this.prisma.authUser.findFirst({
       where: { id, isFoundingAuthor: true, role: $Enums.UserRole.AUTHOR, deletedAt: null, status: $Enums.UserStatus.ACTIVE },
       include: { 
@@ -375,13 +407,15 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
     return author ? this.toFoundingAuthor(author) : null;
   }
 
-  private toFoundingAuthor(author: any): any {
+  private toFoundingAuthor(author: PrismaFoundingAuthorRecord): FoundingAuthor {
     // Get unique categories from approved books
-    const categories = [...new Set(
-      author.books
-        .map((book: any) => book.category)
-        .filter((cat: any) => cat !== null && cat !== undefined)
-    )];
+    const categories = [
+      ...new Set(
+        author.books
+          .map((book) => book.category)
+          .filter((cat): cat is string => cat !== null && cat !== undefined),
+      ),
+    ];
 
     return {
       id: author.id,

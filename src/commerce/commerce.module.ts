@@ -15,6 +15,7 @@ import { OnboardAuthorUseCase } from './application/services/onboard-author.use-
 import { OutboxProcessorService } from './application/services/outbox-processor.service';
 import { SyncConnectAccountUseCase } from './application/services/sync-connect-account.use-case';
 import { UserGetOrderHistoryUseCase } from './application/services/user-get-order-history.use-case';
+import { AdminGetOrdersUseCase } from './application/services/admin-get-orders.use-case';
 import { AuthorGetPayoutsUseCase } from './application/services/author-get-payouts.use-case';
 import { AuthorRequestPayoutUseCase } from './application/services/author-request-payout.use-case';
 import { AdminGetPayoutsUseCase } from './application/services/admin-get-payouts.use-case';
@@ -81,6 +82,7 @@ import { BooksModule } from '../books/books.module';
     OutboxProcessor,
     ProcessOutboxEventsCron,
     UserGetOrderHistoryUseCase,
+    AdminGetOrdersUseCase,
     AuthorGetPayoutsUseCase,
     AuthorRequestPayoutUseCase,
     AdminGetPayoutsUseCase,
