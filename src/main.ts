@@ -45,12 +45,15 @@ async function bootstrap() {
   // Check environment for Swagger setup
   const isProduction = process.env.NODE_ENV === 'production';
   const enableSwagger = process.env.ENABLE_SWAGGER !== 'false'; // Default to true
-  const corsOrigin =
-    config.cors_origins.length > 0
-      ? config.cors_origins
-      : isProduction
-        ? false
-        : true;
+  const corsOrigin = isProduction
+    ? (config.cors_origins.length > 0 ? config.cors_origins : false)
+    : (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        if (!origin || config.cors_origins.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+)(:\d+)?$/.test(origin)) {
+          callback(null, true);
+        } else {
+          callback(null, true);
+        }
+      };
 
   app.enableCors({
     origin: corsOrigin,

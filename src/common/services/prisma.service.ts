@@ -31,14 +31,20 @@ export class PrismaService
   }
 
   async onModuleInit() {
-    this.customLogger.log('Connecting to MongoDB...', 'PrismaService');
+    this.customLogger.log('Connecting to PostgreSQL...', 'PrismaService');
     await this.$connect();
-    this.customLogger.log('MongoDB connected successfully', 'PrismaService');
+    this.customLogger.log(
+      'PostgreSQL connected successfully',
+      'PrismaService',
+    );
   }
 
   async onModuleDestroy() {
-    this.customLogger.log('Disconnecting from MongoDB...', 'PrismaService');
+    this.customLogger.log(
+      'Disconnecting from PostgreSQL...',
+      'PrismaService',
+    );
     await this.$disconnect();
-    this.customLogger.log('MongoDB disconnected', 'PrismaService');
+    this.customLogger.log('PostgreSQL disconnected', 'PrismaService');
   }
 }
