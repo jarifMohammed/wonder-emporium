@@ -286,6 +286,7 @@ export class AuthController {
       firstName: body.firstName,
       lastName: body.lastName,
       location: body.location,
+      bio: body.bio,
     });
   }
 

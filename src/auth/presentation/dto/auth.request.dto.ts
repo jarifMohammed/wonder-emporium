@@ -179,6 +179,11 @@ export class UpdateProfileRequest {
   @IsString()
   @IsOptional()
   location?: string;
+
+  @ApiProperty({ example: 'Book enthusiast & collector', required: false })
+  @IsString()
+  @IsOptional()
+  bio?: string;
 }
 
 export class UpdateEmailRequest {
