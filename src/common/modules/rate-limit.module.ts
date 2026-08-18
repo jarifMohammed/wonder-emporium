@@ -20,9 +20,15 @@ import { CustomThrottlerGuard } from '../guards/custom-throttler.guard';
           password: configService.get<string>('REDIS_PASSWORD'),
           db: configService.get<number>('REDIS_DB', 0),
           keyPrefix: `${configService.get<string>('REDIS_CACHE_KEY_PREFIX', 'app')}:throttle:`,
+          maxRetriesPerRequest: 3,
+          lazyConnect: false,
           ...(configService.get<string>('REDIS_TLS') === 'true' && {
             tls: { rejectUnauthorized: true },
           }),
+        });
+
+        redisClient.on('error', () => {
+          // Handled to prevent unhandled EventEmitter error crashes
         });
 
         return {

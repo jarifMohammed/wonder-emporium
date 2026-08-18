@@ -19,6 +19,7 @@ import {
   ArrayMinSize,
   IsArray,
   IsInt,
+  IsOptional,
   IsString,
   IsUrl,
   IsUUID,
@@ -50,17 +51,19 @@ class CreateCheckoutDto {
   @Type(() => CheckoutItemDto)
   items: CheckoutItemDto[];
 
+  @IsOptional()
   @IsString()
   @IsUrl({
     require_tld: false,
   })
-  successUrl: string;
+  successUrl?: string;
 
+  @IsOptional()
   @IsString()
   @IsUrl({
     require_tld: false,
   })
-  cancelUrl: string;
+  cancelUrl?: string;
 }
 
 @ApiTags('Orders', 'Users', 'Admin')
@@ -128,11 +131,16 @@ export class OrdersController {
   @ApiResponse({ status: 200, description: 'Returns a checkout URL' })
   async createCheckout(@Req() req: Request, @Body() body: CreateCheckoutDto) {
     const user = (req as unknown as { user: { id: string } }).user;
+    const frontendUrl =
+      process.env.APP_FRONTEND_URL || 'https://wonder-emporium.onrender.com';
+    const successUrl = body.successUrl || `${frontendUrl}/checkout/success`;
+    const cancelUrl = body.cancelUrl || `${frontendUrl}/checkout/cancel`;
+
     return this.createCheckoutSessionUseCase.execute(
       user.id,
       body.items,
-      body.successUrl,
-      body.cancelUrl,
+      successUrl,
+      cancelUrl,
     );
   }
 }
