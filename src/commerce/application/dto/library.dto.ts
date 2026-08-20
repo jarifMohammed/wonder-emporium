@@ -10,6 +10,15 @@ export interface LibraryItemOutput {
     title: string;
     bookCover: string | null;
     authorId: string;
+    author?: {
+      id: string;
+      username: string | null;
+      userProfile?: {
+        firstName: string | null;
+        lastName: string | null;
+        avatarUrl: string | null;
+      } | null;
+    } | null;
   };
   format: {
     id: string;

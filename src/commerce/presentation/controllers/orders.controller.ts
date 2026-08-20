@@ -30,9 +30,18 @@ import { AuthGuard } from '../../../common/guards/auth.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../../auth/interfaces/auth.interface';
 import { CreateCheckoutSessionUseCase } from '../../application/services/create-checkout-session.use-case';
+import { HandleCheckoutCompletedUseCase } from '../../application/services/handle-checkout-completed.use-case';
 import { UserGetOrderHistoryUseCase } from '../../application/services/user-get-order-history.use-case';
 import { AdminGetOrdersUseCase } from '../../application/services/admin-get-orders.use-case';
+import { StripeService } from '../../infrastructure/stripe/stripe.service';
+import { PrismaService } from '../../../common/services/prisma.service';
+import { AppError } from '../../../common/errors/app.error';
 import type { Request } from 'express';
+
+class ConfirmSessionDto {
+  @IsString()
+  sessionId: string;
+}
 
 class CheckoutItemDto {
   @IsUUID()
@@ -71,8 +80,11 @@ class CreateCheckoutDto {
 export class OrdersController {
   constructor(
     private readonly createCheckoutSessionUseCase: CreateCheckoutSessionUseCase,
+    private readonly handleCheckoutCompletedUseCase: HandleCheckoutCompletedUseCase,
     private readonly userGetOrderHistoryUseCase: UserGetOrderHistoryUseCase,
     private readonly adminGetOrdersUseCase: AdminGetOrdersUseCase,
+    private readonly stripeService: StripeService,
+    private readonly prisma: PrismaService,
   ) {}
 
   @Get('admin')
@@ -142,5 +154,49 @@ export class OrdersController {
       successUrl,
       cancelUrl,
     );
+  }
+
+  @Post('confirm-session')
+  @UseGuards(AuthGuard)
+  @Roles(userRole.USER, userRole.READER, userRole.AUTHOR, userRole.ADMIN)
+  @ApiOperation({
+    summary: 'Verify and fulfill completed Stripe checkout session',
+  })
+  @ApiBody({ type: ConfirmSessionDto })
+  @ApiResponse({ status: 200, description: 'Order fulfilled and cart cleared' })
+  async confirmCheckoutSession(
+    @Req() req: Request,
+    @Body() body: ConfirmSessionDto,
+  ) {
+    const user = (req as unknown as { user: { id: string } }).user;
+    if (!body.sessionId) {
+      throw AppError.badRequest('Session ID is required');
+    }
+
+    const session = await this.stripeService.retrieveCheckoutSession(
+      body.sessionId,
+    );
+    if (!session) {
+      throw AppError.notFound('Checkout session not found');
+    }
+
+    if (session.payment_status === 'paid' || session.status === 'complete') {
+      await this.handleCheckoutCompletedUseCase.execute(session);
+    }
+
+    // Ensure the user cart is cleared
+    await this.prisma.cartItem.deleteMany({
+      where: {
+        cart: {
+          userId: user.id,
+        },
+      },
+    });
+
+    return {
+      success: true,
+      paymentStatus: session.payment_status,
+      status: session.status,
+    };
   }
 }

@@ -24,7 +24,7 @@ export class CreateCheckoutSessionUseCase {
     items: CheckoutItem[],
     successUrl: string,
     cancelUrl: string,
-  ): Promise<{ checkoutUrl: string }> {
+  ): Promise<{ checkoutUrl: string; sessionId: string }> {
     if (!items || items.length === 0) {
       throw AppError.badRequest('Cart is empty');
     }
@@ -93,6 +93,6 @@ export class CreateCheckoutSessionUseCase {
       items: orderItemsData,
     });
 
-    return { checkoutUrl: session.url! };
+    return { checkoutUrl: session.url!, sessionId: session.id };
   }
 }
