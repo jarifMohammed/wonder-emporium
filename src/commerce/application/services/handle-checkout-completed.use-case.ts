@@ -69,6 +69,15 @@ export class HandleCheckoutCompletedUseCase {
         },
       });
 
+      // Clear the buyer's cart upon completed purchase
+      await tx.cartItem.deleteMany({
+        where: {
+          cart: {
+            userId: order.buyerId,
+          },
+        },
+      });
+
       if (
         order.items &&
         order.items.length > 0 &&
@@ -107,7 +116,11 @@ export class HandleCheckoutCompletedUseCase {
       `Order ${order.id} marked as COMPLETED and OutboxEvent created.`,
     );
 
-    await this.outboxQueue.add('process-event', { eventId: outboxEvent.id });
+    try {
+      await this.outboxQueue.add('process-event', { eventId: outboxEvent.id });
+    } catch (err: any) {
+      this.logger.warn(`Failed to enqueue outbox event: ${err.message}`);
+    }
 
     await this.createPrintJobsIfNeeded(order, session);
   }

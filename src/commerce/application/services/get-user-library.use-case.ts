@@ -22,6 +22,19 @@ export class GetUserLibraryUseCase {
             title: true,
             bookCover: true,
             authorId: true,
+            author: {
+              select: {
+                id: true,
+                username: true,
+                userProfile: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
           },
         },
         format: { select: { id: true, formatType: true } },

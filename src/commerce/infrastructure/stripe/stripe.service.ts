@@ -99,6 +99,12 @@ export class StripeService {
     });
   }
 
+  async retrieveCheckoutSession(
+    sessionId: string,
+  ): Promise<Stripe.Checkout.Session> {
+    return this.stripe.checkout.sessions.retrieve(sessionId);
+  }
+
   constructEvent(
     payload: string | Buffer,
     signature: string,
