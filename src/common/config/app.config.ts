@@ -11,6 +11,10 @@ interface AppConfig {
   email_user: string;
   email_pass: string;
   email_from: string;
+  // Microsoft Azure / Graph API Email
+  microsoft_tenant_id: string;
+  microsoft_client_id: string;
+  microsoft_client_secret: string;
   // Google OAuth
   google_client_id: string;
   google_client_secret: string;
@@ -50,6 +54,21 @@ const config: AppConfig = {
   email_user: process.env.EMAIL_USER || '',
   email_pass: process.env.EMAIL_PASS || '',
   email_from: process.env.EMAIL_FROM || process.env.EMAIL_USER || '',
+  // Microsoft Azure / Graph API Email
+  microsoft_tenant_id:
+    process.env.MICROSOFT_TENANT_ID ||
+    process.env.AZURE_TENANT_ID ||
+    process.env.DIRECTORY_TENANT_ID ||
+    '',
+  microsoft_client_id:
+    process.env.MICROSOFT_CLIENT_ID ||
+    process.env.AZURE_CLIENT_ID ||
+    process.env.APPLICATION_CLIENT_ID ||
+    '',
+  microsoft_client_secret:
+    process.env.MICROSOFT_CLIENT_SECRET ||
+    process.env.AZURE_CLIENT_SECRET ||
+    '',
   // Google OAuth
   google_client_id: process.env.GOOGLE_CLIENT_ID || '',
   google_client_secret: process.env.GOOGLE_CLIENT_SECRET || '',

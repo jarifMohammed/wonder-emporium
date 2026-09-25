@@ -16,12 +16,6 @@ export class VerifyEmailUseCase {
   ) {}
 
   async execute(email: string, code: string): Promise<{ message: string }> {
-    const otpKey = `verification:${email}`;
-    const valid = await this.otpStore.verify(otpKey, code);
-    if (!valid) {
-      throw AppError.badRequest('Invalid or expired verification code');
-    }
-
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw AppError.notFound('User not found');
@@ -29,6 +23,12 @@ export class VerifyEmailUseCase {
 
     if (user.isVerified()) {
       return { message: 'Email already verified' };
+    }
+
+    const otpKey = `verification:${email}`;
+    const valid = await this.otpStore.verify(otpKey, code);
+    if (!valid) {
+      throw AppError.badRequest('Invalid or expired verification code');
     }
 
     await this.userRepository.update(user.id, {

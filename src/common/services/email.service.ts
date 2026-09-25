@@ -11,25 +11,135 @@ export interface EmailOptions {
   subject: string;
   text?: string;
   html?: string;
+  from?: string;
 }
 
 @Injectable()
 export class EmailService {
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter | null = null;
+  private msGraphToken: string | null = null;
+  private msGraphTokenExpiresAt: number = 0;
 
   constructor(private readonly customLogger: CustomLoggerService) {
-    this.transporter = nodemailer.createTransport({
-      host: String(config.email_host),
-      port: Number(config.email_port),
-      secure: config.email_port === 465, // true for 465, false for other ports
-      auth: {
-        user: String(config.email_user),
-        pass: String(config.email_pass),
-      },
-      connectionTimeout: 10_000,
-      greetingTimeout: 10_000,
-      socketTimeout: 20_000,
+    if (config.email_host && config.email_user) {
+      this.transporter = nodemailer.createTransport({
+        host: String(config.email_host),
+        port: Number(config.email_port),
+        secure: config.email_port === 465, // true for 465, false for other ports
+        auth: {
+          user: String(config.email_user),
+          pass: String(config.email_pass),
+        },
+        connectionTimeout: 10_000,
+        greetingTimeout: 10_000,
+        socketTimeout: 20_000,
+      });
+    }
+  }
+
+  private isMicrosoftGraphConfigured(): boolean {
+    return Boolean(
+      config.microsoft_tenant_id &&
+        config.microsoft_client_id &&
+        config.microsoft_client_secret,
+    );
+  }
+
+  private async getMicrosoftGraphAccessToken(): Promise<string> {
+    const now = Date.now();
+    if (this.msGraphToken && this.msGraphTokenExpiresAt > now + 60_000) {
+      return this.msGraphToken;
+    }
+
+    const tokenUrl = `https://login.microsoftonline.com/${config.microsoft_tenant_id}/oauth2/v2.0/token`;
+    const params = new URLSearchParams();
+    params.append('client_id', config.microsoft_client_id);
+    params.append('client_secret', config.microsoft_client_secret);
+    params.append('scope', 'https://graph.microsoft.com/.default');
+    params.append('grant_type', 'client_credentials');
+
+    const res = await fetch(tokenUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
     });
+
+    if (!res.ok) {
+      const errorData = await res.text();
+      this.customLogger.error(
+        `Failed to get Microsoft Graph access token: ${errorData}`,
+        undefined,
+        'EmailService',
+      );
+      throw AppError.internalServerError(
+        'Failed to authenticate with Microsoft email service.',
+      );
+    }
+
+    const tokenData = (await res.json()) as {
+      access_token: string;
+      expires_in: number;
+    };
+    this.msGraphToken = tokenData.access_token;
+    this.msGraphTokenExpiresAt =
+      now + (Number(tokenData.expires_in) || 3600) * 1000;
+    return this.msGraphToken;
+  }
+
+  private async sendViaMicrosoftGraph(options: EmailOptions): Promise<void> {
+    const token = await this.getMicrosoftGraphAccessToken();
+    const senderEmail = options.from || config.email_from || config.email_user;
+
+    if (!senderEmail) {
+      throw AppError.internalServerError(
+        'Sender email (EMAIL_FROM / EMAIL_USER) is not configured.',
+      );
+    }
+
+    const mailPayload = {
+      message: {
+        subject: options.subject,
+        body: {
+          contentType: options.html ? 'HTML' : 'Text',
+          content: options.html || options.text || '',
+        },
+        toRecipients: [
+          {
+            emailAddress: {
+              address: options.to,
+            },
+          },
+        ],
+      },
+      saveToSentItems: 'true',
+    };
+
+    const res = await fetch(
+      `https://graph.microsoft.com/v1.0/users/${encodeURIComponent(senderEmail)}/sendMail`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mailPayload),
+      },
+    );
+
+    if (res.status !== 202 && !res.ok) {
+      const errorText = await res.text();
+      this.customLogger.error(
+        `Microsoft Graph sendMail failed with status ${res.status}: ${errorText}`,
+        undefined,
+        'EmailService',
+      );
+      throw AppError.badRequest(`Microsoft email sending failed: ${errorText}`);
+    }
+
+    this.customLogger.log(
+      `Email successfully sent via Microsoft Graph API to: ${options.to}`,
+      'EmailService',
+    );
   }
 
   /**
@@ -40,18 +150,43 @@ export class EmailService {
       `Sending email to: ${options.to}, subject: ${options.subject}`,
       'EmailService',
     );
-    const mailOptions = {
-      from: String(config.email_from || config.email_user),
-      to: options.to,
-      subject: options.subject,
-      text: options.text,
-      html: options.html,
-    };
+
+    let graphError: unknown = null;
+
+    if (this.isMicrosoftGraphConfigured()) {
+      try {
+        await this.sendViaMicrosoftGraph(options);
+        return;
+      } catch (err) {
+        graphError = err;
+        this.customLogger.warn(
+          `Microsoft Graph email delivery failed (${err instanceof Error ? err.message : String(err)}). Attempting SMTP fallback...`,
+          'EmailService',
+        );
+      }
+    }
 
     try {
+      if (!this.transporter) {
+        if (graphError) {
+          throw graphError;
+        }
+        throw AppError.internalServerError(
+          'Email transporter is not configured.',
+        );
+      }
+
+      const mailOptions = {
+        from: options.from || String(config.email_from || config.email_user),
+        to: options.to,
+        subject: options.subject,
+        text: options.text,
+        html: options.html,
+      };
+
       await this.transporter.sendMail(mailOptions);
       this.customLogger.log(
-        `Email sent successfully to: ${options.to}`,
+        `Email sent successfully via SMTP to: ${options.to}`,
         'EmailService',
       );
     } catch (error) {
@@ -61,7 +196,9 @@ export class EmailService {
         'EmailService',
       );
       console.error('Error sending email:', error);
-      throw AppError.badRequest('Email sending failed, something went wrong!');
+      throw error instanceof AppError
+        ? error
+        : AppError.badRequest('Email sending failed, something went wrong!');
     }
   }
 
@@ -103,6 +240,10 @@ export class EmailService {
     username: string,
     verificationCode: string,
   ): Promise<void> {
+    console.log(
+      `\n=========================================\n[AUTH VERIFICATION OTP]\nRecipient: ${email}\nVerification Code: ${verificationCode}\n=========================================\n`,
+    );
+
     const html = this.getEmailTemplate('verification.html', {
       username,
       verificationCode,

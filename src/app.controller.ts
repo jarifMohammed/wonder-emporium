@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Inject,
-  UseGuards,
   Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
@@ -14,14 +13,27 @@ import {
   EMAIL_SENDER_TOKEN,
   type IEmailSender,
 } from './common/domain/interfaces/email-sender.interface';
-import { AuthGuard } from './common/guards/auth.guard';
-import { Roles } from './common/decorators/roles.decorator';
-import { userRole } from './auth/interfaces/auth.interface';
 import type { Request } from 'express';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { AccessTokenAuthenticator } from './auth/application/services/access-token-authenticator.service';
+import AppError from './common/errors/app.error';
 
 class ContactDto {
+  @IsString()
+  @IsNotEmpty()
   subject: string;
+
+  @IsString()
+  @IsNotEmpty()
   message: string;
+
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 }
 
 @ApiTags('App')
@@ -31,6 +43,7 @@ export class AppController {
     private readonly appService: AppService,
     @Inject(EMAIL_SENDER_TOKEN)
     private readonly emailSender: IEmailSender,
+    private readonly authenticator: AccessTokenAuthenticator,
   ) {}
 
   @ApiOperation({ summary: 'Health check endpoint' })
@@ -54,26 +67,41 @@ export class AppController {
     return this.appService.ready();
   }
 
-  @ApiOperation({ summary: 'Contact Us endpoint (User/Author to Admin)' })
+  @ApiOperation({ summary: 'Contact / Support endpoint (User/Author/Guest to Admin)' })
   @ApiBody({ type: ContactDto })
-  @UseGuards(AuthGuard)
-  @Roles(userRole.USER, userRole.AUTHOR, userRole.READER)
   @Post('contact')
   async contactUs(@Req() req: Request, @Body() body: ContactDto) {
-    const user = (
-      req as unknown as {
-        user: { id: string; email: string; username: string };
+    let senderName = body.name || 'Valued Customer';
+    let senderEmail = body.email;
+
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.split(' ')[1];
+        const principal = await this.authenticator.authenticate(token);
+        if (principal) {
+          senderName = body.name || principal.email;
+          senderEmail = body.email || principal.email;
+        }
+      } catch {
+        // Fall back to provided body credentials
       }
-    ).user;
+    }
+
+    if (!senderEmail) {
+      throw AppError.badRequest('Email address is required to submit a support inquiry.');
+    }
+
     await this.emailSender.sendContactUsEmail(
-      user.username,
-      user.email,
+      senderName,
+      senderEmail,
       body.subject,
       body.message,
     );
+
     return {
       success: true,
-      message: 'Your message has been sent to the admin.',
+      message: 'Your message has been sent to our support team.',
     };
   }
 }
