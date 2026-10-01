@@ -71,3 +71,5 @@ docs
 !docs/api/openapi.yaml
 !docs/api/postman-collection.json
 config.bat
+
+.env 

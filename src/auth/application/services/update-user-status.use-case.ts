@@ -21,17 +21,12 @@ export class UpdateUserStatusUseCase {
       throw AppError.notFound('User not found');
     }
 
-    if (
-      status === 'ACTIVE' &&
-      user.role === userRole.AUTHOR &&
-      !user.verified
-    ) {
-      throw AppError.badRequest(
-        'The author must verify their email before approval',
-      );
+    const updateData: { status: string; verified?: boolean } = { status };
+    if (status === 'ACTIVE' && !user.verified) {
+      updateData.verified = true;
     }
 
-    await this.userRepository.update(userId, { status });
+    await this.userRepository.update(userId, updateData as any);
 
     if (
       status === 'ACTIVE' &&
