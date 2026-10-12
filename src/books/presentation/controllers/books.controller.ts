@@ -204,10 +204,22 @@ export class BooksController {
     @UploadedFiles() files: { [fieldname: string]: Express.Multer.File[] },
     @Body() body: CreateBookRequest,
   ) {
-    const user = (req as unknown as { user: { id: string } }).user;
+    const user = (req as unknown as { user: { id: string; role: string } }).user;
+    const authorId =
+      (user.role === userRole.ADMIN || user.role === userRole.SUPERADMIN) &&
+      body.authorId
+        ? body.authorId
+        : user.id;
+
+    const bookStatus =
+      (user.role === userRole.ADMIN || user.role === userRole.SUPERADMIN) &&
+      body.status
+        ? body.status
+        : BookStatus.DRAFT;
+
     const uploadedFiles = await this.s3Storage.uploadBookFiles(
       files || {},
-      user.id,
+      authorId,
     );
 
     const inputFiles: {
@@ -256,7 +268,7 @@ export class BooksController {
     }
 
     return this.createBookUseCase.execute({
-      authorId: user.id,
+      authorId,
       title: body.title,
       description: body.description,
       bookCover: uploadedFiles.bookCover?.url,
@@ -270,6 +282,7 @@ export class BooksController {
       publicationDetails: body.publicationDetails,
       files: inputFiles,
       printEdition: body.printEdition,
+      status: bookStatus,
     });
   }
 
@@ -335,6 +348,15 @@ export class BooksController {
   @ApiResponse({ status: 200, description: 'List of pending books' })
   async getPendingBooks(@Query() query: BookQueryParams) {
     return this.getBooksUseCase.getPending(query);
+  }
+
+  @Get('admin/all')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(userRole.ADMIN, userRole.SUPERADMIN)
+  @ApiOperation({ summary: 'Get all books across all statuses for admin' })
+  @ApiResponse({ status: 200, description: 'Paginated all books list' })
+  async getAdminAllBooks(@Query() query: BookQueryParams) {
+    return this.getBooksUseCase.execute(query);
   }
 
   @Get('mine')

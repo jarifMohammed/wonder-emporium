@@ -132,6 +132,11 @@ export interface AdminAuthorRecord {
     location: string | null;
   } | null;
   bookCount: number;
+  kyc?: {
+    kycStatus: string;
+    taxFormType: string | null;
+    taxFormFileUrl: string | null;
+  } | null;
 }
 
 export interface PaginatedAdminAuthors {

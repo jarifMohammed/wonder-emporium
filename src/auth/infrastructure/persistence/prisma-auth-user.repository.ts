@@ -320,7 +320,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
     const [authors, total] = await Promise.all([
       this.prisma.authUser.findMany({
         where,
-        include: { userProfile: true, _count: { select: { books: true } } },
+        include: { userProfile: true, authorKyc: true, _count: { select: { books: true } } },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -340,7 +340,7 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
   async findAuthorDetails(id: string): Promise<AdminAuthorRecord | null> {
     const author = await this.prisma.authUser.findFirst({
       where: { id, role: $Enums.UserRole.AUTHOR, deletedAt: null },
-      include: { userProfile: true, _count: { select: { books: true } } },
+      include: { userProfile: true, authorKyc: true, _count: { select: { books: true } } },
     });
     return author ? this.toAdminAuthor(author) : null;
   }
@@ -463,6 +463,13 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
           }
         : null,
       bookCount: author._count.books,
+      kyc: author.authorKyc
+        ? {
+            kycStatus: author.authorKyc.kycStatus,
+            taxFormType: author.authorKyc.taxFormType,
+            taxFormFileUrl: author.authorKyc.taxFormFileUrl,
+          }
+        : null,
     };
   }
 

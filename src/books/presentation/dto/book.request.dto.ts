@@ -234,6 +234,16 @@ export class CreateBookRequest {
     return plainToInstance(PrintEditionDto, parsed);
   })
   printEdition?: PrintEditionDto;
+
+  @ApiPropertyOptional({ example: 'b5674c3d-e3bb-4d7a-b5e1-cf284bf2c611' })
+  @IsString()
+  @IsOptional()
+  authorId?: string;
+
+  @ApiPropertyOptional({ enum: BookStatus, example: BookStatus.APPROVED })
+  @IsEnum(BookStatus)
+  @IsOptional()
+  status?: BookStatus;
 }
 
 export class UpdateBookRequest {

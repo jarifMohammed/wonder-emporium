@@ -23,6 +23,7 @@
     "prisma:push": "prisma db push",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:generate": "prisma generate",
+    "seed:admin": "ts-node -r dotenv/config scripts/seed-admin.ts",
     "docker:dev": "docker compose -f docker-compose.yaml up -d"
   },
   "dependencies": {
