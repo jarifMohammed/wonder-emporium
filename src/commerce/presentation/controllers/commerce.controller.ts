@@ -12,6 +12,7 @@ import { AuthGuard } from '../../../common/guards/auth.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../../auth/interfaces/auth.interface';
 import { OnboardAuthorUseCase } from '../../application/services/onboard-author.use-case';
+import { OnboardAuthorDto } from '../dto/onboard-author.dto';
 import type { Request } from 'express';
 import { StripeService } from '../../infrastructure/stripe/stripe.service';
 import { COMMERCE_REPOSITORY_TOKEN } from '../../domain/interfaces/commerce.repository.interface';
@@ -39,10 +40,11 @@ export class CommerceController {
   @ApiResponse({ status: 200, description: 'Returns an onboarding URL' })
   async onboardAuthor(
     @Req() req: Request,
-    @Body() body: { email: string; country?: string },
+    @Body() body: OnboardAuthorDto,
   ) {
-    const user = (req as unknown as { user: { id: string } }).user;
-    return this.onboardAuthorUseCase.execute(user.id, body.email, body.country);
+    const user = (req as unknown as { user: { id: string; email: string } }).user;
+    const email = body?.email || user.email;
+    return this.onboardAuthorUseCase.execute(user.id, email, body?.country);
   }
 
   @Get('author/status')

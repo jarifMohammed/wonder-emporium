@@ -365,6 +365,11 @@ export class BookQueryParams {
   @IsOptional()
   language?: string;
 
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  authorId?: string;
+
   @ApiPropertyOptional({ default: 1 })
   @IsInt()
   @Min(1)
