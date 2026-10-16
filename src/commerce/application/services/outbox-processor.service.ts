@@ -110,7 +110,7 @@ export class OutboxProcessorService {
         continue;
       }
 
-      const platformFeePercentage = authorUser.isFoundingAuthor ? 0.35 : 0.3;
+      const platformFeePercentage = authorUser.isFoundingAuthor ? 0.15 : 0.35;
       const platformFee = Math.round(amountInCents * platformFeePercentage);
       const authorPayout = amountInCents - platformFee;
 

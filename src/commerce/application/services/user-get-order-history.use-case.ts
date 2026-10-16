@@ -31,10 +31,30 @@ export class UserGetOrderHistoryUseCase {
         items: {
           include: {
             book: {
-              select: { title: true, bookCover: true },
+              select: {
+                id: true,
+                title: true,
+                bookCover: true,
+                category: true,
+                author: {
+                  select: {
+                    username: true,
+                    userProfile: {
+                      select: {
+                        firstName: true,
+                        lastName: true,
+                      },
+                    },
+                  },
+                },
+              },
             },
             format: {
-              select: { formatType: true },
+              select: {
+                id: true,
+                formatType: true,
+                listPrice: true,
+              },
             },
           },
         },
