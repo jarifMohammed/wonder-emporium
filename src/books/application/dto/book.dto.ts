@@ -141,6 +141,8 @@ export interface UpdateBookInput {
   }[];
   authorEarnings?: number;
   publicationDetails?: string;
+  authorId?: string;
+  status?: BookStatus;
   files?: {
     type: BookFileType;
     url: string;

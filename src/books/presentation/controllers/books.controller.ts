@@ -485,6 +485,16 @@ export class BooksController {
       formats: body.formats,
       authorEarnings: body.authorEarnings,
       publicationDetails: body.publicationDetails,
+      authorId:
+        (user.role === userRole.ADMIN || user.role === userRole.SUPERADMIN) &&
+        body.authorId
+          ? body.authorId
+          : undefined,
+      status:
+        (user.role === userRole.ADMIN || user.role === userRole.SUPERADMIN) &&
+        body.status
+          ? body.status
+          : undefined,
       files: inputFiles,
       printEdition: body.printEdition,
       isAdmin:

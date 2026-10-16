@@ -51,6 +51,8 @@ export interface UpdateBookData {
   }[];
   authorEarnings?: number;
   publicationDetails?: string;
+  status?: BookStatus;
+  authorId?: string;
 }
 
 export interface CreateFileData {

@@ -32,7 +32,7 @@ export class UpdateBookUseCase {
       throw AppError.forbidden('You can only update your own books');
     }
 
-    if (!existing.book.isEditable()) {
+    if (!input.isAdmin && !existing.book.isEditable()) {
       throw AppError.badRequest('Only draft or rejected books can be edited');
     }
 
@@ -48,6 +48,8 @@ export class UpdateBookUseCase {
       formats: input.formats,
       authorEarnings: input.authorEarnings,
       publicationDetails: input.publicationDetails,
+      status: input.status,
+      authorId: input.authorId,
     });
 
     if (input.files && input.files.length > 0) {

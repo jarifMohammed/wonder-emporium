@@ -281,6 +281,10 @@ export class PrismaBookRepository implements IBookRepository {
       updateData.authorEarnings = data.authorEarnings;
     if (data.publicationDetails !== undefined)
       updateData.publicationDetails = data.publicationDetails;
+    if (data.status !== undefined)
+      updateData.status = data.status as $Enums.BookStatus;
+    if (data.authorId !== undefined)
+      updateData.authorId = data.authorId;
 
     if (data.formats !== undefined) {
       updateData.formats = {
@@ -318,7 +322,22 @@ export class PrismaBookRepository implements IBookRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.book.delete({ where: { id } });
+    await this.prisma.$transaction(async (tx) => {
+      // Clean up any cart items referencing this book or its formats
+      await tx.cartItem.deleteMany({
+        where: { bookId: id },
+      });
+
+      // Clean up any order items referencing this book or its formats
+      await tx.orderItem.deleteMany({
+        where: { bookId: id },
+      });
+
+      // Delete the book (cascade handles files and format pricing)
+      await tx.book.delete({
+        where: { id },
+      });
+    });
   }
 
   async addFile(data: CreateFileData): Promise<BookFileData> {
