@@ -9,6 +9,7 @@ import { Book } from '../entities/book.entity';
 
 export interface CreateBookData {
   authorId: string;
+  authorName?: string;
   title: string;
   description?: string;
   bookCover?: string;
@@ -32,6 +33,7 @@ export interface CreateBookData {
 }
 
 export interface UpdateBookData {
+  authorName?: string;
   title?: string;
   description?: string;
   bookCover?: string;

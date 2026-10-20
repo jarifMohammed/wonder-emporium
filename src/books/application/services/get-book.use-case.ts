@@ -42,6 +42,7 @@ export class GetBookUseCase {
     const output: BookOutput = {
       id: result.book.id,
       authorId: result.book.authorId,
+      authorName: result.book.authorName ?? null,
       title: result.book.title,
       description: result.book.description,
       bookCover: result.book.bookCover,

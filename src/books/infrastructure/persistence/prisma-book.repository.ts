@@ -22,6 +22,7 @@ import { Book } from '../../domain/entities/book.entity';
 interface PrismaBook {
   id: string;
   authorId: string;
+  authorName: string | null;
   title: string;
   description: string | null;
   bookCover: string | null;
@@ -71,6 +72,7 @@ export class PrismaBookRepository implements IBookRepository {
     const book = await this.prisma.book.create({
       data: {
         authorId: data.authorId,
+        authorName: data.authorName,
         title: data.title,
         description: data.description,
         bookCover: data.bookCover,
@@ -268,6 +270,7 @@ export class PrismaBookRepository implements IBookRepository {
     data: UpdateBookData,
   ): Promise<BookWithFilesAndFormats> {
     const updateData: Record<string, unknown> = {};
+    if (data.authorName !== undefined) updateData.authorName = data.authorName;
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined)
       updateData.description = data.description;
@@ -377,6 +380,7 @@ export class PrismaBookRepository implements IBookRepository {
       book.createdAt,
       book.updatedAt,
       book.printEdition,
+      book.authorName,
     );
   }
 

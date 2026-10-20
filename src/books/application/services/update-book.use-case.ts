@@ -37,6 +37,7 @@ export class UpdateBookUseCase {
     }
 
     const result = await this.bookRepository.update(id, {
+      authorName: input.authorName,
       title: input.title,
       description: input.description,
       bookCover: input.bookCover,
@@ -134,6 +135,7 @@ export class UpdateBookUseCase {
     const output: BookOutput = {
       id: result.book.id,
       authorId: result.book.authorId,
+      authorName: result.book.authorName ?? null,
       title: result.book.title,
       description: result.book.description,
       bookCover: result.book.bookCover,

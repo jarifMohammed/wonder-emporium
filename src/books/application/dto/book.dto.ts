@@ -7,6 +7,7 @@ import {
 export interface BookOutput {
   id: string;
   authorId: string;
+  authorName: string | null;
   title: string;
   description: string | null;
   bookCover: string | null;
@@ -71,6 +72,7 @@ export interface BookCategoriesOutput {
 
 export interface CreateBookInput {
   authorId: string;
+  authorName?: string;
   title: string;
   description?: string;
   bookCover?: string;
@@ -122,6 +124,7 @@ export interface CreateBookInput {
 
 export interface UpdateBookInput {
   isAdmin?: boolean;
+  authorName?: string;
   title?: string;
   description?: string;
   bookCover?: string;

@@ -38,6 +38,7 @@ export class CreateBookUseCase {
 
     const result = await this.bookRepository.create({
       authorId: input.authorId,
+      authorName: input.authorName,
       title: input.title,
       description: input.description,
       bookCover: input.bookCover,
@@ -145,6 +146,7 @@ export class CreateBookUseCase {
     return {
       id: result.book.id,
       authorId: result.book.authorId,
+      authorName: result.book.authorName ?? null,
       title: result.book.title,
       description: result.book.description,
       bookCover: result.book.bookCover,

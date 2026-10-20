@@ -139,6 +139,11 @@ export class PrintEditionDto {
 }
 
 export class CreateBookRequest {
+  @ApiPropertyOptional({ example: 'Mark Twain' })
+  @IsString()
+  @IsOptional()
+  authorName?: string;
+
   @ApiProperty({ example: 'The Great Adventure' })
   @IsString()
   @IsNotEmpty()
@@ -247,6 +252,11 @@ export class CreateBookRequest {
 }
 
 export class UpdateBookRequest {
+  @ApiPropertyOptional({ example: 'Mark Twain' })
+  @IsString()
+  @IsOptional()
+  authorName?: string;
+
   @ApiPropertyOptional({ example: 'The Great Adventure' })
   @IsString()
   @IsOptional()

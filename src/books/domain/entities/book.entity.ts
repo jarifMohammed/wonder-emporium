@@ -18,6 +18,7 @@ export class Book {
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
     public readonly printEdition?: any,
+    public readonly authorName?: string | null,
   ) {}
 
   isDraft(): boolean {

@@ -269,6 +269,7 @@ export class BooksController {
 
     return this.createBookUseCase.execute({
       authorId,
+      authorName: body.authorName,
       title: body.title,
       description: body.description,
       bookCover: uploadedFiles.bookCover?.url,
@@ -474,6 +475,7 @@ export class BooksController {
     }
 
     return this.updateBookUseCase.execute(id, user.id, {
+      authorName: body.authorName,
       title: body.title,
       description: body.description,
       bookCover: uploadedFiles.bookCover?.url,

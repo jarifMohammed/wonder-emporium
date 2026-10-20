@@ -106,6 +106,7 @@ export class GetBooksUseCase {
     return {
       id: b.book.id,
       authorId: b.book.authorId,
+      authorName: b.book.authorName ?? null,
       title: b.book.title,
       description: b.book.description,
       bookCover: b.book.bookCover,
