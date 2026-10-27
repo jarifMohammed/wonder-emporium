@@ -136,10 +136,39 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
   }
 
   async softDelete(id: string): Promise<void> {
-    await this.prisma.authUser.update({
-      where: { id },
-      data: { deletedAt: new Date(), status: 'DELETED' },
-    });
+    const user = await this.prisma.authUser.findUnique({ where: { id } });
+    if (!user) return;
+    const timestamp = Date.now();
+    await this.prisma.$transaction([
+      this.prisma.authUser.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+          status: 'DELETED',
+          tokenVersion: { increment: 1 },
+          email: `deleted_${timestamp}_${user.email}`,
+          username: `deleted_${timestamp}_${user.username}`,
+        },
+      }),
+      this.prisma.userProfile.updateMany({
+        where: { authId: id },
+        data: {
+          firstName: 'Deleted',
+          lastName: 'User',
+          bio: null,
+          avatarUrl: null,
+          coverImageUrl: null,
+          websiteUrl: null,
+          twitterUrl: null,
+          instagramUrl: null,
+          linkedinUrl: null,
+          location: null,
+        },
+      }),
+      this.prisma.cart.deleteMany({
+        where: { userId: id },
+      }),
+    ]);
   }
 
   async createProfile(

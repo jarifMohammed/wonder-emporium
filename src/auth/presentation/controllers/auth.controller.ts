@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -41,6 +42,7 @@ import { ResendVerificationUseCase } from '../../application/services/resend-ver
 import { VerifyPasswordResetOtpUseCase } from '../../application/services/verify-password-reset-otp.use-case';
 import { UpdateProfileUseCase } from '../../application/services/update-profile.use-case';
 import { UpdateEmailUseCase } from '../../application/services/update-email.use-case';
+import { DeleteAccountUseCase } from '../../application/services/delete-account.use-case';
 
 import {
   RegisterRequest,
@@ -55,6 +57,7 @@ import {
   VerifyPasswordResetOtpRequest,
   UpdateProfileRequest,
   UpdateEmailRequest,
+  DeleteAccountRequest,
 } from '../dto/auth.request.dto';
 
 import config from '../../../common/config/app.config';
@@ -80,6 +83,7 @@ export class AuthController {
     private readonly verifyPasswordResetOtpUseCase: VerifyPasswordResetOtpUseCase,
     private readonly updateProfileUseCase: UpdateProfileUseCase,
     private readonly updateEmailUseCase: UpdateEmailUseCase,
+    private readonly deleteAccountUseCase: DeleteAccountUseCase,
     private readonly s3Storage: S3FileStorageService,
     @Inject(AUTH_USER_REPOSITORY_TOKEN)
     private readonly userRepository: IAuthUserRepository,
@@ -329,5 +333,31 @@ export class AuthController {
       body.newEmail,
       body.password,
     );
+  }
+
+  @Delete('account')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Delete current user account' })
+  @ApiResponse({ status: 200, description: 'Account deleted successfully' })
+  async deleteAccount(
+    @Body() body: DeleteAccountRequest,
+    @Req() req: Request,
+  ) {
+    const user = (req as unknown as { user: AuthPrincipal }).user;
+    return this.deleteAccountUseCase.execute(user.id, body?.password);
+  }
+
+  @Delete('me')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Delete current user account (alias)' })
+  @ApiResponse({ status: 200, description: 'Account deleted successfully' })
+  async deleteMe(
+    @Body() body: DeleteAccountRequest,
+    @Req() req: Request,
+  ) {
+    const user = (req as unknown as { user: AuthPrincipal }).user;
+    return this.deleteAccountUseCase.execute(user.id, body?.password);
   }
 }

@@ -24,6 +24,7 @@ import { UpdateEmailUseCase } from './application/services/update-email.use-case
 import { GetFoundingAuthorsUseCase } from './application/services/get-founding-authors.use-case';
 import { SubmitKycUseCase } from './application/services/submit-kyc.use-case';
 import { ReviewKycUseCase } from './application/services/review-kyc.use-case';
+import { DeleteAccountUseCase } from './application/services/delete-account.use-case';
 
 import { PrismaAuthUserRepository } from './infrastructure/persistence/prisma-auth-user.repository';
 import { PrismaOtpStore } from './infrastructure/persistence/prisma-otp.store';
@@ -88,6 +89,7 @@ import { AppConfigService } from '../common/config/app-config.service';
     GetFoundingAuthorsUseCase,
     SubmitKycUseCase,
     ReviewKycUseCase,
+    DeleteAccountUseCase,
 
     // Infrastructure
     PrismaAuthUserRepository,

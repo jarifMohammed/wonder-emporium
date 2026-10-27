@@ -197,3 +197,11 @@ export class UpdateEmailRequest {
   @IsNotEmpty()
   password: string;
 }
+
+export class DeleteAccountRequest {
+  @ApiProperty({ example: 'MyPassword123!', required: false })
+  @IsString()
+  @IsOptional()
+  password?: string;
+}
+
