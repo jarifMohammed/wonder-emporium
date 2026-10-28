@@ -86,18 +86,19 @@ export class GetBooksUseCase {
       (f: any) => f.type === BookFileType.AUDIOBOOK,
     );
 
+    const authorProfile = b.author?.profile || b.author?.userProfile;
     const author = b.author
       ? {
           id: b.author.id,
           username: b.author.username,
           email: b.author.email,
           isFoundingAuthor: b.author.isFoundingAuthor,
-          profile: b.author.userProfile
+          profile: authorProfile
             ? {
-                firstName: b.author.userProfile.firstName,
-                lastName: b.author.userProfile.lastName,
-                bio: b.author.userProfile.bio,
-                avatarUrl: b.author.userProfile.avatarUrl,
+                firstName: authorProfile.firstName,
+                lastName: authorProfile.lastName,
+                bio: authorProfile.bio,
+                avatarUrl: authorProfile.avatarUrl,
               }
             : null,
         }

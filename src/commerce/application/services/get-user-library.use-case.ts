@@ -22,6 +22,16 @@ export class GetUserLibraryUseCase {
             title: true,
             bookCover: true,
             authorId: true,
+            authorName: true,
+            description: true,
+            category: true,
+            formats: {
+              select: {
+                id: true,
+                formatType: true,
+                listPrice: true,
+              },
+            },
             author: {
               select: {
                 id: true,
