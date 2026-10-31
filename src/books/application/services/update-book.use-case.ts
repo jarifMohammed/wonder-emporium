@@ -32,9 +32,12 @@ export class UpdateBookUseCase {
       throw AppError.forbidden('You can only update your own books');
     }
 
-    if (!input.isAdmin && !existing.book.isEditable()) {
-      throw AppError.badRequest('Only draft or rejected books can be edited');
-    }
+    // Preserve approved status for author updates so published books remain live in catalog
+    const statusToUpdate = input.isAdmin
+      ? input.status
+      : existing.book.isApproved()
+      ? existing.book.status
+      : input.status;
 
     const result = await this.bookRepository.update(id, {
       authorName: input.authorName,
@@ -49,7 +52,7 @@ export class UpdateBookUseCase {
       formats: input.formats,
       authorEarnings: input.authorEarnings,
       publicationDetails: input.publicationDetails,
-      status: input.status,
+      status: statusToUpdate,
       authorId: input.authorId,
     });
 
