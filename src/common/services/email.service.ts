@@ -295,6 +295,21 @@ export class EmailService {
   }
 
   /**
+   * Send newsletter subscription welcome confirmation
+   */
+  async sendNewsletterWelcomeEmail(email: string): Promise<void> {
+    const html = this.getEmailTemplate('newsletter-welcome.html', {
+      year: new Date().getFullYear().toString(),
+    });
+
+    await this.sendEmail({
+      to: email,
+      subject: 'Welcome to The Wonder Emporium Newsletter! ✨',
+      html,
+    });
+  }
+
+  /**
    * Send order receipt email to buyer
    */
   async sendOrderReceiptEmail(

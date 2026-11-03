@@ -8,9 +8,10 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
+  UploadedFile,
   Body,
 } from '@nestjs/common';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
@@ -122,6 +123,52 @@ export class AuthorKycController {
         idBack: files.idBack[0],
         taxFormFile: files.taxFormFile[0],
       },
+      {
+        taxFormType: body.taxFormType,
+        taxpayerName: body.taxpayerName,
+        taxId: body.taxId,
+        taxCountry: body.taxCountry,
+      },
+    );
+  }
+
+  @Post('tax-form')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor('taxFormFile'))
+  @ApiOperation({
+    summary: 'Upload or update W-9 or W-8BEN tax form document directly',
+    description: 'Upload a signed Form W-9 or W-8BEN document into the secure encrypted vault.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['taxFormFile'],
+      properties: {
+        taxFormFile: { type: 'string', format: 'binary' },
+        taxFormType: { type: 'string', example: 'W-9' },
+        taxpayerName: { type: 'string', example: 'John Doe' },
+        taxId: { type: 'string', example: '123-45-6789' },
+        taxCountry: { type: 'string', example: 'US' },
+      },
+    },
+  })
+  async uploadTaxForm(
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: SubmitKycBody,
+  ) {
+    const user = (req as any).user as { id: string; email: string; username: string };
+
+    if (!file) {
+      return { error: 'taxFormFile is required.' };
+    }
+
+    return this.submitKycUseCase.executeTaxFormOnly(
+      user.id,
+      user.email,
+      user.username,
+      file,
       {
         taxFormType: body.taxFormType,
         taxpayerName: body.taxpayerName,

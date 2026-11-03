@@ -33,6 +33,9 @@ export class EmailProcessor extends WorkerHost {
         case 'welcome':
           await this.handleWelcomeEmail(job);
           break;
+        case 'newsletter-welcome':
+          await this.handleNewsletterWelcomeEmail(job);
+          break;
         case 'order-receipt':
           await this.handleOrderReceiptEmail(job);
           break;
@@ -144,6 +147,29 @@ export class EmailProcessor extends WorkerHost {
       });
       // Don't throw for welcome emails - they're non-critical
       // Just log the error and mark job as complete
+    }
+  }
+
+  private async handleNewsletterWelcomeEmail(
+    job: Job<EmailJob>,
+  ): Promise<void> {
+    const jobData = job.data as Extract<EmailJob, { type: 'newsletter-welcome' }>;
+    const { email } = jobData;
+
+    try {
+      await this.emailService.sendNewsletterWelcomeEmail(email);
+      this.logger.info(`Newsletter welcome email sent successfully to ${email}`, {
+        context: 'EmailProcessor',
+        jobId: job.id,
+        email,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send newsletter welcome email to ${email}`, {
+        context: 'EmailProcessor',
+        email,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      // Do not rethrow for newsletter so queue does not get blocked indefinitely
     }
   }
 
