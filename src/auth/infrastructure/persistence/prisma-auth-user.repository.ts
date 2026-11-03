@@ -472,6 +472,12 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
   }
 
   private toAdminAuthor(author: any): AdminAuthorRecord {
+    const hasTaxForm = Boolean(
+      author.authorKyc?.taxFormFileUrl ||
+      (author.authorKyc?.kycStatus && author.authorKyc?.kycStatus !== 'NOT_SUBMITTED') ||
+      (author.authorKyc?.taxFormType && author.authorKyc?.taxId)
+    );
+
     return {
       id: author.id,
       email: author.email,
@@ -492,6 +498,8 @@ export class PrismaAuthUserRepository implements IAuthUserRepository {
           }
         : null,
       bookCount: author._count.books,
+      taxFormReceived: hasTaxForm,
+      taxFormType: author.authorKyc?.taxFormType ?? null,
       kyc: author.authorKyc
         ? {
             kycStatus: author.authorKyc.kycStatus,

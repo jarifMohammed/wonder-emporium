@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Body,
   UseGuards,
   Query,
 } from '@nestjs/common';
@@ -20,7 +21,8 @@ import { Roles } from '../../../common/decorators/roles.decorator';
 import { userRole } from '../../interfaces/auth.interface';
 import { UpdateUserStatusUseCase } from '../../application/services/update-user-status.use-case';
 import { GetAdminAuthorsUseCase } from '../../application/services/get-admin-authors.use-case';
-import { AdminAuthorQuery } from '../dto/auth.request.dto';
+import { UpdateProfileUseCase } from '../../application/services/update-profile.use-case';
+import { AdminAuthorQuery, AdminUpdateAuthorProfileRequest } from '../dto/auth.request.dto';
 
 @ApiTags('Admin Users')
 @Controller('admin/users')
@@ -31,6 +33,7 @@ export class AdminUsersController {
   constructor(
     private readonly updateUserStatusUseCase: UpdateUserStatusUseCase,
     private readonly getAdminAuthorsUseCase: GetAdminAuthorsUseCase,
+    private readonly updateProfileUseCase: UpdateProfileUseCase,
   ) {}
 
   @Get('authors')
@@ -46,6 +49,29 @@ export class AdminUsersController {
   @ApiResponse({ status: 404, description: 'Author not found' })
   getAuthor(@Param('id') id: string) {
     return this.getAdminAuthorsUseCase.getById(id);
+  }
+
+  @Patch('authors/:id/profile')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update author profile / bio as admin' })
+  @ApiResponse({ status: 200, description: 'Author profile updated successfully' })
+  async updateAuthorProfile(
+    @Param('id') id: string,
+    @Body() body: AdminUpdateAuthorProfileRequest,
+  ) {
+    await this.getAdminAuthorsUseCase.getById(id);
+    return this.updateProfileUseCase.execute(id, body);
+  }
+
+  @Patch(':id/profile')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update author profile / bio as admin' })
+  @ApiResponse({ status: 200, description: 'Author profile updated successfully' })
+  async updateAuthorProfileDirect(
+    @Param('id') id: string,
+    @Body() body: AdminUpdateAuthorProfileRequest,
+  ) {
+    return this.updateAuthorProfile(id, body);
   }
 
   @Patch(':id/approve')
