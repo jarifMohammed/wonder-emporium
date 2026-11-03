@@ -71,9 +71,15 @@ export interface NewAuthorAdminNotificationEmailJob {
   };
 }
 
+export interface NewsletterWelcomeEmailJob {
+  type: 'newsletter-welcome';
+  email: string;
+}
+
 export type EmailJob =
   | VerificationEmailJob
   | WelcomeEmailJob
+  | NewsletterWelcomeEmailJob
   | OrderReceiptEmailJob
   | AuthorSaleEmailJob
   | AuthorOnboardingApprovedEmailJob
@@ -134,6 +140,25 @@ export class EmailQueueService implements IEmailSender {
         username,
         authId,
       } as WelcomeEmailJob,
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
+        removeOnComplete: 100,
+        removeOnFail: 500,
+      },
+    );
+  }
+
+  async sendNewsletterWelcomeEmail(email: string): Promise<void> {
+    await this.emailQueue.add(
+      'send-newsletter-welcome',
+      {
+        type: 'newsletter-welcome',
+        email,
+      } as NewsletterWelcomeEmailJob,
       {
         attempts: 3,
         backoff: {

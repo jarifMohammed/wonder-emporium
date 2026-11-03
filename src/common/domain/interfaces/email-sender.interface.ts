@@ -27,6 +27,8 @@ export interface IEmailSender {
     authId?: string,
   ): Promise<void>;
 
+  sendNewsletterWelcomeEmail(email: string): Promise<void>;
+
   sendOrderReceiptEmail(email: string, data: OrderReceiptData): Promise<void>;
 
   sendAuthorSaleNotificationEmail(

@@ -47,6 +47,7 @@ export class S3FileStorageService {
         Key: fileKey,
         Body: file.buffer,
         ContentType: file.mimetype,
+        ServerSideEncryption: 'AES256',
       },
     });
 
@@ -58,6 +59,59 @@ export class S3FileStorageService {
       url,
       fileKey,
       mimeType: file.mimetype,
+      size: file.size,
+    };
+  }
+
+  /**
+   * Upload author tax document to an isolated, access-restricted encrypted vault
+   * with clean labeling by author and tax form type.
+   */
+  async uploadTaxFormFile(
+    file: Express.Multer.File,
+    authId: string,
+    authorUsername: string,
+    authorName?: string,
+    taxFormType: string = 'W-9',
+  ): Promise<UploadedFile> {
+    const rawExt = file.originalname.includes('.')
+      ? '.' + file.originalname.split('.').pop()
+      : '.pdf';
+    const ext = rawExt.toLowerCase();
+    const cleanAuthor = (authorName || authorUsername).replace(/[^a-zA-Z0-9_-]/g, '_');
+    const cleanUsername = authorUsername.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const cleanType = (taxFormType || 'TAX-FORM').replace(/[^a-zA-Z0-9_-]/g, '_').toUpperCase();
+    const timestamp = Date.now();
+
+    // Isolated access-restricted vault path, clearly labeled by author and tax form type
+    const folder = `secure-tax-forms/${cleanUsername}_${authId}`;
+    const fileKey = `${folder}/${cleanType}_${cleanAuthor}_${timestamp}${ext}`;
+
+    const upload = new Upload({
+      client: this.s3,
+      params: {
+        Bucket: this.bucket,
+        Key: fileKey,
+        Body: file.buffer,
+        ContentType: file.mimetype || 'application/pdf',
+        ServerSideEncryption: 'AES256',
+        Metadata: {
+          authorId: authId,
+          authorUsername: cleanUsername,
+          taxFormType: cleanType,
+          uploadedAt: new Date().toISOString(),
+        },
+      },
+    });
+
+    await upload.done();
+
+    const url = `https://${this.bucket}.s3.${this.region}.amazonaws.com/${fileKey}`;
+
+    return {
+      url,
+      fileKey,
+      mimeType: file.mimetype || 'application/pdf',
       size: file.size,
     };
   }

@@ -132,6 +132,8 @@ export interface AdminAuthorRecord {
     location: string | null;
   } | null;
   bookCount: number;
+  taxFormReceived: boolean;
+  taxFormType: string | null;
   kyc?: {
     kycStatus: string;
     taxFormType: string | null;

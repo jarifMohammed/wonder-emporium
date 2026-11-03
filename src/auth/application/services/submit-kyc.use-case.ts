@@ -41,7 +41,13 @@ export class SubmitKycUseCase {
       this.s3.uploadFile(files.idBack, `${folder}/id-back`),
     ]);
 
-    const taxUpload = await this.s3.uploadFile(files.taxFormFile, `${folder}/tax-form`);
+    const taxUpload = await this.s3.uploadTaxFormFile(
+      files.taxFormFile,
+      authId,
+      authorUsername,
+      body.taxpayerName || authorUsername,
+      body.taxFormType || 'W-9',
+    );
 
     const input: SubmitKycInput = {
       authId,
@@ -67,5 +73,57 @@ export class SubmitKycUseCase {
     });
 
     return { kycStatus: kyc.kycStatus, submittedAt: kyc.submittedAt };
+  }
+
+  async executeTaxFormOnly(
+    authId: string,
+    authorEmail: string,
+    authorUsername: string,
+    file: Express.Multer.File,
+    body: {
+      taxFormType?: string;
+      taxpayerName?: string;
+      taxId?: string;
+      taxCountry?: string;
+    },
+  ) {
+    const existing = await this.kycRepo.findByAuthId(authId);
+    const taxUpload = await this.s3.uploadTaxFormFile(
+      file,
+      authId,
+      authorUsername,
+      body.taxpayerName || authorUsername,
+      body.taxFormType || 'W-9',
+    );
+
+    const input: SubmitKycInput = {
+      authId,
+      idFrontUrl: existing?.idFrontUrl ?? null,
+      idFrontKey: existing?.idFrontKey ?? null,
+      idBackUrl: existing?.idBackUrl ?? null,
+      idBackKey: existing?.idBackKey ?? null,
+      taxFormType: body.taxFormType || existing?.taxFormType || 'W-9',
+      taxpayerName: body.taxpayerName || existing?.taxpayerName || null,
+      taxId: body.taxId || existing?.taxId || null,
+      taxCountry: body.taxCountry || existing?.taxCountry || 'US',
+      taxFormFileUrl: taxUpload.url,
+      taxFormFileKey: taxUpload.fileKey,
+    };
+
+    const kyc = await this.kycRepo.upsert(input);
+
+    void this.emailService.sendTaxFormSubmittedAdminNotificationEmail({
+      authorId: authId,
+      authorEmail,
+      authorUsername,
+    });
+
+    return {
+      message: 'Tax form uploaded successfully to encrypted vault.',
+      kycStatus: kyc.kycStatus,
+      taxFormType: kyc.taxFormType,
+      taxFormFileUrl: kyc.taxFormFileUrl,
+      submittedAt: kyc.submittedAt,
+    };
   }
 }

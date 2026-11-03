@@ -25,14 +25,14 @@ export interface AuthorKycData {
 
 export interface SubmitKycInput {
   authId: string;
-  idFrontUrl: string;
-  idFrontKey: string;
-  idBackUrl: string;
-  idBackKey: string;
-  taxFormType?: string;
-  taxpayerName?: string;
-  taxId?: string;
-  taxCountry?: string;
+  idFrontUrl?: string | null;
+  idFrontKey?: string | null;
+  idBackUrl?: string | null;
+  idBackKey?: string | null;
+  taxFormType?: string | null;
+  taxpayerName?: string | null;
+  taxId?: string | null;
+  taxCountry?: string | null;
   taxFormFileUrl: string;
   taxFormFileKey: string;
 }

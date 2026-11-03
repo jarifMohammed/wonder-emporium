@@ -10,6 +10,7 @@ import {
   IsOptional,
   Max,
   Min,
+  MaxLength,
 } from 'class-validator';
 import { userRole } from '../../interfaces/auth.interface';
 import { Type } from 'class-transformer';
@@ -180,9 +181,33 @@ export class UpdateProfileRequest {
   @IsOptional()
   location?: string;
 
-  @ApiProperty({ example: 'Book enthusiast & collector', required: false })
+  @ApiProperty({ example: 'Book enthusiast & author of fiction novels', required: false, maxLength: 1000 })
   @IsString()
   @IsOptional()
+  @MaxLength(1000, { message: 'Bio cannot exceed 1000 characters' })
+  bio?: string;
+}
+
+export class AdminUpdateAuthorProfileRequest {
+  @ApiProperty({ example: 'John', required: false })
+  @IsString()
+  @IsOptional()
+  firstName?: string;
+
+  @ApiProperty({ example: 'Doe', required: false })
+  @IsString()
+  @IsOptional()
+  lastName?: string;
+
+  @ApiProperty({ example: 'New York, USA', required: false })
+  @IsString()
+  @IsOptional()
+  location?: string;
+
+  @ApiProperty({ example: 'Author biography and background...', required: false, maxLength: 1000 })
+  @IsString()
+  @IsOptional()
+  @MaxLength(1000, { message: 'Bio cannot exceed 1000 characters' })
   bio?: string;
 }
 
